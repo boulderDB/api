@@ -1,0 +1,59 @@
+ascent:
+  resource: ../../src/Controller/AscentController.php
+  type: annotation
+  prefix: /api/{location}/
+
+boulder:
+  resource: ../../src/Controller/BoulderController.php
+  type: annotation
+  prefix: /api/{location}/
+
+stat:
+  resource: ../../src/Controller/StatController.php
+  type: annotation
+  prefix: /api/{location}/
+
+grade:
+  resource: ../../src/Controller/GradeController.php
+  type: annotation
+  prefix: /api/{location}/
+
+holdStyle:
+  resource: ../../src/Controller/HoldStyleController.php
+  type: annotation
+  prefix: /api/{location}/
+
+ranking:
+  resource: ../../src/Controller/RankingController.php
+  type: annotation
+  prefix: /api/{location}/
+
+tag:
+  resource: ../../src/Controller/TagController.php
+  type: annotation
+  prefix: /api/{location}/
+
+wall:
+  resource: ../../src/Controller/WallController.php
+  type: annotation
+  prefix: /api/{location}/
+
+boulderError:
+  resource: ../../src/Controller/BoulderErrorController.php
+  type: annotation
+  prefix: /api/{location}/
+
+user:
+  resource: ../../src/Controller/UserController.php
+  type: annotation
+  prefix: /api/{location}/
+
+global:
+  resource: ../../src/Controller/GlobalController.php
+  type: annotation
+  prefix: /api
+
+compare:
+  resource: ../../src/Controller/CompareController.php
+  type: annotation
+  prefix: /api/{location}/

@@ -1,0 +1,32 @@
+version: "3.1"
+services:
+  php-fpm:
+    working_dir: /var/www
+    build: _docker/php-fpm
+    ports:
+      - "9002:9000"
+    volumes:
+      - ./:/var/www:cached
+
+  nginx:
+    working_dir: /var/www
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www:cached
+      - ./_docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+
+  postgres:
+    image: postgres:12-alpine
+    volumes:
+      - ./_docker/postgres/db:/data/db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: boulderdb
+      POSTGRES_PASSWORD: boulderdb
+      POSTGRES_USER: boulderdb
+
+  redis:
+    image: redis:alpine
