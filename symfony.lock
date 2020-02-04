@@ -160,6 +160,9 @@
     "symfony/dotenv": {
         "version": "v4.3.6"
     },
+    "symfony/error-handler": {
+        "version": "v4.4.4"
+    },
     "symfony/event-dispatcher": {
         "version": "v4.3.6"
     },
@@ -344,6 +347,9 @@
             "config/packages/test/validator.yaml",
             "config/packages/validator.yaml"
         ]
+    },
+    "symfony/var-dumper": {
+        "version": "v4.4.4"
     },
     "symfony/var-exporter": {
         "version": "v4.3.6"

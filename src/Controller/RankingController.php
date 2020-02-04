@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Boulder;
+use App\Service\ContextService;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,10 +14,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class RankingController extends AbstractController
 {
     private $entityManager;
+    private $contextService;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ContextService $contextService
+    )
     {
         $this->entityManager = $entityManager;
+        $this->contextService = $contextService;
     }
 
     /**
@@ -35,7 +41,7 @@ class RankingController extends AbstractController
             ->innerJoin('ascent.user', 'user')
             ->where('boulder.tenant = :tenant')
             ->andWhere('boulder.status = :status')
-            ->setParameter('tenant', 28)
+            ->setParameter('tenant', $this->contextService->getLocation()->getId())
             ->setParameter('status', 'active')
             ->getQuery()
             ->getArrayResult();
