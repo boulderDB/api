@@ -41,11 +41,8 @@ class AscentController extends AbstractController
     {
         $ascent = new Ascent();
 
-        /**
-         * @var User $user
-         */
-        $user = $this->getUser();
-        $ascent->setUser($user);
+        $ascent->setUser($this->getUser());
+        $ascent->setTenant($this->contextService->getLocation());
 
         $form = $this->createForm(AscentType::class, $ascent);
         $form->submit(json_decode($request->getContent(), true), false);
@@ -54,7 +51,7 @@ class AscentController extends AbstractController
             return $this->json($this->getFormErrors($form));
         }
 
-        $this->entityManager->persist($user);
+        $this->entityManager->persist($ascent);
         $this->entityManager->flush();
 
         return $this->json(AscentSerializer::serialize($ascent));

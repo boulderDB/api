@@ -6,6 +6,7 @@ use App\Components\Constants;
 use App\Components\Entity\TimestampTrait;
 use App\Components\Entity\TenantTrait;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -288,7 +289,7 @@ class Boulder
     /**
      * @return mixed
      */
-    public function getAscents(): ArrayCollection
+    public function getAscents(): Collection
     {
         return $this->ascents;
     }

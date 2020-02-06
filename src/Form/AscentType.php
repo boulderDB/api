@@ -18,10 +18,6 @@ class AscentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('user', EntityType::class, [
-                'constraints' => [new NotBlank()],
-                'class' => User::class
-            ])
             ->add('boulder', EntityType::class, [
                 'constraints' => [new NotBlank()],
                 'class' => Boulder::class

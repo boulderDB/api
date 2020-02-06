@@ -157,15 +157,7 @@ class Ascent implements TenantResourceInterface
      */
     public function setChecksum()
     {
-        $this->checksum = md5($this->boulder->getId() . $this->user->getId() . $this->getTenantId());
-    }
-
-    /**
-     * @return string
-     */
-    public function getBasicChecksum()
-    {
-        return md5($this->boulder->getId() . $this->user->getId() . $this->getTenantId());
+        $this->checksum = md5($this->boulder->getId() . $this->user->getId());
     }
 
     /**
