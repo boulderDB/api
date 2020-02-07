@@ -20,13 +20,13 @@ services:
   postgres:
     image: postgres:12-alpine
     volumes:
-      - ./_docker/postgres/db:/data/db
+      - ./var/data/blocbeta/db:/data/db
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: boulderdb
-      POSTGRES_PASSWORD: boulderdb
-      POSTGRES_USER: boulderdb
+      POSTGRES_DB: blocbeta
+      POSTGRES_PASSWORD: blocbeta
+      POSTGRES_USER: blocbeta
 
   redis:
     image: redis:alpine
