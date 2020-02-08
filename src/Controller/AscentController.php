@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -58,11 +59,20 @@ class AscentController extends AbstractController
     }
 
     /**
-     * @Route("", methods={"DELETE"})
+     * @Route("/{id}", methods={"DELETE"})
      */
-    public function delete()
+    public function delete(string $id)
     {
+        $ascent = $this->entityManager->getRepository(Ascent::class)->find($id);
 
+        if (!$ascent) {
+            return $this->json("Ascent {$id} not found", Response::HTTP_NOT_FOUND);
+        }
+
+        $this->entityManager->remove($ascent);
+        $this->entityManager->flush();
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
