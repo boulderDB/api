@@ -37,11 +37,18 @@ class BoulderController extends AbstractController
      */
     public function show(string $id)
     {
-        $queryBuilder = $this->getBoulderQueryBuilder();
+        $queryBuilder = $this->getBoulderQueryBuilder("
+        partial ascent.{id, userId, type}, 
+        partial ascent.{id, type, createdAt}, 
+        partial user.{id,username}");
 
         $boulder = $queryBuilder
+            ->leftJoin('boulder.ascents', 'ascent')
+            ->leftJoin('ascent.user', 'user')
             ->where('boulder.id = :id')
+            ->andWhere('user.visible = :visible')
             ->setParameter('id', $id)
+            ->setParameter('visible', true)
             ->getQuery()
             ->getSingleResult(AbstractQuery::HYDRATE_ARRAY);
 
@@ -95,18 +102,19 @@ class BoulderController extends AbstractController
         ]);
     }
 
-    private function getBoulderQueryBuilder()
+    private function getBoulderQueryBuilder(string $select = null)
     {
         return $this->entityManager->createQueryBuilder()
-            ->select('
+            ->select("
                 partial boulder.{id, name, createdAt, status}, 
                 partial startWall.{id}, 
                 partial endWall.{id}, 
                 partial tag.{id}, 
                 partial setter.{id},
                 partial color.{id}, 
-                partial grade.{id}
-            ')
+                partial grade.{id},
+                {$select}
+            ")
             ->from(Boulder::class, 'boulder')
             ->leftJoin('boulder.tags', 'tag')
             ->leftJoin('boulder.setters', 'setter')
