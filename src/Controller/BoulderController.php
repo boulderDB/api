@@ -104,17 +104,22 @@ class BoulderController extends AbstractController
 
     private function getBoulderQueryBuilder(string $select = null)
     {
-        return $this->entityManager->createQueryBuilder()
-            ->select("
+        $partials = "
                 partial boulder.{id, name, createdAt, status}, 
                 partial startWall.{id}, 
                 partial endWall.{id}, 
                 partial tag.{id}, 
                 partial setter.{id},
                 partial color.{id}, 
-                partial grade.{id},
-                {$select}
-            ")
+                partial grade.{id}
+        ";
+
+        if ($select) {
+            $partials .= ", {$select}";
+        }
+
+        return $this->entityManager->createQueryBuilder()
+            ->select($partials)
             ->from(Boulder::class, 'boulder')
             ->leftJoin('boulder.tags', 'tag')
             ->leftJoin('boulder.setters', 'setter')
