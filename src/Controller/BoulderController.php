@@ -52,6 +52,10 @@ class BoulderController extends AbstractController
             ->getQuery()
             ->getSingleResult(AbstractQuery::HYDRATE_ARRAY);
 
+        $boulder['ascents'] = array_filter($boulder['ascents'], function ($ascent) {
+            return in_array($ascent["type"], Constants::SCORED_ASCENT_TYPES);
+        });
+
         return $this->json($boulder);
     }
 

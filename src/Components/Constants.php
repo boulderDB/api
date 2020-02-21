@@ -19,6 +19,11 @@ interface Constants
         self::ASCENT_RESIGNED
     ];
 
+    const SCORED_ASCENT_TYPES = [
+        self::ASCENT_FLASHED,
+        self::ASCENT_TOPPED,
+    ];
+
     const ROLE_SETTER = 'ROLE_SETTER';
     const ROLE_USER = 'ROLE_USER';
     const ROLE_ADMIN = 'ROLE_ADMIN';
