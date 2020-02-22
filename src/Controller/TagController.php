@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\ContextService;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,10 +13,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class TagController extends AbstractController
 {
     private $entityManager;
+    private $contextService;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ContextService $contextService
+    )
     {
         $this->entityManager = $entityManager;
+        $this->contextService = $contextService;
     }
 
     /**
@@ -28,7 +34,7 @@ class TagController extends AbstractController
         $query = $connection->prepare($statement);
 
         $query->execute([
-            'tenantId' => 28
+            'tenantId' => $this->contextService->getLocation()->getId()
         ]);
 
         $results = $query->fetchAll();

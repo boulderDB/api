@@ -27,9 +27,9 @@ class StatController extends AbstractController
     }
 
     /**
-     * @Route("/location")
+     * @Route("/boulder")
      */
-    public function location()
+    public function boulder()
     {
         $boulderCount = $this->entityManager->createQueryBuilder()
             ->select('count(boulder.id)')
@@ -59,5 +59,22 @@ class StatController extends AbstractController
             'activeBoulders' => $boulderCount,
             'newBoulders' => $newBoulders
         ]);
+    }
+
+    /**
+     * @Route("/wall")
+     */
+    public function wall()
+    {
+        $connection = $this->entityManager->getConnection();
+        $statement = 'SELECT wall.id, wall.name, COUNT(boulder.id) FROM wall LEFT JOIN boulder ON boulder.start_wall_id = wall.id AND boulder.status = :status WHERE wall.tenant_id = :tenantId GROUP BY wall.id ORDER BY wall.name';
+        $query = $connection->prepare($statement);
+
+        $query->execute([
+            'tenantId' => $this->contextService->getLocation()->getId(),
+            'status' => Boulder::STATUS_ACTIVE
+        ]);
+
+        return $this->json($query->fetchAll());
     }
 }

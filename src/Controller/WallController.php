@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Boulder;
+use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,20 +14,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class WallController extends AbstractController
 {
     private $entityManager;
+    private $contextService;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ContextService $contextService
+    )
     {
         $this->entityManager = $entityManager;
+        $this->contextService = $contextService;
     }
-
-//$connection = $this->entityManager->getConnection();
-//$statement = 'SELECT wall.id, wall.name, COUNT(boulder.id) FROM wall LEFT JOIN boulder ON boulder.start_wall_id = wall.id AND boulder.status = :status WHERE wall.tenant_id = :tenantId GROUP BY wall.id';
-//$query = $connection->prepare($statement);
-//
-//$query->execute([
-//'tenantId' => 28,
-//'status' => Boulder::STATUS_ACTIVE
-//]);
 
     /**
      * @Route("")
@@ -38,12 +35,14 @@ class WallController extends AbstractController
         $query = $connection->prepare($statement);
 
         $query->execute([
-            'tenantId' => 28
+            'tenantId' => $this->contextService->getLocation()->getId()
         ]);
 
         $results = $query->fetchAll();
 
         return $this->json($results);
     }
+
+
 
 }
