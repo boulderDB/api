@@ -38,22 +38,33 @@ class BoulderController extends AbstractController
     public function show(string $id)
     {
         $queryBuilder = $this->getBoulderQueryBuilder("
-        partial ascent.{id, userId, type}, 
-        partial ascent.{id, type, createdAt}, 
-        partial user.{id,username}");
+            partial ascent.{id, userId, type}, 
+            partial ascent.{id, type, createdAt}, 
+            partial user.{id,username,visible}"
+        );
 
         $boulder = $queryBuilder
             ->leftJoin('boulder.ascents', 'ascent')
             ->leftJoin('ascent.user', 'user')
             ->where('boulder.id = :id')
-            ->andWhere('user.visible = :visible')
             ->setParameter('id', $id)
-            ->setParameter('visible', true)
             ->getQuery()
             ->getSingleResult(AbstractQuery::HYDRATE_ARRAY);
 
+        if (!$boulder['ascents']) {
+            return $this->json($boulder);
+        }
+
         $boulder['ascents'] = array_filter($boulder['ascents'], function ($ascent) {
-            return in_array($ascent["type"], Constants::SCORED_ASCENT_TYPES);
+            if (!in_array($ascent["type"], Constants::SCORED_ASCENT_TYPES)) {
+                return false;
+            }
+
+            if (!$ascent["user"]["visible"]) {
+                return false;
+            }
+
+            return true;
         });
 
         return $this->json($boulder);
