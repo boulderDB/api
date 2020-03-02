@@ -42,7 +42,4 @@ class WallController extends AbstractController
 
         return $this->json($results);
     }
-
-
-
 }

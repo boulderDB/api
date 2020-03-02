@@ -34,7 +34,7 @@ class RankingController extends AbstractController
             ->select('
                 partial boulder.{id, points},
                 partial ascent.{id, type},
-                partial user.{id, username, gender, lastActivity}
+                partial user.{id, username, gender, lastActivity, media}
             ')
             ->from(Boulder::class, 'boulder')
             ->innerJoin('boulder.ascents', 'ascent')
