@@ -53,7 +53,7 @@ class StorageSubscriber implements EventSubscriber
             return;
         }
 
-        RedisConnectionFactory::create()->set($this->getStorageKey(), $this->generateHash());
+        RedisConnectionFactory::create()->set(static::getStorageKey($this->getLocationId()), $this->generateHash());
     }
 
     public function postRemove(LifecycleEventArgs $args)
@@ -62,7 +62,7 @@ class StorageSubscriber implements EventSubscriber
             return;
         }
 
-        RedisConnectionFactory::create()->set($this->getStorageKey(), $this->generateHash());
+        RedisConnectionFactory::create()->set(static::getStorageKey($this->getLocationId()), $this->generateHash());
     }
 
     public function postUpdate(LifecycleEventArgs $args)
@@ -71,7 +71,7 @@ class StorageSubscriber implements EventSubscriber
             return;
         }
 
-        RedisConnectionFactory::create()->set($this->getStorageKey(), $this->generateHash());
+        RedisConnectionFactory::create()->set(static::getStorageKey($this->getLocationId()), $this->generateHash());
     }
 
     private function getLocationId(): int
@@ -79,9 +79,9 @@ class StorageSubscriber implements EventSubscriber
         return $this->contextService->getLocation()->getId();
     }
 
-    public function getStorageKey(): string
+    public static function getStorageKey(string $locationId): string
     {
-        return "storage_hash_{$this->getLocationId()}";
+        return "storage_hash_{$locationId}";
     }
 
     private function generateHash()

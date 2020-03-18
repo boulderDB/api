@@ -6,6 +6,12 @@ use Symfony\Component\Form\FormInterface;
 
 trait ApiControllerTrait
 {
+    private static function isValidId($id): bool
+    {
+        return (int)$id > 0;
+    }
+
+
     private function getFormErrors(FormInterface $form)
     {
         $errors = [];

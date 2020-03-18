@@ -6,11 +6,13 @@ use App\Components\Constants;
 use App\Components\Controller\ApiControllerTrait;
 use App\Entity\Boulder;
 use App\Form\BoulderType;
+use App\Repository\BoulderRepository;
 use App\Service\ContextService;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -22,21 +24,31 @@ class BoulderController extends AbstractController
 
     private $entityManager;
     private $contextService;
+    private $boulderRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        ContextService $contextService
+        ContextService $contextService,
+        BoulderRepository $boulderRepository
     )
     {
         $this->entityManager = $entityManager;
         $this->contextService = $contextService;
+        $this->boulderRepository = $boulderRepository;
     }
 
     /**
-     * @Route("/{id}")
+     * @Route("/{id}", methods={"GET"})
      */
     public function show(string $id)
     {
+        if (!static::isValidId($id)) {
+            return $this->json([
+                "code" => Response::HTTP_BAD_REQUEST,
+                "message" => "Invalid id"
+            ]);
+        }
+
         $queryBuilder = $this->getBoulderQueryBuilder("
             partial ascent.{id, userId, type}, 
             partial ascent.{id, type, createdAt}, 
@@ -51,7 +63,12 @@ class BoulderController extends AbstractController
             ->getQuery()
             ->getSingleResult(AbstractQuery::HYDRATE_ARRAY);
 
-        if (!$boulder['ascents']) {
+        $boulder['holdStyle'] = $boulder['color'];
+        unset($boulder['color']);
+
+        if (!isset($boulder['ascents'])) {
+            $boulder['ascents'] = [];
+
             return $this->json($boulder);
         }
 
@@ -71,7 +88,70 @@ class BoulderController extends AbstractController
     }
 
     /**
-     * @Route("/filter/active")
+     * @Route(methods={"POST"})
+     */
+    public function create(Request $request)
+    {
+        $this->denyAccessUnlessGranted(Constants::ROLE_ADMIN);
+
+        $boulder = new Boulder();
+        $form = $this->createForm(BoulderType::class, $boulder);
+        $form->submit(json_decode($request->getContent(), true));
+
+        if (!$form->isValid()) {
+            return $this->json([
+                "code" => Response::HTTP_BAD_REQUEST,
+                "message" => $this->getFormErrors($form)
+            ]);
+        }
+
+        $this->entityManager->persist($boulder);
+        $this->entityManager->flush();
+
+        return $this->json([
+            'id' => $boulder->getId()
+        ]);
+    }
+
+    /**
+     * @Route("/{id}", methods={"PUT"})
+     */
+    public function update(Request $request, string $id)
+    {
+        if (!static::isValidId($id)) {
+            return $this->json([
+                "code" => Response::HTTP_BAD_REQUEST,
+                "message" => "Invalid id"
+            ]);
+        }
+
+        $boulder = $this->boulderRepository->find($id);
+
+        if (!$boulder) {
+            return $this->json([
+                "code" => Response::HTTP_NO_CONTENT,
+                "message" => "Boulder $id not found"
+            ]);
+        }
+
+        $form = $this->createForm(BoulderType::class, $boulder);
+        $form->submit(json_decode($request->getContent(), true));
+
+        if (!$form->isValid()) {
+            return $this->json([
+                "code" => Response::HTTP_BAD_REQUEST,
+                "message" => $this->getFormErrors($form)
+            ]);
+        }
+
+        $this->entityManager->persist($boulder);
+        $this->entityManager->flush();
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @Route("/filter/active", methods={"GET"})
      */
     public function active()
     {
@@ -86,6 +166,8 @@ class BoulderController extends AbstractController
 
         $results = array_map(function ($boulder) {
             $boulder['createdAt'] = $boulder['createdAt']->format('c');
+            $boulder['holdStyle'] = $boulder['color'];
+            unset($boulder['color']);
 
             return $boulder;
         }, $results);
@@ -93,39 +175,15 @@ class BoulderController extends AbstractController
         return $this->json($results);
     }
 
-    /**
-     * @Route(methods={"POST"})
-     */
-    public function create(Request $request)
-    {
-        $this->denyAccessUnlessGranted(Constants::ROLE_ADMIN);
-
-        $boulder = new Boulder();
-
-        $form = $this->createForm(BoulderType::class, $boulder);
-        $form->submit(json_decode($request->getContent(), true));
-
-        if (!$form->isValid()) {
-            return $this->json($this->getFormErrors($form));
-        }
-
-        $this->entityManager->persist($boulder);
-        $this->entityManager->flush();
-
-        return $this->json([
-            'id' => $boulder->getId()
-        ]);
-    }
-
     private function getBoulderQueryBuilder(string $select = null)
     {
         $partials = "
-                partial boulder.{id, name, createdAt, status}, 
+                partial boulder.{id, name, createdAt, status, points}, 
                 partial startWall.{id}, 
                 partial endWall.{id}, 
                 partial tag.{id}, 
                 partial setter.{id},
-                partial color.{id}, 
+                partial holdStyle.{id}, 
                 partial grade.{id}
         ";
 
@@ -141,6 +199,6 @@ class BoulderController extends AbstractController
             ->leftJoin('boulder.startWall', 'startWall')
             ->leftJoin('boulder.endWall', 'endWall')
             ->innerJoin('boulder.grade', 'grade')
-            ->innerJoin('boulder.color', 'color');
+            ->innerJoin('boulder.color', 'holdStyle');
     }
 }

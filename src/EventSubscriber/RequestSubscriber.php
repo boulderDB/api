@@ -6,6 +6,7 @@ use App\Entity\Location;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 class RequestSubscriber implements EventSubscriberInterface
@@ -32,6 +33,11 @@ class RequestSubscriber implements EventSubscriberInterface
     public function onKernelRequest(RequestEvent $event)
     {
         $slug = $event->getRequest()->get('location');
+        $routeRequiresContext = strpos($event->getRequest()->get('_route'), 'global') === false;
+
+        if (!$routeRequiresContext) {
+            return;
+        }
 
         $location = $this->entityManager->createQueryBuilder()
             ->select('location')
@@ -42,7 +48,7 @@ class RequestSubscriber implements EventSubscriberInterface
             ->getOneOrNullResult();
 
         if (!$location) {
-            return;
+            throw new \InvalidArgumentException("Location '$slug' does not exist", Response::HTTP_NOT_FOUND);
         }
 
         $this->contextService->setLocation($location);

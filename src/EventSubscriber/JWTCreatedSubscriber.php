@@ -38,8 +38,9 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
                 'id' => $location->getId(),
                 'name' => $location->getName(),
                 'url' => $location->getUrl(),
-                'storageHash' => self::getLocationStorageHash($location->getId())
             ];
+
+            $payload['storageVersion'] = self::getLocationStorageHash($location->getId());
         }
 
         $event->setData($payload);
@@ -54,7 +55,6 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
 
     private static function getLocationStorageHash(int $locationId): ?string
     {
-        return "";
         $redis = RedisConnectionFactory::create();
 
         return $redis->get(StorageSubscriber::getStorageKey($locationId));

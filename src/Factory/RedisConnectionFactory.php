@@ -7,7 +7,7 @@ class RedisConnectionFactory
     public static function create()
     {
         $redis = new \Redis();
-        $redis->connect(getenv("REDIS_HOST"));
+        $redis->connect($_ENV["REDIS_HOST"]);
 
         return $redis;
     }

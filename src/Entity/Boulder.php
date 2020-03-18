@@ -158,18 +158,12 @@ class Boulder
         $this->name = $name;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getColor()
+    public function getHoldStyle(): ?HoldStyle
     {
         return $this->color;
     }
 
-    /**
-     * @param mixed $color
-     */
-    public function setColor($color): void
+    public function setHoldStyle(HoldStyle $color): void
     {
         $this->color = $color;
     }

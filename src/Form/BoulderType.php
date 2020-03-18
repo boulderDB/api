@@ -27,7 +27,7 @@ class BoulderType extends AbstractType
             ->add('name', TextType::class, [
                 'constraints' => [new NotBlank()]
             ])
-            ->add('color', EntityType::class, [
+            ->add('holdStyle', EntityType::class, [
                 'class' => HoldStyle::class,
                 'constraints' => [new NotBlank()]
             ])
