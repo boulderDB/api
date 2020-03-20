@@ -22,6 +22,8 @@ class CorsSubscriber implements EventSubscriberInterface
 
         if (Request::METHOD_OPTIONS === $method) {
             $response = new Response();
+            static::setHeaders($response);
+            
             $event->setResponse($response);
         }
     }
@@ -35,10 +37,16 @@ class CorsSubscriber implements EventSubscriberInterface
         $response = $event->getResponse();
 
         if ($response) {
-            $response->headers->set('Access-Control-Allow-Origin', '*');
-            $response->headers->set('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH');
-            $response->headers->set('Access-Control-Allow-Headers', 'content-type');
+           static::setHeaders($response);
         }
+    }
+
+    private static function setHeaders(Response $response)
+    {
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Credentials', 'true');
+        $response->headers->set('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
+        $response->headers->set('Access-Control-Allow-Headers', 'content-type');
     }
 
     public static function getSubscribedEvents()
