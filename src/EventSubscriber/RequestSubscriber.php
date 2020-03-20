@@ -33,9 +33,8 @@ class RequestSubscriber implements EventSubscriberInterface
     public function onKernelRequest(RequestEvent $event)
     {
         $slug = $event->getRequest()->get('location');
-        $routeRequiresContext = strpos($event->getRequest()->get('_route'), 'global') === false;
 
-        if (!$routeRequiresContext) {
+        if (!$slug) {
             return;
         }
 
