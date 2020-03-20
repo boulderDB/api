@@ -43,6 +43,11 @@ boulderError:
   type: annotation
   prefix: /api/{location}/
 
+setter:
+  resource: ../../src/Controller/SetterController.php
+  type: annotation
+  prefix: /api/{location}/
+
 user:
   resource: ../../src/Controller/UserController.php
   type: annotation

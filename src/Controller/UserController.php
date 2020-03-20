@@ -32,49 +32,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/setters")
-     */
-    public function setters()
-    {
-        $connection = $this->entityManager->getConnection();
-        $statement = 'select id, username from users where roles like :role';
-        $query = $connection->prepare($statement);
-
-//        // todo: enable for v2
-//        $query->execute([
-//            'role' => '%"' . $this->contextService->getLocationRole(Constants::ROLE_SETTER) . '"%'
-//        ]);
-
-        $query->execute([
-            'role' => "%" . addcslashes(Constants::ROLE_SETTER, '%_') . "%"
-        ]);
-
-        $results = $query->fetchAll();
-
-        return $this->json($results);
-    }
-
-    /**
-     * @Route("/admins")
-     */
-    public function admins()
-    {
-        $this->denyAccessUnlessGranted(Constants::ROLE_ADMIN);
-
-        $connection = $this->entityManager->getConnection();
-        $statement = 'select id, username from users where roles like :role';
-        $query = $connection->prepare($statement);
-
-        $query->execute([
-            'role' => '%"' . $this->contextService->getLocationRole(Constants::ROLE_ADMIN) . '"%'
-        ]);
-
-        $results = $query->fetchAll();
-
-        return $this->json($results);
-    }
-
-    /**
      * @Route("/invite", methods={"POST", "OPTIONS"})
      */
     public function sendRoleInvite(Request $request)

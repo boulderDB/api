@@ -169,6 +169,10 @@ class BoulderController extends AbstractController
             $boulder['holdStyle'] = $boulder['color'];
             unset($boulder['color']);
 
+            if (!$boulder['endWall']) {
+                $boulder['endWall'] = $boulder['startWall'];
+            }
+
             return $boulder;
         }, $results);
 

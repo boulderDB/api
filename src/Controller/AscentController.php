@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Components\Controller\ApiControllerTrait;
 use App\Entity\Ascent;
 use App\Entity\Boulder;
-use App\Entity\User;
 use App\Form\AscentType;
 use App\Serializer\AscentSerializer;
 use App\Service\ContextService;
@@ -101,13 +100,17 @@ class AscentController extends AbstractController
 
             $boulderId = $result['id'];
             $ascents = count($result['ascents']) ? count($result['ascents']) : 0;
-
             $userId = $this->getUser()->getId();
 
+            if ($ascents === 0) {
+                $points = $result['points'];
+            } else {
+                $points = $result['points'] / ($ascents);
+            }
+
             $scores[] = [
-                // calculate +1 to return the score the user will get when checked
                 'boulderId' => $boulderId,
-                'points' => round($result['points'] / ($ascents + 1)),
+                'points' => round($points),
                 'ascents' => $ascents,
                 'me' => self::filterUserAscent($result['ascents'], $userId)
             ];
