@@ -26,7 +26,7 @@ class StatController extends AbstractController
     }
 
     /**
-     * @Route("/boulder")
+     * @Route("/boulder", methods={"GET"})
      */
     public function boulder()
     {

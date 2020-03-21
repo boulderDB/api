@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Components\Controller\ApiControllerTrait;
 use App\Entity\Ascent;
+use App\Entity\AscentDoubt;
 use App\Entity\Boulder;
+use App\Form\AscentDoubtType;
 use App\Form\AscentType;
 use App\Serializer\AscentSerializer;
 use App\Service\ContextService;
@@ -35,7 +37,7 @@ class AscentController extends AbstractController
     }
 
     /**
-     * @Route("", methods={"POST"})
+     * @Route(methods={"POST"})
      */
     public function create(Request $request)
     {
@@ -117,6 +119,27 @@ class AscentController extends AbstractController
         }
 
         return $this->json($scores);
+    }
+
+    /**
+     * @Route("/doubt", methods={"POST"})
+     */
+    public function doubt(Request $request)
+    {
+        $ascentDoubt = new AscentDoubt();
+        $ascentDoubt->setAuthor($this->getUser());
+
+        $form = $this->createForm(AscentDoubtType::class, $ascentDoubt);
+        $form->submit(json_decode($request->getContent(), true));
+
+        if (!$form->isValid()) {
+            return $this->json($this->getFormErrors($form));
+        }
+
+        $this->entityManager->persist($ascentDoubt);
+        $this->entityManager->flush();
+
+        return $this->json(null, Response::HTTP_CREATED);
     }
 
     private static function filterUserAscent(array $ascents, int $userId): ?array

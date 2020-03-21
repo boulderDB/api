@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Components\Constants;
 use App\Components\Controller\ApiControllerTrait;
 use App\Entity\Boulder;
+use App\Entity\BoulderError;
+use App\Form\BoulderErrorType;
 use App\Form\BoulderType;
 use App\Repository\BoulderRepository;
 use App\Service\ContextService;
@@ -177,6 +179,28 @@ class BoulderController extends AbstractController
         }, $results);
 
         return $this->json($results);
+    }
+
+    /**
+     * @Route("/error", methods={"POST"})
+     */
+    public function createError(Request $request)
+    {
+        $boulderError = new BoulderError();
+        $boulderError->setAuthor($this->getUser());
+
+        $form = $this->createForm(BoulderErrorType::class, $boulderError);
+
+        $form->submit(json_decode($request->getContent(), true));
+
+        if (!$form->isValid()) {
+            return $this->json($this->getFormErrors($form));
+        }
+
+        $this->entityManager->persist($boulderError);
+        $this->entityManager->flush();
+
+        return $this->json(null, Response::HTTP_CREATED);
     }
 
     private function getBoulderQueryBuilder(string $select = null)

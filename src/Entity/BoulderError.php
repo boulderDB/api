@@ -52,99 +52,53 @@ class BoulderError implements TenantResourceInterface
      */
     private $status;
 
-    /**
-     * BoulderError constructor.
-     */
     public function __construct()
     {
         $this->status = self::STATUS_UNRESOLVED;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId(int $id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return User
-     */
-    public function getAuthor()
+    public function getAuthor(): ?User
     {
         return $this->author;
     }
 
-    /**
-     * @param User $author
-     */
-    public function setAuthor(User $author)
+    public function setAuthor(User $author): void
     {
         $this->author = $author;
     }
 
-    /**
-     * @return Boulder
-     */
-    public function getBoulder()
+    public function getBoulder(): ?Boulder
     {
         return $this->boulder;
     }
 
-    /**
-     * @param Boulder $boulder
-     */
-    public function setBoulder(Boulder $boulder)
+    public function setBoulder(Boulder $boulder): void
     {
         $this->boulder = $boulder;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getMessage(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     */
-    public function setDescription(string $description)
+    public function setMessage(string $message): void
     {
-        $this->description = $description;
+        $this->description = $message;
     }
 
-    /**
-     * @return string
-     */
     public function getStatus()
     {
         return $this->status;
     }
 
-    /**
-     * @param string $status
-     */
     public function setStatus(string $status)
     {
         $this->status = $status;
-    }
-
-    /**
-     * @return int
-     */
-    public function getTenantId()
-    {
-        return $this->tenant->getId();
     }
 }

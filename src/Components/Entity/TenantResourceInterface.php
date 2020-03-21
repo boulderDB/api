@@ -6,10 +6,5 @@ use App\Entity\Location;
 
 interface TenantResourceInterface
 {
-    /**
-     * @return int
-     */
-    public function getTenantId();
-
     public function setTenant(Location $tenant);
 }

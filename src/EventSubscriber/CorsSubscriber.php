@@ -22,7 +22,16 @@ class CorsSubscriber implements EventSubscriberInterface
 
         if (Request::METHOD_OPTIONS === $method) {
             $response = new Response();
+
+            $response->headers->set('Access-Control-Allow-Credentials', 'true');
+            $response->headers->set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, PATCH, OPTIONS');
+            $response->headers->set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, Authorization');
+            $response->headers->set('Access-Control-Max-Age', 3600);
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+
             $event->setResponse($response);
+
+            return;
         }
     }
 
@@ -33,11 +42,16 @@ class CorsSubscriber implements EventSubscriberInterface
         }
 
         $response = $event->getResponse();
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Methods', 'GET,POST,PUT');
+
         $response->headers->set('Access-Control-Allow-Credentials', 'true');
-        $response->headers->set('Access-Control-Allow-Headers', 'Authorization, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type');
+        $response->headers->set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, Authorization');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, PATCH, OPTIONS');
+        $response->headers->set('Vary', 'Origin');
+
+        $event->setResponse($response);
     }
+
     public static function getSubscribedEvents()
     {
         return [

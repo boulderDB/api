@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class BoulderDoubt implements TenantResourceInterface
+class AscentDoubt implements TenantResourceInterface
 {
     use TimestampTrait;
     use TenantTrait;
@@ -61,7 +61,7 @@ class BoulderDoubt implements TenantResourceInterface
     private $status;
 
     /**
-     * BoulderDoubt constructor.
+     * AscentDoubt constructor.
      */
     public function __construct()
     {
@@ -132,43 +132,23 @@ class BoulderDoubt implements TenantResourceInterface
         $this->boulder = $boulder;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription(string $description)
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * @return int
-     */
     public function getStatus()
     {
         return $this->status;
     }
 
-    /**
-     * @param int $status
-     */
     public function setStatus(int $status = self::STATUS_UNREAD)
     {
         $this->status = $status;
     }
 
-    /**
-     * @return int
-     */
-    public function getTenantId()
+    public function setMessage(string $message): void
     {
-        return $this->tenant->getId();
+        $this->description = $message;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->description;
     }
 }
