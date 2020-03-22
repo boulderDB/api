@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Components\Controller\ApiControllerTrait;
 use App\Entity\Boulder;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,6 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class StatController extends AbstractController
 {
+    use ApiControllerTrait;
+
     private $entityManager;
     private $contextService;
 
@@ -75,5 +78,45 @@ class StatController extends AbstractController
         ]);
 
         return $this->json($query->fetchAll());
+    }
+
+    /**
+     * @Route("/reset-rotation")
+     */
+    public function resetRotation()
+    {
+        $connection = $this->entityManager->getConnection();
+        $statement = "SELECT start_wall_id,created_at FROM boulder WHERE status = :status AND tenant_id = :tenantId";
+        $query = $connection->prepare($statement);
+
+        $query->execute([
+            'tenantId' => $this->contextService->getLocation()->getId(),
+            'status' => Boulder::STATUS_ACTIVE
+        ]);
+
+        $data = [];
+        foreach ($query->fetchAll() as $result) {
+            $data[$result['start_wall_id']][] = strtotime($result['created_at']);
+        }
+
+        $result = [];
+        foreach (array_keys($data) as $wallId) {
+            $average = array_sum($data[$wallId]) / count($data[$wallId]);
+
+            $result[] = [
+                'id' => $wallId,
+                'averageSetDate' => (int)round($average)
+            ];
+        }
+
+        usort($result, function ($a, $b) {
+            return $a['averageSetDate'] > $b['averageSetDate'];
+        });
+
+        foreach ($result as & $average) {
+            $average['averageSetDate'] = self::getApiDate($average['averageSetDate']);
+        }
+
+        return $this->json($result);
     }
 }
