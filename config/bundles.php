@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Bundle\MercureBundle\MercureBundle;
+
 return [
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
     Doctrine\Bundle\DoctrineCacheBundle\DoctrineCacheBundle::class => ['all' => true],
@@ -9,4 +11,6 @@ return [
     Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle::class => ['all' => true],
     Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle::class => ['all' => true],
     Symfony\Bundle\MonologBundle\MonologBundle::class => ['all' => true],
+    Symfony\Bundle\MercureBundle\MercureBundle::class => ['all' => true],
+    Symfony\Bundle\MakerBundle\MakerBundle::class => ['dev' => true]
 ];

@@ -9,11 +9,11 @@ use App\Entity\HoldStyle;
 use App\Entity\Location;
 use App\Entity\Tag;
 use App\Entity\Wall;
-use App\Factory\RedisConnectionFactory;
 use App\Service\ContextService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use Symfony\Component\Mercure\PublisherInterface;
 
 class StorageSubscriber implements EventSubscriber
 {
@@ -27,15 +27,16 @@ class StorageSubscriber implements EventSubscriber
         Wall::class
     ];
 
-    /**
-     * @var \Redis
-     */
-    private $redis;
     private $contextService;
+    private $publisher;
 
-    public function __construct(ContextService $contextService)
+    public function __construct(
+        ContextService $contextService,
+        PublisherInterface $publisher
+    )
     {
         $this->contextService = $contextService;
+        $this->publisher = $publisher;
     }
 
     public function getSubscribedEvents()
@@ -53,7 +54,7 @@ class StorageSubscriber implements EventSubscriber
             return;
         }
 
-        RedisConnectionFactory::create()->set(static::getStorageKey($this->getLocationId()), $this->generateHash());
+        $this->notifyClients();
     }
 
     public function postRemove(LifecycleEventArgs $args)
@@ -62,7 +63,7 @@ class StorageSubscriber implements EventSubscriber
             return;
         }
 
-        RedisConnectionFactory::create()->set(static::getStorageKey($this->getLocationId()), $this->generateHash());
+        $this->notifyClients();
     }
 
     public function postUpdate(LifecycleEventArgs $args)
@@ -71,24 +72,12 @@ class StorageSubscriber implements EventSubscriber
             return;
         }
 
-        RedisConnectionFactory::create()->set(static::getStorageKey($this->getLocationId()), $this->generateHash());
+        $this->notifyClients();
     }
 
-    private function getLocationId(): int
+    private function notifyClients()
     {
-        return $this->contextService->getLocation()->getId();
-    }
 
-    public static function getStorageKey(string $locationId): string
-    {
-        return "storage_hash_{$locationId}";
-    }
-
-    private function generateHash()
-    {
-        $current = new \DateTime();
-
-        return md5("{$current->getTimestamp()}_{$this->getLocationId()}");
     }
 
     private static function isStorageSubject($subject): bool

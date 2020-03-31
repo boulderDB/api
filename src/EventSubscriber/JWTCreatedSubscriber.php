@@ -43,8 +43,6 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
                 'name' => $location->getName(),
                 'url' => $location->getUrl(),
             ];
-
-            $payload['storageVersion'] = self::getLocationStorageHash($location->getId());
         }
 
         $event->setData($payload);
@@ -55,12 +53,5 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
         return [
             'lexik_jwt_authentication.on_jwt_created' => 'onJWTCreated'
         ];
-    }
-
-    private static function getLocationStorageHash(int $locationId): ?string
-    {
-        $redis = RedisConnectionFactory::create();
-
-        return $redis->get(StorageSubscriber::getStorageKey($locationId));
     }
 }

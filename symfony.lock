@@ -1,4 +1,7 @@
 {
+    "cboden/ratchet": {
+        "version": "v0.4.2"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -81,6 +84,12 @@
     "egulias/email-validator": {
         "version": "2.1.12"
     },
+    "evenement/evenement": {
+        "version": "v3.0.1"
+    },
+    "guzzlehttp/psr7": {
+        "version": "1.6.1"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
@@ -120,8 +129,38 @@
     "psr/container": {
         "version": "1.0.0"
     },
+    "psr/http-message": {
+        "version": "1.0.1"
+    },
     "psr/log": {
         "version": "1.1.2"
+    },
+    "ralouphie/getallheaders": {
+        "version": "3.0.3"
+    },
+    "ratchet/rfc6455": {
+        "version": "v0.2.6"
+    },
+    "react/cache": {
+        "version": "v1.0.0"
+    },
+    "react/dns": {
+        "version": "v1.2.0"
+    },
+    "react/event-loop": {
+        "version": "v1.1.1"
+    },
+    "react/promise": {
+        "version": "v2.7.1"
+    },
+    "react/promise-timer": {
+        "version": "v1.5.1"
+    },
+    "react/socket": {
+        "version": "v1.4.0"
+    },
+    "react/stream": {
+        "version": "v1.1.0"
     },
     "swiftmailer/swiftmailer": {
         "version": "v6.2.3"
@@ -209,6 +248,12 @@
             "src/Kernel.php"
         ]
     },
+    "symfony/http-client": {
+        "version": "v4.3.11"
+    },
+    "symfony/http-client-contracts": {
+        "version": "v1.1.8"
+    },
     "symfony/http-foundation": {
         "version": "v4.3.6"
     },
@@ -229,6 +274,21 @@
             "version": "1.0",
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
+    },
+    "symfony/mercure": {
+        "version": "v0.3.0"
+    },
+    "symfony/mercure-bundle": {
+        "version": "0.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "0.2",
+            "ref": "a37d3438e4bd4f9f924c516996bc29e25f66b07e"
+        },
+        "files": [
+            "config/packages/mercure.yaml"
+        ]
     },
     "symfony/mime": {
         "version": "v4.3.6"
