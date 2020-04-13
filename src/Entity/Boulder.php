@@ -224,6 +224,11 @@ class Boulder
         return $this->status;
     }
 
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
     /**
      * @param mixed $status
      */

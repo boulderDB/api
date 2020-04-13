@@ -8,6 +8,7 @@ use App\Entity\Boulder;
 use App\Entity\BoulderError;
 use App\Form\BoulderErrorType;
 use App\Form\BoulderType;
+use App\Form\MassOperationType;
 use App\Repository\BoulderRepository;
 use App\Service\ContextService;
 use Doctrine\ORM\AbstractQuery;
@@ -120,6 +121,8 @@ class BoulderController extends AbstractController
      */
     public function update(Request $request, string $id)
     {
+        $this->denyAccessUnlessGranted(Constants::ROLE_ADMIN);
+
         if (!static::isValidId($id)) {
             return $this->json([
                 "code" => Response::HTTP_BAD_REQUEST,
@@ -201,6 +204,41 @@ class BoulderController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json(null, Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Route("/mass", methods={"POST"})
+     */
+    public function massOperation(Request $request)
+    {
+        $form = $this->createForm(MassOperationType::class);
+        $form->submit(json_decode($request->getContent(), true), false);
+
+        if (!$form->isValid()) {
+            return $this->json([
+                "code" => Response::HTTP_BAD_REQUEST,
+                "message" => $this->getFormErrors($form)
+            ]);
+        }
+
+        /**
+         * @var Boulder $boulder
+         */
+        foreach ($form->getData()["items"] as $boulder) {
+            if ($form->getData()["operation"] === MassOperationType::OPERATION_DEACTIVATE) {
+                $boulder->setStatus(Boulder::STATUS_INACTIVE);
+            }
+
+            if ($form->getData()["operation"] === MassOperationType::OPERATION_PRUNE_ASCENTS) {
+                // todo: implement prune ascents
+            }
+
+            $this->entityManager->persist($boulder);
+        }
+
+        $this->entityManager->flush();
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
     private function getBoulderQueryBuilder(string $select = null)

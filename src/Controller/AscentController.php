@@ -53,6 +53,13 @@ class AscentController extends AbstractController
             return $this->json($this->getFormErrors($form));
         }
 
+        if (!$ascent->getBoulder()->isActive()) {
+            return $this->json([
+                'code' => Response::HTTP_NOT_ACCEPTABLE,
+                'message' => "Boulder {$ascent->getBoulder()->getId()} is deactivated"
+            ]);
+        }
+
         $this->entityManager->persist($ascent);
         $this->entityManager->flush();
 
@@ -77,7 +84,7 @@ class AscentController extends AbstractController
     }
 
     /**
-     * @Route("/active-boulders")
+     * @Route("/filter/active")
      */
     public function active()
     {

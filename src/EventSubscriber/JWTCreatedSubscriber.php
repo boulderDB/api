@@ -32,6 +32,8 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
             'username' => $user->getUsername()
         ];
 
+        $payload['user']['roles'] = $payload['roles'];
+
         if ($user->getLastVisitedLocation()) {
             /**
              * @var Location $location
