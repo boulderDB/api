@@ -34,13 +34,8 @@ class SetterController extends AbstractController
         $statement = 'select id, username from users where roles like :role';
         $query = $connection->prepare($statement);
 
-//        // todo: enable for v2
-//        $query->execute([
-//            'role' => '%"' . $this->contextService->getLocationRole(Constants::ROLE_SETTER) . '"%'
-//        ]);
-
         $query->execute([
-            'role' => "%" . addcslashes(Constants::ROLE_SETTER, '%_') . "%"
+            'role' => '%"' .addcslashes($this->contextService->getLocationRole(Constants::ROLE_SETTER), '%_')  . '"%'
         ]);
 
         $results = $query->fetchAll();

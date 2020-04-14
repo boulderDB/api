@@ -59,64 +59,6 @@ class GlobalController extends AbstractController
         return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
-
-    /**
-     * @Route("/showuser/{id}")
-     */
-    public function showUser(int $id)
-    {
-        $connection = $this->entityManager->getConnection();
-        $statement = 'select id, username, gender from users where id = :id';
-        $query = $connection->prepare($statement);
-
-        $query->execute([
-            'id' => $id
-        ]);
-
-        $user = $query->fetch();
-
-        if (!$user) return $this->json("User {$id} not found", Response::HTTP_FOUND);
-
-        return $this->json($user);
-    }
-
-    /**
-     * @Route("/searchuser")
-     */
-    public function searchUsers(Request $request)
-    {
-        $this->denyAccessUnlessGranted(Constants::ROLE_ADMIN);
-
-        if (!$request->query->has('term')) {
-            return $this->json("Missing request parameter term", Response::HTTP_BAD_REQUEST);
-        }
-
-        $term = $request->query->get('term');
-
-        $builder = $this->entityManager->createQueryBuilder();
-
-        $users = $builder
-            ->from(User::class, 'user')
-            ->distinct()
-            ->select('user.id, user.username, user.gender, user.roles')
-            ->where('user.visible = true')
-            ->andWhere($builder->expr()->like('lower(user.username)', ':term'))
-            ->orWhere($builder->expr()->like('lower(user.email)', ':term'))
-            ->setParameter('term', '%' . addcslashes(strtolower($term), '%') . '%')
-            ->orderBy('user.username')
-            ->setMaxResults(20)
-            ->getQuery()
-            ->getArrayResult();
-
-        $users = array_map(function ($user) {
-            $user['roles'] = array_values($user['roles']);
-
-            return $user;
-        }, $users);
-
-        return $this->json($users);
-    }
-
     /**
      * @Route("/location")
      */
