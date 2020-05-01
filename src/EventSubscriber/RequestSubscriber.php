@@ -3,24 +3,30 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Location;
+use App\Entity\User;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class RequestSubscriber implements EventSubscriberInterface
 {
     private $contextService;
     private $entityManager;
+    private $tokenStorage;
 
     public function __construct(
         ContextService $contextService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        TokenStorageInterface $tokenStorage
     )
     {
         $this->contextService = $contextService;
         $this->entityManager = $entityManager;
+        $this->tokenStorage = $tokenStorage;
     }
 
     public static function getSubscribedEvents()
@@ -30,9 +36,26 @@ class RequestSubscriber implements EventSubscriberInterface
         ];
     }
 
+    private function accountDisabled(): bool
+    {
+        /**
+         * @var User $user
+         */
+        $user = $this->tokenStorage->getToken()->getUser();
+
+        return !$user->isActive();
+    }
+
     public function onKernelRequest(RequestEvent $event)
     {
-        $slug = $event->getRequest()->get('location');
+        $request = $event->getRequest();
+
+        // disable write actions for disabled accounts
+        if ($this->accountDisabled() && $request->isMethod("post") || $request->isMethod("put") || $request->isMethod("delete")) {
+            throw new AccessDeniedException("Your account is disabled");
+        }
+
+        $slug = $request->get('location');
 
         if (!$slug) {
             return;
