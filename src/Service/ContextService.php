@@ -27,8 +27,6 @@ class ContextService
             return null;
         }
 
-        return $role;
-
         return "{$role}@{$this->getLocation()->getId()}";
     }
 }

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Components\Constants;
 use App\Components\Controller\ApiControllerTrait;
+use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\Boulder;
 use App\Entity\BoulderError;
 use App\Form\BoulderErrorType;
@@ -24,6 +25,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class BoulderController extends AbstractController
 {
     use ApiControllerTrait;
+    use ContextualizedControllerTrait;
 
     private $entityManager;
     private $contextService;
@@ -95,7 +97,7 @@ class BoulderController extends AbstractController
      */
     public function create(Request $request)
     {
-        $this->denyAccessUnlessGranted(Constants::ROLE_ADMIN);
+        $this->denyUnlessLocationAdmin();
 
         $boulder = new Boulder();
         $form = $this->createForm(BoulderType::class, $boulder);
@@ -121,7 +123,7 @@ class BoulderController extends AbstractController
      */
     public function update(Request $request, string $id)
     {
-        $this->denyAccessUnlessGranted(Constants::ROLE_ADMIN);
+        $this->denyUnlessLocationAdmin();
 
         if (!static::isValidId($id)) {
             return $this->json([

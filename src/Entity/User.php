@@ -166,274 +166,176 @@ class User implements UserInterface, \Serializable, EquatableInterface
         $this->tags = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
     public function setId(int $id)
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string
-     */
     public function getUsername()
     {
         return $this->username;
     }
 
-    /**
-     * @param string $username
-     */
     public function setUsername(string $username)
     {
         $this->username = $username;
     }
 
-    /**
-     * @return string
-     */
     public function getEmail()
     {
         return $this->email;
     }
 
-    /**
-     * @param string $email
-     */
     public function setEmail(string $email)
     {
         $this->email = $email;
     }
 
-    /**
-     * @return string
-     */
     public function getPassword()
     {
         return $this->password;
     }
 
-    /**
-     * @param string $password
-     */
     public function setPassword(string $password)
     {
         $this->password = $password;
     }
 
-    /**
-     * @return string
-     */
     public function getPlainPassword()
     {
         return $this->plainPassword;
     }
 
-    /**
-     * @param string $plainPassword
-     */
     public function setPlainPassword(string $plainPassword)
     {
         $this->plainPassword = $plainPassword;
     }
 
-    /**
-     * @return string
-     */
     public function getGender()
     {
         return $this->gender;
     }
 
-    /**
-     * @param string $gender
-     */
     public function setGender(string $gender)
     {
         $this->gender = $gender;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getBirthday()
     {
         return $this->birthday;
     }
 
-    /**
-     * @param \DateTime $birthday
-     */
     public function setBirthday(\DateTime $birthday = null)
     {
         $this->birthday = $birthday;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getLastLogin()
     {
         return $this->lastLogin;
     }
 
-    /**
-     * @param \DateTime $lastLogin
-     */
     public function setLastLogin(\DateTime $lastLogin = null)
     {
         $this->lastLogin = $lastLogin;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getLastActivity()
     {
         return $this->lastActivity;
     }
 
-    /**
-     * @param \DateTime $lastActivity
-     */
     public function setLastActivity(\DateTime $lastActivity = null)
     {
         $this->lastActivity = $lastActivity;
     }
 
-    /**
-     * @return string
-     */
     public function getSignature()
     {
         return $this->signature;
     }
 
-    /**
-     * @param string $signature
-     */
     public function setSignature(string $signature)
     {
         $this->signature = $signature;
     }
 
-    /**
-     * @return int
-     */
     public function getArmSpan()
     {
         return $this->armSpan;
     }
 
-    /**
-     * @param int $armSpan
-     */
     public function setArmSpan(int $armSpan = null)
     {
         $this->armSpan = $armSpan;
     }
 
-    /**
-     * @return int
-     */
     public function getHeight()
     {
         return $this->height;
     }
 
-    /**
-     * @param int $height
-     */
     public function setHeight(int $height = null)
     {
         $this->height = $height;
     }
 
-    /**
-     * @return int
-     */
     public function getApeIndex()
     {
         return $this->armSpan - $this->height;
     }
 
-    /**
-     * @return bool
-     */
     public function isActive()
     {
         return $this->active;
     }
 
-    /**
-     * @param bool $active
-     */
     public function setActive(bool $active)
     {
         $this->active = $active;
     }
 
-    /**
-     * @param string $role
-     * @return bool
-     */
     public function hasRole(string $role)
     {
         return in_array($role, $this->roles);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getRoles()
     {
         return $this->roles;
     }
 
-    /**
-     * @param array $roles
-     */
     public function setRoles(array $roles)
     {
         $this->roles = $roles;
     }
 
-    /**
-     * @param string $role
-     */
     public function addRole(string $role)
     {
         $this->roles[] = $role;
     }
 
-    /**
-     * @inheritdoc
-     */
+    public function removeRole(string $role)
+    {
+        return $this->roles = array_diff($this->roles, [$role]);
+    }
+
     public function getSalt()
     {
         return null;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function eraseCredentials()
     {
         $this->plainPassword = null;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function serialize()
     {
         return serialize([
@@ -442,9 +344,6 @@ class User implements UserInterface, \Serializable, EquatableInterface
         ]);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function unserialize($serialized)
     {
         list (
@@ -453,9 +352,6 @@ class User implements UserInterface, \Serializable, EquatableInterface
             ) = unserialize($serialized);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function isAccountNonExpired()
     {
         return true;

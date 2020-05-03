@@ -51,7 +51,7 @@ class RequestSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
 
         // disable write actions for disabled accounts
-        if ($this->accountDisabled() && $request->isMethod("post") || $request->isMethod("put") || $request->isMethod("delete")) {
+        if ($this->accountDisabled() && in_array(strtoupper($request->getMethod()), ["POST", "PUT", "DELETE"])) {
             throw new AccessDeniedException("Your account is disabled");
         }
 

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Components\Constants;
+use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\Boulder;
 use App\Entity\BoulderError;
 use App\Service\ContextService;
@@ -15,6 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class BoulderErrorController extends AbstractController
 {
+    use ContextualizedControllerTrait;
+
     private $entityManager;
     private $contextService;
 
@@ -32,7 +35,7 @@ class BoulderErrorController extends AbstractController
      */
     public function index()
     {
-        $this->denyAccessUnlessGranted(Constants::ROLE_ADMIN);
+        $this->denyUnlessLocationAdmin();
 
         $errors = $this->entityManager->createQueryBuilder()
             ->select('
@@ -60,7 +63,7 @@ class BoulderErrorController extends AbstractController
      */
     public function count()
     {
-        $this->denyAccessUnlessGranted(Constants::ROLE_ADMIN);
+        $this->denyUnlessLocationAdmin();
         
         $connection = $this->entityManager->getConnection();
         $statement = 'select count(id) from boulder_error where tenant_id = :locationId and status = :status';
