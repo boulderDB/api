@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -21,14 +22,9 @@ class CorsSubscriber implements EventSubscriberInterface
         $method = $request->getRealMethod();
 
         if (Request::METHOD_OPTIONS === $method) {
-            $response = new Response();
+            $response = new JsonResponse(null, Response::HTTP_NO_CONTENT);
 
-            $response->headers->set('Access-Control-Allow-Credentials', 'true');
-            $response->headers->set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, PATCH, OPTIONS');
-            $response->headers->set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, Authorization');
-            $response->headers->set('Access-Control-Max-Age', 3600);
-            $response->headers->set('Access-Control-Allow-Origin', '*');
-
+            self::setHeaders($response);
             $event->setResponse($response);
 
             return;
@@ -43,11 +39,7 @@ class CorsSubscriber implements EventSubscriberInterface
 
         $response = $event->getResponse();
 
-        $response->headers->set('Access-Control-Allow-Credentials', 'true');
-        $response->headers->set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, Authorization');
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, PATCH, OPTIONS');
-        $response->headers->set('Vary', 'Origin');
+        self::setHeaders($response);
 
         $event->setResponse($response);
     }
@@ -55,8 +47,17 @@ class CorsSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'onKernelRequest',
-            KernelEvents::RESPONSE => 'onKernelResponse'
+            KernelEvents::REQUEST => ['onKernelRequest', 9999],
+            KernelEvents::RESPONSE => ['onKernelResponse', 9999]
         ];
+    }
+
+    public static function setHeaders(Response $response)
+    {
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Credentials', 'true');
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        $response->headers->set('Access-Control-Allow-Headers', 'DNT, X-User-Token, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type');
+        $response->headers->set('Access-Control-Max-Age', 1728000);
     }
 }
