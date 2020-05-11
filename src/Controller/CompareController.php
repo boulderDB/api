@@ -12,14 +12,13 @@ use App\Service\ContextService;
 use App\Struct\ComparisonStruct;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NoResultException;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
- * @Route("/compare")
+ * @Route("/doubt")
  */
 class CompareController extends AbstractController
 {
@@ -39,7 +38,7 @@ class CompareController extends AbstractController
     }
 
     /**
-     * @Route("/{userA}/to/{userB}/at/current")
+     * @Route("/{userA}/to/{userB}/at/current", methods={"GET"})
      */
     public function compareCurrent(int $userA, int $userB)
     {

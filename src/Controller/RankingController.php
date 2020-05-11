@@ -26,7 +26,7 @@ class RankingController extends AbstractController
     }
 
     /**
-     * @Route("/current")
+     * @Route("/current", methods={"GET"})
      */
     public function current()
     {
@@ -106,5 +106,13 @@ class RankingController extends AbstractController
         });
 
         return $this->json($ranking);
+    }
+
+    /**
+     * @Route("/alltime", methods={"GET"})
+     */
+    public function allTime()
+    {
+        return $this->json();
     }
 }

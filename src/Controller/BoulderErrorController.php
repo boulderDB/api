@@ -31,7 +31,7 @@ class BoulderErrorController extends AbstractController
     }
 
     /**
-     * @Route("")
+     * @Route(methods={"GET"})
      */
     public function index()
     {
@@ -59,12 +59,12 @@ class BoulderErrorController extends AbstractController
     }
 
     /**
-     * @Route("/count")
+     * @Route("/count", methods={"GET"})
      */
     public function count()
     {
         $this->denyUnlessLocationAdmin();
-        
+
         $connection = $this->entityManager->getConnection();
         $statement = 'select count(id) from boulder_error where tenant_id = :locationId and status = :status';
         $query = $connection->prepare($statement);
@@ -77,5 +77,13 @@ class BoulderErrorController extends AbstractController
         $results = $query->fetch();
 
         return $this->json($results);
+    }
+
+    /**
+     * @Route("/{id}/resolve", methods={"PUT"})
+     */
+    public function resolve(string $id)
+    {
+
     }
 }

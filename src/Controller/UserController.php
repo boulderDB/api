@@ -23,23 +23,20 @@ class UserController extends AbstractController
 
     private $entityManager;
     private $contextService;
-    private $mailer;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        ContextService $contextService,
-        Swift_Mailer $mailer
+        ContextService $contextService
     )
     {
         $this->entityManager = $entityManager;
         $this->contextService = $contextService;
-        $this->mailer = $mailer;
     }
 
     /**
-     * @Route(path="", methods={"GET"})
+     * @Route("/search", methods={"GET"})
      */
-    public function findUser(Request $request)
+    public function search(Request $request)
     {
         $this->denyUnlessLocationAdmin();
 
@@ -64,23 +61,5 @@ class UserController extends AbstractController
             ->getArrayResult();
 
         return $this->json($users);
-    }
-
-    /**
-     * @Route("/invite", methods={"POST", "OPTIONS"})
-     */
-    public function sendRoleInvite(Request $request)
-    {
-        $this->denyUnlessLocationAdmin();
-
-        $redis = RedisConnectionFactory::create();
-    }
-
-    /**
-     * @Route("/invite/accept", methods={"POST", "OPTIONS"})
-     */
-    public function acceptRoleInvite()
-    {
-        $this->denyUnlessLocationAdmin();
     }
 }

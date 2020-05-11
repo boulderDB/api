@@ -29,7 +29,7 @@ class SetterController extends AbstractController
     }
 
     /**
-     * @Route("")
+     * @Route(methods={"GET"})
      */
     public function setters()
     {
@@ -47,20 +47,28 @@ class SetterController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/revoke", methods={"PUT"})
+     * @Route("/{userId}/invite", methods={"POST"})
      */
-    public function revoke(string $id)
+    public function invite(string $userId)
+    {
+
+    }
+
+    /**
+     * @Route("/{userId}/revoke", methods={"PUT"})
+     */
+    public function revoke(string $userId)
     {
         $userRepository = $this->entityManager->getRepository(User::class);
 
         /**
          * @var User $user
          */
-        $user = $userRepository->find($id);
+        $user = $userRepository->find($userId);
 
         if (!$user) {
             return $this->json(
-                ResponseFactory::createError("User ${id} not found", Response::HTTP_NOT_FOUND),
+                ResponseFactory::createError("User ${userId} not found", Response::HTTP_NOT_FOUND),
                 Response::HTTP_NOT_FOUND
             );
         }

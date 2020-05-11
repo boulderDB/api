@@ -209,7 +209,7 @@ class BoulderController extends AbstractController
     }
 
     /**
-     * @Route("/mass", methods={"POST"})
+     * @Route("/mass", methods={"PUT"})
      */
     public function massOperation(Request $request)
     {

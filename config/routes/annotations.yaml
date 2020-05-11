@@ -8,8 +8,8 @@ boulder:
   type: annotation
   prefix: /api/{location}/
 
-stat:
-  resource: ../../src/Controller/StatController.php
+statistics:
+  resource: ../../src/Controller/StatisticsController.php
   type: annotation
   prefix: /api/{location}/
 
@@ -43,6 +43,11 @@ boulderError:
   type: annotation
   prefix: /api/{location}/
 
+boulderDoubt:
+  resource: ../../src/Controller/BoulderDoubtController.php
+  type: annotation
+  prefix: /api/{location}/
+
 setter:
   resource: ../../src/Controller/SetterController.php
   type: annotation
@@ -55,6 +60,11 @@ user:
 
 global:
   resource: ../../src/Controller/GlobalController.php
+  type: annotation
+  prefix: /api
+
+token:
+  resource: ../../src/Controller/TokenController.php
   type: annotation
   prefix: /api
 

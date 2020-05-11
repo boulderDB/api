@@ -32,7 +32,7 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/me", methods={"get"})
+     * @Route("/me", methods={"GET"})
      */
     public function getMe()
     {
@@ -45,7 +45,7 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/me", methods={"put"})
+     * @Route("/me", methods={"PUT"})
      */
     public function updateMe(Request $request)
     {
@@ -90,7 +90,7 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/location")
+     * @Route("/location", methods={"GET"})
      */
     public function location()
     {

@@ -6,6 +6,7 @@ use App\Components\Controller\ApiControllerTrait;
 use App\Entity\Ascent;
 use App\Entity\AscentDoubt;
 use App\Entity\Boulder;
+use App\Factory\ResponseFactory;
 use App\Form\AscentDoubtType;
 use App\Form\AscentType;
 use App\Serializer\AscentSerializer;
@@ -84,7 +85,7 @@ class AscentController extends AbstractController
     }
 
     /**
-     * @Route("/filter/active")
+     * @Route("/filter/active", methods={"GET"})
      */
     public function active()
     {
@@ -120,6 +121,7 @@ class AscentController extends AbstractController
             $scores[] = [
                 'boulderId' => $boulderId,
                 'points' => round($points),
+
                 'ascents' => $ascents,
                 'me' => self::filterUserAscent($result['ascents'], $userId)
             ];
@@ -129,12 +131,23 @@ class AscentController extends AbstractController
     }
 
     /**
-     * @Route("/doubt", methods={"POST"})
+     * @Route("/{id}/doubt", methods={"POST"})
      */
-    public function doubt(Request $request)
+    public function doubt(Request $request, string $id)
     {
         $ascentDoubt = new AscentDoubt();
         $ascentDoubt->setAuthor($this->getUser());
+
+        /**
+         * @var Ascent $ascent
+         */
+        $ascent = $this->entityManager->getRepository(Ascent::class)->find($id);
+
+        if (!$ascent) {
+            return $this->json(ResponseFactory::createError("Ascent $id not found", Response::HTTP_BAD_REQUEST), Response::HTTP_BAD_REQUEST);
+        }
+
+        $ascentDoubt->setBoulder($ascent->getBoulder());
 
         $form = $this->createForm(AscentDoubtType::class, $ascentDoubt);
         $form->submit(json_decode($request->getContent(), true));

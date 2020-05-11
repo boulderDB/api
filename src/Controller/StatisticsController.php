@@ -10,9 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/stat")
+ * @Route("/statistics")
  */
-class StatController extends AbstractController
+class StatisticsController extends AbstractController
 {
     use ApiControllerTrait;
 
@@ -64,7 +64,7 @@ class StatController extends AbstractController
     }
 
     /**
-     * @Route("/wall")
+     * @Route("/wall", methods={"GET"})
      */
     public function wall()
     {
@@ -81,7 +81,7 @@ class StatController extends AbstractController
     }
 
     /**
-     * @Route("/reset-rotation")
+     * @Route("/wall-reset-rotation", methods={"GET"})
      */
     public function resetRotation()
     {

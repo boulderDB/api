@@ -25,7 +25,7 @@ class TagController extends AbstractController
     }
 
     /**
-     * @Route("")
+     * @Route(methods={"GET"})
      */
     public function index()
     {

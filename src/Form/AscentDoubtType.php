@@ -23,10 +23,6 @@ class AscentDoubtType extends AbstractType
             ->add('recipient', EntityType::class, [
                 'class' => User::class,
                 'constraints' => [new NotBlank()]
-            ])
-            ->add('boulder', EntityType::class, [
-                'class' => Boulder::class,
-                'constraints' => [new NotBlank()]
             ]);
     }
 
