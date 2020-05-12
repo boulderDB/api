@@ -10,22 +10,23 @@
 # API Documentation
 
 [Authorization](#Authorization)
+
 [Resources](#Resources)
   - [Statistics](#Statistics)
-  - [location](#location)
-  - [boulder](#boulder)
-  - [grade](#grade)
-  - [holdstyle](#holdstyle)
-  - [wall](#wall)
-  - [tag](#tag)
-  - [ascent](#ascent)
-  - [setter](#setter)
-  - [error](#error)
-  - [doubt](#doubt)
-  - [ranking](#ranking)
-  - [compare](#compare)
-  - [me](#me)
-  - [user](#user)
+  - [Location](#location)
+  - [Boulder](#boulder)
+  - [Grade](#grade)
+  - [Holdstyle](#holdstyle)
+  - [Wall](#wall)
+  - [Tag](#tag)
+  - [Ascent](#ascent)
+  - [Setter](#setter)
+  - [Error](#error)
+  - [Doubt](#doubt)
+  - [Ranking](#ranking)
+  - [Compare](#compare)
+  - [Me](#me)
+  - [User](#user)
 
 # Authorization
 
@@ -68,7 +69,7 @@ Authorization: Bearer <jwt-token>
 # Resources
 The {location} parameter takes the locations slug. To obtain a location see the the [location](#location) endpoint.
 
-## Statistics
+### Statistics
 
 Statistics on active boulders
 ```
@@ -132,7 +133,7 @@ All grades
 GET /api/{location}/grade
 ```
 
-### Hold style
+### Holdstyle
 
 All hold styles
 ```
