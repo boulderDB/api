@@ -11,8 +11,8 @@
 
 [Authorization](#Authorization)
 
-[Resources](#Resources)
-  - [Statistics](#Statistics)
+[Resources](#Resources)s
+  - [Statistic](#Statistic)
   - [Location](#location)
   - [Boulder](#boulder)
   - [Grade](#grade)
@@ -69,21 +69,21 @@ Authorization: Bearer <jwt-token>
 # Resources
 The {location} parameter takes the locations slug. To obtain a location see the the [location](#location) endpoint.
 
-### Statistics
+### Statistic
 
-Statistics on active boulders
+Statistic on active boulders
 ```
-GET /api/{location}/statistics/boulder
-```
-
-Statistics on walls
-```
-GET /api/{location}/statistics/wall
+GET /api/{location}/statistic/boulder
 ```
 
-Statistics on wall reset rotation
+Statistic on walls
 ```
-GET /api/{location}/statistics/wall-reset-rotation
+GET /api/{location}/statistic/wall
+```
+
+Statistic on wall reset rotation
+```
+GET /api/{location}/statistic/wall-reset-rotation
 ```
 
 

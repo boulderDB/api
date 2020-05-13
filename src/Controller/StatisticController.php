@@ -10,9 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/statistics")
+ * @Route("/statistic")
  */
-class StatisticsController extends AbstractController
+class StatisticController extends AbstractController
 {
     use ApiControllerTrait;
 

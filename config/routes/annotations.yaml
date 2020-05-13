@@ -8,8 +8,8 @@ boulder:
   type: annotation
   prefix: /api/{location}/
 
-statistics:
-  resource: ../../src/Controller/StatisticsController.php
+statistic:
+  resource: ../../src/Controller/StatisticController.php
   type: annotation
   prefix: /api/{location}/
 
