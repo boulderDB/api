@@ -187,16 +187,19 @@ class BoulderController extends AbstractController
     }
 
     /**
-     * @Route("/error", methods={"POST"})
+     * @Route("/{id}/error", methods={"POST"})
      */
-    public function createError(Request $request)
+    public function createError(Request $request, string $id)
     {
         $boulderError = new BoulderError();
         $boulderError->setAuthor($this->getUser());
 
         $form = $this->createForm(BoulderErrorType::class, $boulderError);
 
-        $form->submit(json_decode($request->getContent(), true));
+        $data = json_decode($request->getContent());
+        $data['boulder'] = $id;
+
+        $form->submit($data, true);
 
         if (!$form->isValid()) {
             return $this->json($this->getFormErrors($form));
