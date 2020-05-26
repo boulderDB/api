@@ -6,7 +6,7 @@ services:
     ports:
       - "9002:9000"
     volumes:
-      - ./:/var/www:delegated
+      - ./:/var/www:cached
 
   nginx:
     working_dir: /var/www
@@ -14,7 +14,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./:/var/www:delegated
+      - ./:/var/www:cached
       - ./_docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
 
   postgres:

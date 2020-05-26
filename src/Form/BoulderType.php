@@ -18,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class BoulderType extends AbstractType
 {
@@ -48,7 +49,7 @@ class BoulderType extends AbstractType
                 [
                     'class' => User::class,
                     'multiple' => true,
-                    'constraints' => [new NotBlank()],
+                    'constraints' => [new NotNull()],
                     'query_builder' => function (EntityRepository $entityRepository) {
                         return $entityRepository->createQueryBuilder('user')
                             ->where('user.roles LIKE :roles')
@@ -60,7 +61,7 @@ class BoulderType extends AbstractType
             ->add('tags', EntityType::class, [
                 'class' => Tag::class,
                 'multiple' => true,
-                'constraints' => [new NotBlank()]
+                'constraints' => [new NotNull()]
             ])
             ->add('points', IntegerType::class, [
                 'constraints' => [new NotBlank()]

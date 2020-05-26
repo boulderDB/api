@@ -40,7 +40,6 @@ class CorsSubscriber implements EventSubscriberInterface
         $response = $event->getResponse();
 
         self::setHeaders($response);
-
         $event->setResponse($response);
     }
 
