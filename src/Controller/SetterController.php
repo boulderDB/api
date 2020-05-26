@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Components\Constants;
+use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\User;
+use App\Factory\RedisConnectionFactory;
 use App\Factory\ResponseFactory;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,8 +18,11 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class SetterController extends AbstractController
 {
+    use ContextualizedControllerTrait;
+
     private $entityManager;
     private $contextService;
+    private $redis;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -26,6 +31,7 @@ class SetterController extends AbstractController
     {
         $this->entityManager = $entityManager;
         $this->contextService = $contextService;
+        $this->redis = RedisConnectionFactory::create();
     }
 
     /**
@@ -51,7 +57,11 @@ class SetterController extends AbstractController
      */
     public function invite(string $userId)
     {
+        $this->denyUnlessLocationAdmin();
 
+        $this->redis->set("setter_role_invite", hash('sha256', "setter_role_invite_$userId"), 3600);
+
+        return $this->json(null, Response::HTTP_CREATED);
     }
 
     /**
@@ -59,6 +69,8 @@ class SetterController extends AbstractController
      */
     public function revoke(string $userId)
     {
+        $this->denyUnlessLocationAdmin();
+
         $userRepository = $this->entityManager->getRepository(User::class);
 
         /**

@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Components\Constants;
 use App\Components\Controller\ApiControllerTrait;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;

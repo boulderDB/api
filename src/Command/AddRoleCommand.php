@@ -3,17 +3,17 @@
 namespace App\Command;
 
 use App\Entity\User;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class MigrateRolesCommand extends Command
+class AddRoleCommand extends Command
 {
-    protected static $defaultName = 'MigrateRoles';
+    protected static $defaultName = 'admin:add-role';
     private $entityManager;
 
     public function __construct(
@@ -27,7 +27,12 @@ class MigrateRolesCommand extends Command
 
     protected function configure()
     {
-        $this->setDescription('Remove post migration');
+        $this
+            ->setDescription('Command to add a role to a user')
+            ->addArgument('username', InputArgument::REQUIRED)
+            ->addArgument('role', InputArgument::REQUIRED)
+            ->addArgument('locationId', InputArgument::REQUIRED);
+
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -38,30 +43,23 @@ class MigrateRolesCommand extends Command
          * @var EntityRepository $userRepository
          */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $setterRole = "ROLE_SETTER";
+        $role = "ROLE_" . strtoupper($input->getArgument('role')) . "@{$input->getArgument('locationId')}";
 
         /**
-         * @var User[] $setters
+         * @var User $user
          */
-        $setters = $userRepository->createQueryBuilder('user')
-            ->where('user.roles LIKE :roles')
-            ->setParameter('roles', '%"' . $setterRole . '"%')
+        $user = $userRepository->createQueryBuilder('user')
+            ->where('user.username = :username')
+            ->setParameter('username', $input->getArgument('username'))
             ->getQuery()
-            ->getResult();
+            ->getSingleResult();
 
-        foreach ($setters as $setter) {
-            $io->writeln($setter->getId());
+        $user->addRole($role);
 
-            $setter->removeRole("SETTER@28");
-            $setter->removeRole("SETTER@29");
-
-            $setter->addRole("ROLE_SETTER@28");
-            $setter->addRole("ROLE_SETTER@29");
-
-            $this->entityManager->persist($setter);
-        }
-
+        $this->entityManager->persist($user);
         $this->entityManager->flush();
+
+        $io->success("Added role {$role} to user {$user->getUsername()}");
 
         return 0;
     }
