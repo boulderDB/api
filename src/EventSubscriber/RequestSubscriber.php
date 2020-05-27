@@ -43,6 +43,10 @@ class RequestSubscriber implements EventSubscriberInterface
          */
         $user = $this->tokenStorage->getToken()->getUser();
 
+        if (!$user instanceof User) {
+            return false;
+        }
+
         return !$user->isActive();
     }
 
