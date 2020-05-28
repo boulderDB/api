@@ -1,9 +1,9 @@
 <?php
 
-
 namespace App\EventSubscriber;
 
 use App\Components\Entity\TenantResourceInterface;
+use App\Components\Entity\TimestampableInterface;
 use App\Service\ContextService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
@@ -31,21 +31,25 @@ class TenantResourceSubscriber implements EventSubscriber
     {
         $subject = $args->getObject();
 
-        if (!$subject instanceof TenantResourceInterface) {
-            return;
+        if ($subject instanceof TenantResourceInterface) {
+            $subject->setTenant($this->contextService->getLocation());
         }
 
-        $subject->setTenant($this->contextService->getLocation());
+        if ($subject instanceof TimestampableInterface) {
+            $subject->setCreatedAt(new \DateTime());
+        }
     }
 
     public function preUpdate(PreUpdateEventArgs $args)
     {
         $subject = $args->getObject();
 
-        if (!$subject instanceof TenantResourceInterface) {
-            return;
+        if ($subject instanceof TenantResourceInterface) {
+            $subject->setTenant($this->contextService->getLocation());
         }
 
-        $subject->setTenant($this->contextService->getLocation());
+        if ($subject instanceof TimestampableInterface) {
+            $subject->setUpdatedAt(new \DateTime());
+        }
     }
 }

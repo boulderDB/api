@@ -35,7 +35,7 @@ class SetterController extends AbstractController
     }
 
     /**
-     * @Route(methods={"GET"})
+     * @Route("", methods={"GET"})
      */
     public function setters()
     {

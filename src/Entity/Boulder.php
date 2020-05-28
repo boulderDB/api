@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Components\Constants;
+use App\Components\Entity\TenantResourceInterface;
+use App\Components\Entity\TimestampableInterface;
 use App\Components\Entity\TimestampTrait;
 use App\Components\Entity\TenantTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\Table(indexes={@ORM\Index(name="status", columns={"status"})})
  */
-class Boulder
+class Boulder implements TenantResourceInterface, TimestampableInterface
 {
     use TimestampTrait;
     use TenantTrait;

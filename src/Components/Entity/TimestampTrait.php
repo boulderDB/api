@@ -22,49 +22,23 @@ trait TimestampTrait
      */
     protected $updatedAt;
 
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
     }
 
-    /**
-     * @param \DateTimeInterface|null $createdAt
-     */
     public function setCreatedAt(\DateTimeInterface $createdAt = null)
     {
         $this->createdAt = $createdAt;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
     }
 
-
     public function setUpdatedAt(\DateTimeInterface $updatedAt = null)
     {
         $this->updatedAt = $updatedAt;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     */
-    public function updatePrePersist()
-    {
-        $this->setCreatedAt(new \DateTime());
-    }
-
-    /**
-     * @ORM\PreUpdate()
-     */
-    public function updatePreUpdate()
-    {
-        $this->setUpdatedAt(new \DateTime());
     }
 }
