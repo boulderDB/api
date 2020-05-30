@@ -164,9 +164,9 @@ class BoulderController extends AbstractController
     {
         $builder = $this->getBoulderQueryBuilder();
 
-        $results = $builder->where('boulder.tenant = :tenant')
+        $results = $builder->where('boulder.location = :location')
             ->andWhere('boulder.status = :status')
-            ->setParameter('tenant', $this->contextService->getLocation()->getId())
+            ->setParameter('location', $this->contextService->getLocation()->getId())
             ->setParameter('status', 'active')
             ->getQuery()
             ->getArrayResult();

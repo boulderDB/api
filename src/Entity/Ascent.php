@@ -3,8 +3,8 @@
 namespace App\Entity;
 
 use App\Components\Entity\TimestampTrait;
-use App\Components\Entity\TenantResourceInterface;
-use App\Components\Entity\TenantTrait;
+use App\Components\Entity\LocationResourceInterface;
+use App\Components\Entity\LocationTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,12 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(indexes={@ORM\Index(name="user", columns={"user_id"})})
  * @ORM\HasLifecycleCallbacks()
  */
-class Ascent implements TenantResourceInterface
+class Ascent implements LocationResourceInterface
 {
     const RESOURCE_TYPE = 'ascent';
 
     use TimestampTrait;
-    use TenantTrait;
+    use LocationTrait;
 
     /**
      * @ORM\Id()
@@ -158,14 +158,6 @@ class Ascent implements TenantResourceInterface
     public function setChecksum()
     {
         $this->checksum = md5($this->boulder->getId() . $this->user->getId());
-    }
-
-    /**
-     * @return int
-     */
-    public function getTenantId()
-    {
-        return $this->tenant->getId();
     }
 
     public function getResourceType(): string

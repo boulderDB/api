@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\TenantResourceInterface;
-use App\Components\Entity\TenantTrait;
+use App\Components\Entity\LocationResourceInterface;
+use App\Components\Entity\LocationTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,9 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity(repositoryClass="App\Repository\PermissionRepository")
  */
-class Permission implements TenantResourceInterface
+class Permission implements LocationResourceInterface
 {
-    use TenantTrait;
+    use LocationTrait;
 
     /**
      * @var int
@@ -96,13 +96,5 @@ class Permission implements TenantResourceInterface
     public function setRole(string $role)
     {
         $this->role = $role;
-    }
-
-    /**
-     * @return int
-     */
-    public function getTenantId()
-    {
-        return $this->tenant->getId();
     }
 }

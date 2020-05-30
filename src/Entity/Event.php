@@ -3,8 +3,8 @@
 namespace App\Entity;
 
 use App\Components\Entity\TimestampTrait;
-use App\Components\Entity\TenantResourceInterface;
-use App\Components\Entity\TenantTrait;
+use App\Components\Entity\LocationResourceInterface;
+use App\Components\Entity\LocationTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -13,10 +13,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class Event implements  TenantResourceInterface
+class Event implements  LocationResourceInterface
 {
     use TimestampTrait;
-    use TenantTrait;
+    use LocationTrait;
 
     /**
      * @ORM\Id()
@@ -316,26 +316,11 @@ class Event implements  TenantResourceInterface
         $this->scoringOrder = $scoringOrder;
     }
 
-    /**
-     * @return int
-     */
-    public function getTenantId()
-    {
-        return $this->tenant->getId();
-    }
-
-
-    /**
-     * @return bool
-     */
     public function isPublicEvent()
     {
         return $this->publicEvent;
     }
 
-    /**
-     * @param bool $publicEvent
-     */
     public function setPublicEvent(bool $publicEvent)
     {
         $this->publicEvent = $publicEvent;

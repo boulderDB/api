@@ -2,16 +2,16 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\TenantResourceInterface;
-use App\Components\Entity\TenantTrait;
+use App\Components\Entity\LocationResourceInterface;
+use App\Components\Entity\LocationTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  */
-class Tag implements TenantResourceInterface
+class Tag implements LocationResourceInterface
 {
-    use TenantTrait;
+    use LocationTrait;
 
     /**
      * @ORM\Id()
@@ -64,25 +64,11 @@ class Tag implements TenantResourceInterface
         $this->name = $name;
     }
 
-    /**
-     * @return int
-     */
-    public function getTenantId()
-    {
-        return $this->getTenant()->getId();
-    }
-
-    /**
-     * @return string
-     */
     public function getEmoji()
     {
         return $this->emoji;
     }
 
-    /**
-     * @param string $emoji
-     */
     public function setEmoji(string $emoji)
     {
         $this->emoji = $emoji;

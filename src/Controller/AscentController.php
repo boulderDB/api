@@ -45,7 +45,7 @@ class AscentController extends AbstractController
         $ascent = new Ascent();
 
         $ascent->setUser($this->getUser());
-        $ascent->setTenant($this->contextService->getLocation());
+        $ascent->setLocation($this->contextService->getLocation());
 
         $form = $this->createForm(AscentType::class, $ascent);
         $form->submit(json_decode($request->getContent(), true), false);
@@ -97,8 +97,8 @@ class AscentController extends AbstractController
             ->from(Boulder::class, 'boulder')
             ->leftJoin('boulder.ascents', 'ascent')
             ->where('boulder.status = :status')
-            ->andWhere('boulder.tenant = :tenant')
-            ->setParameter('tenant', $this->contextService->getLocation()->getId())
+            ->andWhere('boulder.location = :location')
+            ->setParameter('location', $this->contextService->getLocation()->getId())
             ->setParameter('status', 'active')
             ->getQuery()
             ->setHint(Query::HINT_FORCE_PARTIAL_LOAD, 1)

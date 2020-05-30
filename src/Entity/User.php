@@ -162,8 +162,6 @@ class User implements UserInterface, \Serializable, EquatableInterface
         $this->ascents = new ArrayCollection();
         $this->boulders = new ArrayCollection();
         $this->events = new ArrayCollection();
-        $this->tenants = new ArrayCollection();
-        $this->tags = new ArrayCollection();
     }
 
     public function getId()
@@ -467,38 +465,6 @@ class User implements UserInterface, \Serializable, EquatableInterface
     public function setEvents(array $events)
     {
         $this->events = $events;
-    }
-
-    /**
-     * @return Location[]
-     */
-    public function getTenants()
-    {
-        return $this->tenants;
-    }
-
-    /**
-     * @param Location[] $tenants
-     */
-    public function setTenants(array $tenants)
-    {
-        $this->tenants = $tenants;
-    }
-
-    /**
-     * @param Location $tenant
-     */
-    public function addTenant(Location $tenant)
-    {
-        $this->tenants->add($tenant);
-    }
-
-    /**
-     * @param Location $tenant
-     */
-    public function removeTenant(Location $tenant)
-    {
-        $this->tenants->remove($tenant);
     }
 
     /**

@@ -4,7 +4,6 @@ namespace App\EventSubscriber;
 
 use App\Entity\Location;
 use App\Entity\User;
-use App\Factory\RedisConnectionFactory;
 use App\Repository\LocationRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

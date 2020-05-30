@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class AddRoleCommand extends Command
 {
-    protected static $defaultName = 'admin:add-role';
+    protected static $defaultName = 'blocbeta:admin:add-role';
     private $entityManager;
 
     public function __construct(

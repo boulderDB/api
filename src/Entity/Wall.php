@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\TenantResourceInterface;
-use App\Components\Entity\TenantTrait;
+use App\Components\Entity\LocationResourceInterface;
+use App\Components\Entity\LocationTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 /**
  * @ORM\Entity()
  */
-class Wall implements TenantResourceInterface
+class Wall implements LocationResourceInterface
 {
-    use TenantTrait;
+    use LocationTrait;
 
     /**
      * @ORM\Id()
@@ -142,14 +142,6 @@ class Wall implements TenantResourceInterface
     public function setMedia($media)
     {
         $this->media = $media;
-    }
-
-    /**
-     * @return int
-     */
-    public function getTenantId()
-    {
-        return $this->tenant->getId();
     }
 
     public function getActiveBoulders()

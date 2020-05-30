@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\TenantResourceInterface;
-use App\Components\Entity\TenantTrait;
+use App\Components\Entity\LocationResourceInterface;
+use App\Components\Entity\LocationTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -11,9 +11,9 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class Area implements TenantResourceInterface
+class Area implements LocationResourceInterface
 {
-    use TenantTrait;
+    use LocationTrait;
 
     /**
      * @ORM\Id()
@@ -81,17 +81,6 @@ class Area implements TenantResourceInterface
         $this->walls = $walls;
     }
 
-    /**
-     * @return int
-     */
-    public function getTenantId()
-    {
-        return $this->tenant->getId();
-    }
-
-    /**
-     * @return string
-     */
     public function getGradeDiversityTargetMap()
     {
         return $this->gradeDiversityTargetMap;

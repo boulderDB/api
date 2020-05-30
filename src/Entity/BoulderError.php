@@ -3,18 +3,18 @@
 namespace App\Entity;
 
 use App\Components\Entity\TimestampTrait;
-use App\Components\Entity\TenantResourceInterface;
-use App\Components\Entity\TenantTrait;
+use App\Components\Entity\LocationResourceInterface;
+use App\Components\Entity\LocationTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BoulderErrorRepository")
  * @ORM\HasLifecycleCallbacks()
  */
-class BoulderError implements TenantResourceInterface
+class BoulderError implements LocationResourceInterface
 {
     use TimestampTrait;
-    use TenantTrait;
+    use LocationTrait;
 
     const STATUS_RESOLVED = 'resolved';
     const STATUS_UNRESOLVED = 'unresolved';

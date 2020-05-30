@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Boulder;
+use App\Factory\RedisConnectionFactory;
 use App\Service\ContextService;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,6 +16,7 @@ class RankingController extends AbstractController
 {
     private $entityManager;
     private $contextService;
+    private $redis;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -23,6 +25,7 @@ class RankingController extends AbstractController
     {
         $this->entityManager = $entityManager;
         $this->contextService = $contextService;
+        $this->redis = RedisConnectionFactory::create();
     }
 
     /**
@@ -39,9 +42,9 @@ class RankingController extends AbstractController
             ->from(Boulder::class, 'boulder')
             ->innerJoin('boulder.ascents', 'ascent')
             ->innerJoin('ascent.user', 'user')
-            ->where('boulder.tenant = :tenant')
+            ->where('boulder.location = :location')
             ->andWhere('boulder.status = :status')
-            ->setParameter('tenant', $this->contextService->getLocation()->getId())
+            ->setParameter('location', $this->contextService->getLocation()->getId())
             ->setParameter('status', 'active')
             ->getQuery()
             ->getArrayResult();
@@ -101,6 +104,15 @@ class RankingController extends AbstractController
             return $rank['score'] > 0;
         });
 
+        foreach ($ranking as $key => &$rank) {
+            if ($key === count($ranking) - 1) {
+                $rank['advance'] = 0;
+            } else {
+                $rank['advance'] = $rank['points'] - $ranking[$key + 1]['points'];
+                $rank['advance'] = round($rank['advance']);
+            }
+        }
+
         usort($ranking, function ($a, $b) {
             return $a['score'] < $b['score'];
         });
@@ -109,10 +121,12 @@ class RankingController extends AbstractController
     }
 
     /**
-     * @Route("/alltime", methods={"GET"})
+     * @Route("/all-time", methods={"GET"})
      */
     public function allTime()
     {
-        return $this->json();
+        $ranking = $this->redis->get($this->contextService->getLocation()->getId() . "-all-time-ranking");
+
+        return $this->json(json_decode($ranking, true));
     }
 }

@@ -3,18 +3,18 @@
 namespace App\Entity;
 
 use App\Components\Entity\TimestampTrait;
-use App\Components\Entity\TenantResourceInterface;
-use App\Components\Entity\TenantTrait;
+use App\Components\Entity\LocationResourceInterface;
+use App\Components\Entity\LocationTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class AscentDoubt implements TenantResourceInterface
+class AscentDoubt implements LocationResourceInterface
 {
     use TimestampTrait;
-    use TenantTrait;
+    use LocationTrait;
 
     const STATUS_UNREAD = 0;
     const STATUS_READ = 1;

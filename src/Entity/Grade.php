@@ -2,16 +2,16 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\TenantResourceInterface;
-use App\Components\Entity\TenantTrait;
+use App\Components\Entity\LocationResourceInterface;
+use App\Components\Entity\LocationTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  */
-class Grade implements TenantResourceInterface
+class Grade implements LocationResourceInterface
 {
-    use TenantTrait;
+    use LocationTrait;
 
     /**
      * @ORM\Id()
@@ -131,17 +131,6 @@ class Grade implements TenantResourceInterface
         $this->color = $color;
     }
 
-    /**
-     * @return int
-     */
-    public function getTenantId()
-    {
-        return $this->tenant->getId();
-    }
-
-    /**
-     * @return Grade
-     */
     public function getExternalGradeMapping()
     {
         return $this->externalGradeMapping;

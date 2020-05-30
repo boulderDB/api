@@ -36,9 +36,9 @@ class StatisticController extends AbstractController
         $boulderCount = $this->entityManager->createQueryBuilder()
             ->select('count(boulder.id)')
             ->from(Boulder::class, 'boulder')
-            ->where('boulder.tenant = :tenant')
+            ->where('boulder.location = :location')
             ->andWhere('boulder.status = :status')
-            ->setParameter('tenant', $this->contextService->getLocation()->getId())
+            ->setParameter('location', $this->contextService->getLocation()->getId())
             ->setParameter('status', Boulder::STATUS_ACTIVE)
             ->getQuery()
             ->getSingleScalarResult();
@@ -48,12 +48,12 @@ class StatisticController extends AbstractController
         $newBoulders = $this->entityManager->createQueryBuilder()
             ->select('count(boulder.id)')
             ->from(Boulder::class, 'boulder')
-            ->where('boulder.tenant = :tenant')
+            ->where('boulder.location = :location')
             ->andWhere('boulder.createdAt >= :from')
             ->andWhere('boulder.status = :status')
             ->setParameter('from', $current->modify(Boulder::NEW_BOULDERS_DATE_MODIFIER))
             ->setParameter('status', Boulder::STATUS_ACTIVE)
-            ->setParameter('tenant', $this->contextService->getLocation()->getId())
+            ->setParameter('location', $this->contextService->getLocation()->getId())
             ->getQuery()
             ->getSingleScalarResult();
 

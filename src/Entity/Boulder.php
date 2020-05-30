@@ -3,10 +3,10 @@
 namespace App\Entity;
 
 use App\Components\Constants;
-use App\Components\Entity\TenantResourceInterface;
+use App\Components\Entity\LocationResourceInterface;
 use App\Components\Entity\TimestampableInterface;
 use App\Components\Entity\TimestampTrait;
-use App\Components\Entity\TenantTrait;
+use App\Components\Entity\LocationTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,10 +15,10 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\Table(indexes={@ORM\Index(name="status", columns={"status"})})
  */
-class Boulder implements TenantResourceInterface, TimestampableInterface
+class Boulder implements LocationResourceInterface, TimestampableInterface
 {
     use TimestampTrait;
-    use TenantTrait;
+    use LocationTrait;
 
     const STATUS_ACTIVE = 'active';
     const STATUS_INACTIVE = 'inactive';

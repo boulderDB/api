@@ -2,16 +2,16 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\TenantResourceInterface;
-use App\Components\Entity\TenantTrait;
+use App\Components\Entity\LocationResourceInterface;
+use App\Components\Entity\LocationTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  */
-class Value implements TenantResourceInterface
+class Value implements LocationResourceInterface
 {
-    use TenantTrait;
+    use LocationTrait;
 
     /**
      * @ORM\Id()
@@ -103,13 +103,5 @@ class Value implements TenantResourceInterface
     public function setResourceId(int $resourceId = null)
     {
         $this->resourceId = $resourceId;
-    }
-
-    /**
-     * @return int
-     */
-    public function getTenantId()
-    {
-        return $this->tenant->getId();
     }
 }

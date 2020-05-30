@@ -5,28 +5,28 @@ namespace App\Components\Entity;
 use App\Entity\Location;
 use Doctrine\ORM\Mapping as ORM;
 
-trait TenantTrait
+trait LocationTrait
 {
     /**
      * @var Location
      * @ORM\ManyToOne(targetEntity="Location")
      * @ORM\JoinColumn(name="tenant_id", referencedColumnName="id")
      */
-    protected $tenant;
+    protected $location;
 
     /**
      * @return Location
      */
-    public function getTenant()
+    public function getLocation()
     {
-        return $this->tenant;
+        return $this->location;
     }
 
     /**
-     * @param Location $tenant
+     * @param Location $location
      */
-    public function setTenant(Location $tenant)
+    public function setLocation(Location $location)
     {
-        $this->tenant = $tenant;
+        $this->location = $location;
     }
 }

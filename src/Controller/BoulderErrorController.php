@@ -39,7 +39,7 @@ class BoulderErrorController extends AbstractController
 
         $errors = $this->entityManager->createQueryBuilder()
             ->select('
-                partial boulderError.{id, description, createdAt, tenant}, 
+                partial boulderError.{id, description, createdAt, location}, 
                 partial author.{id, username}, 
                 partial boulder.{id, name, startWall},
                 partial startWall.{id, name}
@@ -48,9 +48,9 @@ class BoulderErrorController extends AbstractController
             ->leftJoin('boulderError.author', 'author')
             ->leftJoin('boulderError.boulder', 'boulder')
             ->leftJoin('boulder.startWall', 'startWall')
-            ->where('boulderError.tenant = :tenant')
+            ->where('boulderError.location = :location')
             ->andWhere('boulderError.status = :status')
-            ->setParameter('tenant', $this->contextService->getLocation()->getId())
+            ->setParameter('location', $this->contextService->getLocation()->getId())
             ->setParameter('status', BoulderError::STATUS_UNRESOLVED)
             ->getQuery()
             ->getArrayResult();
