@@ -58,10 +58,18 @@ class IndexAllTimeRankingCommand extends Command
 
             $locationId = $location->getId();
 
+            $from = new \DateTime();
+            $from->modify('-6 months');
+
             /**
              * @var User[] $users
              */
-            $users = $this->userRepository->getActivePastHalfYear();
+            $users = $this->userRepository->createQueryBuilder('user')
+                ->where('user.visible = 1')
+                ->andWhere('user.lastActivity > :from')
+                ->setParameter('from', $from)
+                ->getQuery()
+                ->getResult();
 
             $totalBoulders = $this->boulderRepository->createQueryBuilder('boulder')
                 ->select('count(boulder.id)')
@@ -97,8 +105,8 @@ class IndexAllTimeRankingCommand extends Command
                 $ranking[$user->getId()] = [
                     'percentage' => $percentage,
                     'boulders' => $total,
-                    'flashed' => $flashes,
-                    'topped' => $tops,
+                    'flashes' => $flashes,
+                    'tops' => $tops,
                     'userId' => $user->getId(),
                     'userVisible' => $user->isVisible(),
                     'username' => $user->getUsername(),
