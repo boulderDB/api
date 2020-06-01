@@ -65,7 +65,7 @@ class IndexAllTimeRankingCommand extends Command
              * @var User[] $users
              */
             $users = $this->userRepository->createQueryBuilder('user')
-                ->where('user.visible = 1')
+                ->where('user.visible = true')
                 ->andWhere('user.lastActivity > :from')
                 ->setParameter('from', $from)
                 ->getQuery()
@@ -74,7 +74,7 @@ class IndexAllTimeRankingCommand extends Command
             $totalBoulders = $this->boulderRepository->createQueryBuilder('boulder')
                 ->select('count(boulder.id)')
                 ->where('boulder.location = :location')
-                ->setParameter('location',$location->getId())
+                ->setParameter('location', $location->getId())
                 ->getQuery()
                 ->getOneOrNullResult()[1];
 
@@ -107,12 +107,13 @@ class IndexAllTimeRankingCommand extends Command
                     'boulders' => $total,
                     'flashes' => $flashes,
                     'tops' => $tops,
-                    'userId' => $user->getId(),
-                    'userVisible' => $user->isVisible(),
-                    'username' => $user->getUsername(),
-                    'avatar' => $user->getMedia(),
-                    'lastActivity' => $user->getLastActivity(),
-                    'gender' => $user->getGender()
+                    'user' => [
+                        'id' => $user->getId(),
+                        'gender' => $user->getGender(),
+                        'lastActivity' => $user->getLastActivity(),
+                        'username' => $user->getUsername(),
+                        'media' => $user->getMedia(),
+                    ]
                 ];
             }
 
