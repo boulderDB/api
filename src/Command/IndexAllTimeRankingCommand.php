@@ -110,7 +110,7 @@ class IndexAllTimeRankingCommand extends Command
                     'user' => [
                         'id' => $user->getId(),
                         'gender' => $user->getGender(),
-                        'lastActivity' => $user->getLastActivity(),
+                        'lastActivity' => $user->getLastActivity()->format('c'),
                         'username' => $user->getUsername(),
                         'media' => $user->getMedia(),
                     ]
