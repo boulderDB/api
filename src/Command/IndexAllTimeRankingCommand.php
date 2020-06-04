@@ -58,15 +58,23 @@ class IndexAllTimeRankingCommand extends Command
 
             $locationId = $location->getId();
 
+            $from = new \DateTime();
+            $from->modify('-6 months');
+
             /**
              * @var User[] $users
              */
-            $users = $this->userRepository->getActivePastHalfYear();
+            $users = $this->userRepository->createQueryBuilder('user')
+                ->where('user.visible = true')
+                ->andWhere('user.lastActivity > :from')
+                ->setParameter('from', $from)
+                ->getQuery()
+                ->getResult();
 
             $totalBoulders = $this->boulderRepository->createQueryBuilder('boulder')
                 ->select('count(boulder.id)')
                 ->where('boulder.location = :location')
-                ->setParameter('location',$location->getId())
+                ->setParameter('location', $location->getId())
                 ->getQuery()
                 ->getOneOrNullResult()[1];
 
@@ -97,14 +105,15 @@ class IndexAllTimeRankingCommand extends Command
                 $ranking[$user->getId()] = [
                     'percentage' => $percentage,
                     'boulders' => $total,
-                    'flashed' => $flashes,
-                    'topped' => $tops,
-                    'userId' => $user->getId(),
-                    'userVisible' => $user->isVisible(),
-                    'username' => $user->getUsername(),
-                    'avatar' => $user->getMedia(),
-                    'lastActivity' => $user->getLastActivity(),
-                    'gender' => $user->getGender()
+                    'flashes' => $flashes,
+                    'tops' => $tops,
+                    'user' => [
+                        'id' => $user->getId(),
+                        'gender' => $user->getGender(),
+                        'lastActivity' => $user->getLastActivity()->format('c'),
+                        'username' => $user->getUsername(),
+                        'media' => $user->getMedia(),
+                    ]
                 ];
             }
 

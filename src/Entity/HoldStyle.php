@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Components\Entity\LocationResourceInterface;
 use App\Components\Entity\LocationTrait;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @ORM\Entity()
@@ -16,7 +15,6 @@ class HoldStyle implements LocationResourceInterface
     use LocationTrait;
 
     /**
-     * @var int
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -24,62 +22,58 @@ class HoldStyle implements LocationResourceInterface
     private $id;
 
     /**
-     * @var string
      * @ORM\Column(name="name", type="string", nullable=false)
      */
     private $name;
 
     /**
-     * @var UploadedFile
      * @ORM\Column(type="string", nullable=true)
      */
     private $media;
 
     /**
-     * @return int
+     * @var string
+     * @ORM\Column(name="icon", type="string", nullable=true)
      */
+    private $icon;
+
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
     public function setId(int $id)
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string
-     */
     public function getName()
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
     public function setName(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * @return UploadedFile
-     */
     public function getMedia()
     {
         return $this->media;
     }
 
-    /**
-     * @param UploadedFile $media
-     */
     public function setMedia($media)
     {
         $this->media = $media;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(string $icon): void
+    {
+        $this->icon = $icon;
     }
 }

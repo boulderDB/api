@@ -30,7 +30,7 @@ class HoldStyleController extends AbstractController
     public function index()
     {
         $connection = $this->entityManager->getConnection();
-        $statement = 'select id, name, media from hold_color where tenant_id = :locationId';
+        $statement = 'select id, name, icon from hold_color where tenant_id = :locationId';
         $query = $connection->prepare($statement);
 
         $query->execute([

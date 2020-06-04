@@ -12,16 +12,4 @@ class UserRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, User::class);
     }
-
-    public function getActivePastHalfYear()
-    {
-        $from = new \DateTime();
-        $from->modify('-6 months');
-
-        return $this->createQueryBuilder('user')
-            ->andWhere('user.lastActivity > :from')
-            ->setParameter('from', $from)
-            ->getQuery()
-            ->getResult();
-    }
 }
