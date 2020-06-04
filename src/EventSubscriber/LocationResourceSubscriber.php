@@ -7,7 +7,7 @@ use App\Components\Entity\TimestampableInterface;
 use App\Service\ContextService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-use Doctrine\Common\Persistence\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 
 class LocationResourceSubscriber implements EventSubscriber
