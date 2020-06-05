@@ -18,7 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
- * @Route("/doubt")
+ * @Route("/compare")
  */
 class CompareController extends AbstractController
 {
