@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Components\Constants;
 use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
@@ -31,6 +32,25 @@ class UserController extends AbstractController
     {
         $this->entityManager = $entityManager;
         $this->contextService = $contextService;
+    }
+
+    /**
+     * @Route("/{id}", methods={"GET"})
+     */
+    public function show(string $id)
+    {
+        $connection = $this->entityManager->getConnection();
+        $parameters = [
+            'id' => $id,
+            'visible' => true
+        ];
+
+        $statement = 'select id, username from users where id = :id and visible = :visible';
+
+        $query = $connection->prepare($statement);
+        $query->execute($parameters);
+
+        return $this->json($query->fetch());
     }
 
     /**

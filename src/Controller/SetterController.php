@@ -10,6 +10,7 @@ use App\Factory\ResponseFactory;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -37,15 +38,23 @@ class SetterController extends AbstractController
     /**
      * @Route("", methods={"GET"})
      */
-    public function setters()
+    public function setters(Request $request)
     {
         $connection = $this->entityManager->getConnection();
-        $statement = 'select id, username from users where roles like :role';
-        $query = $connection->prepare($statement);
-
-        $query->execute([
+        $parameters = [
             'role' => '%"' . addcslashes($this->contextService->getLocationRole(Constants::ROLE_SETTER), '%_') . '"%'
-        ]);
+        ];
+
+        $statement = 'select id, username from users where roles like :role';
+
+        if ($request->query->get('hasActiveSets')) {
+//            $parameters[] = [];
+//            $statement = 'select users.id, users.username, count(boulder.id) from users inner join boulder where roles like :role';
+        }
+
+
+        $query = $connection->prepare($statement);
+        $query->execute($parameters);
 
         $results = $query->fetchAll();
 
