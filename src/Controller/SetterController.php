@@ -47,11 +47,12 @@ class SetterController extends AbstractController
 
         $statement = 'select id, username from users where roles like :role';
 
-        if ($request->query->get('hasActiveSets')) {
-//            $parameters[] = [];
-//            $statement = 'select users.id, users.username, count(boulder.id) from users inner join boulder where roles like :role';
-        }
+        if ($request->query->has('withActiveBoulders')) {
+            $parameters['status'] = 'active';
+            $parameters['locationId'] = 28;
 
+            $statement = "SELECT users.id, users.username, count(boulder.id) AS boulders FROM users INNER JOIN boulder_setters ON users.id = boulder_setters.user_id INNER JOIN boulder ON boulder_setters.boulder_id = boulder.id WHERE boulder.status = :status AND boulder.tenant_id = :locationId AND roles like :role GROUP BY users.id";
+        }
 
         $query = $connection->prepare($statement);
         $query->execute($parameters);

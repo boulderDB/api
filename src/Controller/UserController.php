@@ -49,8 +49,16 @@ class UserController extends AbstractController
 
         $query = $connection->prepare($statement);
         $query->execute($parameters);
+        $result = $query->fetch();
 
-        return $this->json($query->fetch());
+        if (!$result) {
+            return $this->json(
+                ResponseFactory::createError("User '{$id}' not found", Response::HTTP_NOT_FOUND),
+                Response::HTTP_NOT_FOUND
+            );
+        };
+
+        return $this->json($result);
     }
 
     /**
