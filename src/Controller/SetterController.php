@@ -38,7 +38,7 @@ class SetterController extends AbstractController
     /**
      * @Route("", methods={"GET"})
      */
-    public function setters(Request $request)
+    public function index(Request $request)
     {
         $connection = $this->entityManager->getConnection();
         $parameters = [
@@ -101,5 +101,26 @@ class SetterController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json(null, Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/admins", methods={"GET"})
+     */
+    public function admins()
+    {
+        $this->denyUnlessLocationAdmin();
+
+        $connection = $this->entityManager->getConnection();
+        $parameters = [
+            'role' => '%"' . addcslashes($this->contextService->getLocationRole(Constants::ROLE_ADMIN), '%_') . '"%'
+        ];
+
+        $statement = 'select id, username from users where roles like :role';
+
+        $query = $connection->prepare($statement);
+        $query->execute($parameters);
+        $users = $query->fetchAll();
+
+        return $this->json($users);
     }
 }
