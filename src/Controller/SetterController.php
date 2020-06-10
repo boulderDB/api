@@ -38,7 +38,7 @@ class SetterController extends AbstractController
     /**
      * @Route("", methods={"GET"})
      */
-    public function setters(Request $request)
+    public function index(Request $request)
     {
         $connection = $this->entityManager->getConnection();
         $parameters = [
@@ -47,11 +47,12 @@ class SetterController extends AbstractController
 
         $statement = 'select id, username from users where roles like :role';
 
-        if ($request->query->get('hasActiveSets')) {
-//            $parameters[] = [];
-//            $statement = 'select users.id, users.username, count(boulder.id) from users inner join boulder where roles like :role';
-        }
+        if ($request->query->has('withActiveBoulders')) {
+            $parameters['status'] = 'active';
+            $parameters['locationId'] = 28;
 
+            $statement = "SELECT users.id, users.username, count(boulder.id) AS boulders FROM users INNER JOIN boulder_setters ON users.id = boulder_setters.user_id INNER JOIN boulder ON boulder_setters.boulder_id = boulder.id WHERE boulder.status = :status AND boulder.tenant_id = :locationId AND roles like :role GROUP BY users.id";
+        }
 
         $query = $connection->prepare($statement);
         $query->execute($parameters);
@@ -100,5 +101,26 @@ class SetterController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json(null, Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/admins", methods={"GET"})
+     */
+    public function admins()
+    {
+        $this->denyUnlessLocationAdmin();
+
+        $connection = $this->entityManager->getConnection();
+        $parameters = [
+            'role' => '%"' . addcslashes($this->contextService->getLocationRole(Constants::ROLE_ADMIN), '%_') . '"%'
+        ];
+
+        $statement = 'select id, username from users where roles like :role';
+
+        $query = $connection->prepare($statement);
+        $query->execute($parameters);
+        $users = $query->fetchAll();
+
+        return $this->json($users);
     }
 }

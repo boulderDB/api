@@ -56,7 +56,7 @@ setter:
 user:
   resource: ../../src/Controller/UserController.php
   type: annotation
-  prefix: /api/{location}/
+  prefix: /api
 
 global:
   resource: ../../src/Controller/GlobalController.php

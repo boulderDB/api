@@ -2,13 +2,8 @@
 
 namespace App\Controller;
 
-use App\Components\Constants;
-use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\User;
-use App\Factory\RedisConnectionFactory;
 use App\Factory\ResponseFactory;
-use App\Service\ContextService;
-use Swift_Mailer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,18 +15,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class UserController extends AbstractController
 {
-    use ContextualizedControllerTrait;
-
     private $entityManager;
-    private $contextService;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        ContextService $contextService
+        EntityManagerInterface $entityManager
     )
     {
         $this->entityManager = $entityManager;
-        $this->contextService = $contextService;
     }
 
     /**
@@ -49,8 +39,16 @@ class UserController extends AbstractController
 
         $query = $connection->prepare($statement);
         $query->execute($parameters);
+        $result = $query->fetch();
 
-        return $this->json($query->fetch());
+        if (!$result) {
+            return $this->json(
+                ResponseFactory::createError("User '{$id}' not found", Response::HTTP_NOT_FOUND),
+                Response::HTTP_NOT_FOUND
+            );
+        };
+
+        return $this->json($result);
     }
 
     /**
@@ -58,8 +56,6 @@ class UserController extends AbstractController
      */
     public function search(Request $request)
     {
-        $this->denyUnlessLocationAdmin();
-
         $term = $request->query->get('username');
 
         if (!$term) {
