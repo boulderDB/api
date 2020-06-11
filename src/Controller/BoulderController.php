@@ -278,7 +278,7 @@ class BoulderController extends AbstractController
             }
 
             if ($form->getData()["operation"] === MassOperationType::OPERATION_PRUNE_ASCENTS) {
-                // todo: implement prune ascents
+                $boulder->clearAscents();
             }
 
             $this->entityManager->persist($boulder);

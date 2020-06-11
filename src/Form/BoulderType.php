@@ -38,6 +38,11 @@ class BoulderType extends AbstractType
                     'constraints' => [new NotBlank()]
                 ]
             )
+            ->add('internalGrade', EntityType::class,
+                [
+                    'class' => Grade::class
+                ]
+            )
             ->add('startWall', EntityType::class, [
                 'class' => Wall::class,
                 'constraints' => [new NotBlank()]

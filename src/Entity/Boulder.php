@@ -49,6 +49,13 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
     private $grade;
 
     /**
+     * @var Grade
+     * @ORM\ManyToOne(targetEntity="Grade")
+     * @ORM\JoinColumn(name="internal_grade_id", referencedColumnName="id")
+     */
+    private $internalGrade;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Wall", inversedBy="boulders")
      * @ORM\JoinColumn(name="start_wall_id", referencedColumnName="id")
      */
@@ -128,33 +135,21 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
         $this->points = Constants::BOULDER_DEFAULT_SCORE;
     }
 
-    /**
-     * @return mixed
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * @param mixed $id
-     */
     public function setId($id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return mixed
-     */
     public function getName()
     {
         return $this->name;
     }
 
-    /**
-     * @param mixed $name
-     */
     public function setName($name): void
     {
         $this->name = $name;
@@ -170,57 +165,46 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
         $this->color = $color;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getGrade()
+    public function getGrade(): ?Grade
     {
         return $this->grade;
     }
 
-    /**
-     * @param mixed $grade
-     */
-    public function setGrade($grade): void
+    public function setGrade(Grade $grade): void
     {
         $this->grade = $grade;
     }
 
-    /**
-     * @return mixed
-     */
+    public function getInternalGrade(): ?Grade
+    {
+        return $this->internalGrade;
+    }
+
+    public function setInternalGrade(Grade $internalGrade): void
+    {
+        $this->internalGrade = $internalGrade;
+    }
+
     public function getStartWall()
     {
         return $this->startWall;
     }
 
-    /**
-     * @param mixed $startWall
-     */
     public function setStartWall($startWall): void
     {
         $this->startWall = $startWall;
     }
 
-    /**
-     * @return mixed
-     */
     public function getEndWall()
     {
         return $this->endWall;
     }
 
-    /**
-     * @param mixed $endWall
-     */
     public function setEndWall($endWall): void
     {
         $this->endWall = $endWall;
     }
 
-    /**
-     * @return mixed
-     */
     public function getStatus()
     {
         return $this->status;
@@ -231,169 +215,111 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
         return $this->status === self::STATUS_ACTIVE;
     }
 
-    /**
-     * @param mixed $status
-     */
     public function setStatus($status): void
     {
         $this->status = $status;
     }
 
-    /**
-     * @return mixed
-     */
     public function getRemovedAt()
     {
         return $this->removedAt;
     }
 
-    /**
-     * @param mixed $removedAt
-     */
     public function setRemovedAt($removedAt): void
     {
         $this->removedAt = $removedAt;
     }
 
-    /**
-     * @return mixed
-     */
     public function getSetters()
     {
         return $this->setters;
     }
 
-    /**
-     * @param mixed $setters
-     */
     public function setSetters($setters): void
     {
         $this->setters = $setters;
     }
 
-    /**
-     * @return mixed
-     */
     public function getPoints()
     {
         return $this->points;
     }
 
-    /**
-     * @param mixed $points
-     */
     public function setPoints($points): void
     {
         $this->points = $points;
     }
 
-    /**
-     * @return mixed
-     */
     public function getAscents(): Collection
     {
         return $this->ascents;
     }
 
-    /**
-     * @param mixed $ascents
-     */
-    public function setAscents($ascents): void
+    public function setAscents(Collection $ascents): void
     {
         $this->ascents = $ascents;
     }
 
-    /**
-     * @return mixed
-     */
+    public function clearAscents(): void
+    {
+        $this->ascents->clear();
+    }
+
     public function getErrors()
     {
         return $this->errors;
     }
 
-    /**
-     * @param mixed $errors
-     */
     public function setErrors($errors): void
     {
         $this->errors = $errors;
     }
 
-    /**
-     * @return mixed
-     */
     public function getEvents()
     {
         return $this->events;
     }
 
-    /**
-     * @param mixed $events
-     */
     public function setEvents($events): void
     {
         $this->events = $events;
     }
 
-    /**
-     * @return mixed
-     */
     public function getTags()
     {
         return $this->tags;
     }
 
-    /**
-     * @param mixed $tags
-     */
     public function setTags($tags): void
     {
         $this->tags = $tags;
     }
 
-    /**
-     * @return int
-     */
     public function getCurrentScore(): int
     {
         return $this->currentScore;
     }
 
-    /**
-     * @param int $currentScore
-     */
     public function setCurrentScore(int $currentScore): void
     {
         $this->currentScore = $currentScore;
     }
 
-    /**
-     * @return int
-     */
     public function getAscentCount(): int
     {
         return $this->ascentCount;
     }
 
-    /**
-     * @param int $ascentCount
-     */
     public function setAscentCount(int $ascentCount): void
     {
         $this->ascentCount = $ascentCount;
     }
 
-    /**
-     * @return Ascent
-     */
     public function getUserAscent(): Ascent
     {
         return $this->userAscent;
     }
 
-    /**
-     * @param Ascent $userAscent
-     */
     public function setUserAscent(Ascent $userAscent): void
     {
         $this->userAscent = $userAscent;
