@@ -33,7 +33,7 @@ class BoulderLabel
 
     public function toKey(): string
     {
-        return self::createKey($this->user, $this->boulde, $this->title);
+        return self::createKey($this->user, $this->boulder, $this->title);
     }
 
     public static function fromKey(string $key)
@@ -103,6 +103,6 @@ class BoulderLabel
 
     public function setTitle(string $title): void
     {
-        $this->title = $title;
+        $this->title = preg_replace("/[^a-z0-9.]+/i", "", $title);
     }
 }

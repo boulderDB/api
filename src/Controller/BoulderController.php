@@ -98,11 +98,13 @@ class BoulderController extends AbstractController
             return true;
         });
 
-        $boulder['labels'] = array_map(function ($key) {
+        $labels = array_map(function ($key) {
             $label = BoulderLabel::fromKey($key);
 
             return $label->getTitle();
         }, $this->redis->get(BoulderLabel::createKey($this->getUser()->getId(), $id, "*")));
+
+        $boulder['labels'] = $labels ? $labels : [];
 
         return $this->json($boulder);
     }
