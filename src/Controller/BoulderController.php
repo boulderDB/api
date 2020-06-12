@@ -7,6 +7,7 @@ use App\Components\Controller\ApiControllerTrait;
 use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\Boulder;
 use App\Entity\BoulderError;
+use App\Entity\BoulderLabel;
 use App\Factory\RedisConnectionFactory;
 use App\Factory\ResponseFactory;
 use App\Form\BoulderErrorType;
@@ -65,6 +66,9 @@ class BoulderController extends AbstractController
             partial user.{id,username,visible}"
         );
 
+        /**
+         * @var Boulder $boulder
+         */
         $boulder = $queryBuilder
             ->leftJoin('boulder.ascents', 'ascent')
             ->leftJoin('ascent.user', 'user')
@@ -94,7 +98,11 @@ class BoulderController extends AbstractController
             return true;
         });
 
-        $boulder['labels'] = [];
+        $boulder['labels'] = array_map(function ($key) {
+            $label = BoulderLabel::fromKey($key);
+
+            return $label->getTitle();
+        }, $this->redis->get(BoulderLabel::createKey($this->getUser(), $boulder->getId(), "*")));
 
         return $this->json($boulder);
     }
@@ -223,7 +231,10 @@ class BoulderController extends AbstractController
      */
     public function addLabel(string $id, Request $request)
     {
-        $form = $this->createForm(BoulderLabelType::class);
+        $boulderLabel = new BoulderLabel();
+        $boulderLabel->setUser($this->getUser());
+
+        $form = $this->createForm(BoulderLabelType::class, $boulderLabel);
         $form->submit(json_decode($request->getContent(), true), false);
 
         if (!$form->isValid()) {
@@ -233,24 +244,23 @@ class BoulderController extends AbstractController
             ]);
         }
 
-        /**
-         * @var Boulder $boulder
-         */
-        $boulder = $form->getData()['boulder'];
-        $label = $form->getData()['label'];
-
-        $key = "user={$this->getUser()->getId()}:boulder={$boulder->getId()}:label={$label}";
+        $key = $boulderLabel->toKey();
         $this->redis->set($key, time());
 
         return $this->json(['key' => $key]);
     }
 
     /**
-     * @Route("/{id}/label/{label}", methods={"DELETE"})
+     * @Route("/{id}/label/{title}", methods={"DELETE"})
      */
-    public function removeLabel(string $id, string $label)
+    public function removeLabel(string $id, string $title)
     {
-        $key = "user={$this->getUser()->getId()}:boulder={$id}:label={$label}";
+        $key = BoulderLabel::createKey(
+            $this->getUser()->getId(),
+            $id,
+            $title
+        );
+
         $this->redis->del($key);
 
         return $this->json(null, Response::HTTP_NO_CONTENT);

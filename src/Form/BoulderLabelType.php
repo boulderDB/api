@@ -15,7 +15,7 @@ class BoulderLabelType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('label', TextType::class, [
+            ->add('title', TextType::class, [
                 'constraints' => [new NotBlank()]
             ])
             ->add('boulder', EntityType::class, [
