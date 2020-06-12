@@ -177,7 +177,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
 
     public function getInternalGrade(): ?Grade
     {
-        return $this->internalGrade;
+        return $this->internalGrade ? $this->internalGrade : $this->grade;
     }
 
     public function setInternalGrade(Grade $internalGrade): void

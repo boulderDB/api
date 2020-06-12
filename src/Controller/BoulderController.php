@@ -94,6 +94,8 @@ class BoulderController extends AbstractController
             return true;
         });
 
+        $boulder['labels'] = [];
+
         return $this->json($boulder);
     }
 
@@ -147,7 +149,7 @@ class BoulderController extends AbstractController
         }
 
         $form = $this->createForm(BoulderType::class, $boulder);
-        $form->submit(json_decode($request->getContent(), true));
+        $form->submit(json_decode($request->getContent(), true), false);
 
         if (!$form->isValid()) {
             return $this->json([
@@ -237,7 +239,7 @@ class BoulderController extends AbstractController
         $boulder = $form->getData()['boulder'];
         $label = $form->getData()['label'];
 
-        $key = "user:{$this->getUser()->getId()}:boulder:{$boulder->getId()}:label:{$label}";
+        $key = "user={$this->getUser()->getId()}:boulder={$boulder->getId()}:label={$label}";
         $this->redis->set($key, time());
 
         return $this->json(['key' => $key]);
@@ -248,10 +250,25 @@ class BoulderController extends AbstractController
      */
     public function removeLabel(string $id, string $label)
     {
-        $key = "user:{$this->getUser()->getId()}:boulder:{$id}:label:{$label}";
+        $key = "user={$this->getUser()->getId()}:boulder={$id}:label={$label}";
         $this->redis->del($key);
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @Route("/filter/label/{label}", methods={"GET"})
+     */
+    public function activeByLabel(string $label)
+    {
+        $keys = $this->redis->get("user={$this->getUser()->getId()}:boulder=*");
+        $labels = [];
+
+        foreach ($keys as $key) {
+            $data = explode(':', $this->redis->get($key));
+        }
+
+
     }
 
     /**
