@@ -58,7 +58,7 @@ class BoulderLabel
     }
 
 
-    public function getKey(): string
+    public function getKey(): ?string
     {
         return $this->key;
     }
@@ -68,7 +68,7 @@ class BoulderLabel
         $this->key = $key;
     }
 
-    public function getUser(): string
+    public function getUser(): ?string
     {
         return $this->user;
     }
@@ -82,7 +82,7 @@ class BoulderLabel
         }
     }
 
-    public function getBoulder(): string
+    public function getBoulder(): ?string
     {
         return $this->boulder;
     }
@@ -96,7 +96,7 @@ class BoulderLabel
         }
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
