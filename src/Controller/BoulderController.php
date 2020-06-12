@@ -102,7 +102,7 @@ class BoulderController extends AbstractController
             $label = BoulderLabel::fromKey($key);
 
             return $label->getTitle();
-        }, $this->redis->get(BoulderLabel::createKey($this->getUser(), $boulder->getId(), "*")));
+        }, $this->redis->get(BoulderLabel::createKey($this->getUser()->getId(), $id, "*")));
 
         return $this->json($boulder);
     }
