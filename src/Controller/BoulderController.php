@@ -236,8 +236,11 @@ class BoulderController extends AbstractController
         $boulderLabel = new BoulderLabel();
         $boulderLabel->setUser($this->getUser());
 
+        $data = json_decode($request->getContent(), true);
+        $data['boulder'] = $id;
+
         $form = $this->createForm(BoulderLabelType::class, $boulderLabel);
-        $form->submit(json_decode($request->getContent(), true), false);
+        $form->submit($data, false);
 
         if (!$form->isValid()) {
             return $this->json([
