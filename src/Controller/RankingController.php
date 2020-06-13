@@ -108,7 +108,7 @@ class RankingController extends AbstractController
             if ($key === count($ranking) - 1) {
                 $rank['advance'] = 0;
             } else {
-                $rank['advance'] = $rank['points'] - $ranking[$key + 1]['points'];
+                $rank['advance'] = $rank['score'] - $ranking[$key + 1]['score'];
                 $rank['advance'] = round($rank['advance']);
             }
         }

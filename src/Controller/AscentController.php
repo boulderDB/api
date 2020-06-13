@@ -115,7 +115,7 @@ class AscentController extends AbstractController
             if ($ascents === 0) {
                 $points = $result['points'];
             } else {
-                $points = $result['points'] / ($ascents);
+                $points = $result['points'] / ($ascents + 1);
             }
 
             $scores[] = [
