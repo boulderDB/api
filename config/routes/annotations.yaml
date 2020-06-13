@@ -48,6 +48,11 @@ boulderDoubt:
   type: annotation
   prefix: /api/{location}/
 
+boulderLabel:
+  resource: ../../src/Controller/BoulderLabelController.php
+  type: annotation
+  prefix: /api/{location}/
+
 setter:
   resource: ../../src/Controller/SetterController.php
   type: annotation

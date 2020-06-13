@@ -85,9 +85,9 @@ class AscentController extends AbstractController
     }
 
     /**
-     * @Route("/filter/active", methods={"GET"})
+     * @Route(methods={"GET"})
      */
-    public function active()
+    public function index()
     {
         $results = $this->entityManager->createQueryBuilder()
             ->select('

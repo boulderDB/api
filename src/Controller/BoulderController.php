@@ -6,12 +6,8 @@ use App\Components\Constants;
 use App\Components\Controller\ApiControllerTrait;
 use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\Boulder;
-use App\Entity\BoulderError;
 use App\Entity\BoulderLabel;
 use App\Factory\RedisConnectionFactory;
-use App\Factory\ResponseFactory;
-use App\Form\BoulderErrorType;
-use App\Form\BoulderLabelType;
 use App\Form\BoulderType;
 use App\Form\MassOperationType;
 use App\Repository\BoulderRepository;
@@ -77,34 +73,9 @@ class BoulderController extends AbstractController
             ->getQuery()
             ->getSingleResult(AbstractQuery::HYDRATE_ARRAY);
 
-        $boulder['holdStyle'] = $boulder['color'];
-        unset($boulder['color']);
-
-        if (!isset($boulder['ascents'])) {
-            $boulder['ascents'] = [];
-
-            return $this->json($boulder);
-        }
-
-        $boulder['ascents'] = array_filter($boulder['ascents'], function ($ascent) {
-            if (!in_array($ascent["type"], Constants::SCORED_ASCENT_TYPES)) {
-                return false;
-            }
-
-            if (!$ascent["user"]["visible"]) {
-                return false;
-            }
-
-            return true;
-        });
-
-        $labels = array_map(function ($key) {
-            $label = BoulderLabel::fromKey($key);
-
-            return $label->getTitle();
-        }, $this->redis->get(BoulderLabel::createKey($this->getUser()->getId(), $id, "*")));
-
-        $boulder['labels'] = $labels ? $labels : [];
+        $boulder = self::replaceLegacyNames($boulder);
+        $boulder['ascents'] = $this->filterAscents($boulder['ascents']);
+        $boulder['labels'] = $this->getLabels($id);
 
         return $this->json($boulder);
     }
@@ -175,115 +146,71 @@ class BoulderController extends AbstractController
     }
 
     /**
-     * @Route("/filter/active", methods={"GET"})
+     * @Route(methods={"GET"})
      */
-    public function active()
+    public function index()
     {
         $builder = $this->getBoulderQueryBuilder();
 
         $results = $builder->where('boulder.location = :location')
             ->andWhere('boulder.status = :status')
             ->setParameter('location', $this->contextService->getLocation()->getId())
-            ->setParameter('status', 'active')
+            ->setParameter('status', Constants::STATUS_ACTIVE)
             ->getQuery()
             ->getArrayResult();
 
         $results = array_map(function ($boulder) {
-            $boulder['createdAt'] = $boulder['createdAt']->format('c');
-            $boulder['holdStyle'] = $boulder['color'];
-            unset($boulder['color']);
+            $boulder['labels'] = $this->getLabels($boulder['id']);
 
-            if (!$boulder['endWall']) {
-                $boulder['endWall'] = $boulder['startWall'];
-            }
-
-            return $boulder;
+            return self::replaceLegacyNames($boulder);
         }, $results);
 
         return $this->json($results);
     }
 
-    /**
-     * @Route("/{id}/error", methods={"POST"})
-     */
-    public function createError(Request $request, string $id)
+    private function filterAscents(array $ascents)
     {
-        $boulderError = new BoulderError();
-        $boulderError->setAuthor($this->getUser());
+        return array_filter($ascents, function ($ascent) {
+            if (!in_array($ascent["type"], Constants::SCORED_ASCENT_TYPES)) {
+                return false;
+            }
 
-        $form = $this->createForm(BoulderErrorType::class, $boulderError);
+            if (!$ascent["user"]["visible"]) {
+                return false;
+            }
 
-        $data = json_decode($request->getContent());
-        $data['boulder'] = $id;
-
-        $form->submit($data, true);
-
-        if (!$form->isValid()) {
-            return $this->json($this->getFormErrors($form));
-        }
-
-        $this->entityManager->persist($boulderError);
-        $this->entityManager->flush();
-
-        return $this->json(null, Response::HTTP_CREATED);
+            return true;
+        });
     }
 
-    /**
-     * @Route("/{id}/label", methods={"POST"})
-     */
-    public function addLabel(string $id, Request $request)
-    {
-        $boulderLabel = new BoulderLabel();
-        $boulderLabel->setUser($this->getUser());
-
-        $data = json_decode($request->getContent(), true);
-        $data['boulder'] = $id;
-
-        $form = $this->createForm(BoulderLabelType::class, $boulderLabel);
-        $form->submit($data, false);
-
-        if (!$form->isValid()) {
-            return $this->json([
-                "code" => Response::HTTP_BAD_REQUEST,
-                "message" => $this->getFormErrors($form)
-            ]);
-        }
-
-        $key = $boulderLabel->toKey();
-        $this->redis->set($key, time());
-
-        return $this->json(['key' => $key]);
-    }
-
-    /**
-     * @Route("/{id}/label/{title}", methods={"DELETE"})
-     */
-    public function removeLabel(string $id, string $title)
+    private function getLabels(string $id)
     {
         $key = BoulderLabel::createKey(
+            $this->contextService->getLocation()->getId(),
             $this->getUser()->getId(),
             $id,
-            $title
+            "*"
         );
 
-        $this->redis->del($key);
+        return array_map(function ($key) {
+            $label = BoulderLabel::fromKey($key);
 
-        return $this->json(null, Response::HTTP_NO_CONTENT);
+            return $label->getTitle();
+        }, $this->redis->keys($key));
     }
 
-    /**
-     * @Route("/filter/label/{label}", methods={"GET"})
-     */
-    public function activeByLabel(string $label)
+    private static function replaceLegacyNames(array $boulder)
     {
-        $keys = $this->redis->get("user={$this->getUser()->getId()}:boulder=*");
-        $labels = [];
+        $boulder['createdAt'] = $boulder['createdAt']->format('c');
 
-        foreach ($keys as $key) {
-            $data = explode(':', $this->redis->get($key));
+        $boulder['holdStyle'] = $boulder['color'];
+        unset($boulder['color']);
+
+        if (!$boulder['endWall']) {
+            $boulder['endWall'] = $boulder['startWall'];
         }
 
-
+        return $boulder;
     }
 
     /**

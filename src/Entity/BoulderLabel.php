@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Entity;
-
 
 class BoulderLabel
 {
@@ -24,16 +22,21 @@ class BoulderLabel
     /**
      * @var string
      */
+    private $location;
+
+    /**
+     * @var string
+     */
     private $title;
 
-    public static function createKey(string $user, string $boulder, string $title = null): string
+    public static function createKey(string $location, string $user, string $boulder, string $title = null): string
     {
-        return "user={$user}:boulder={$boulder}:label={$title}";
+        return "location={$location}:user={$user}:boulder={$boulder}:label={$title}";
     }
 
     public function toKey(): string
     {
-        return self::createKey($this->user, $this->boulder, $this->title);
+        return self::createKey($this->location, $this->user, $this->boulder, $this->title);
     }
 
     public static function fromKey(string $key)
@@ -51,12 +54,12 @@ class BoulderLabel
         }
 
         $label->setBoulder($data['boulder']);
+        $label->setLocation($data['location']);
         $label->setUser($data['user']);
         $label->setTitle($data['label']);
 
         return $label;
     }
-
 
     public function getKey(): ?string
     {
@@ -93,6 +96,20 @@ class BoulderLabel
             $this->boulder = $boulder->getId();
         } else {
             $this->boulder = $boulder;
+        }
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation($location): void
+    {
+        if ($location instanceof Location) {
+            $this->location = $location->getId();
+        } else {
+            $this->location = $location;
         }
     }
 

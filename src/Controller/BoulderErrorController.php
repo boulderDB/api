@@ -3,12 +3,16 @@
 namespace App\Controller;
 
 use App\Components\Constants;
+use App\Components\Controller\ApiControllerTrait;
 use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\Boulder;
 use App\Entity\BoulderError;
+use App\Form\BoulderErrorType;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -16,6 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class BoulderErrorController extends AbstractController
 {
+    use ApiControllerTrait;
     use ContextualizedControllerTrait;
 
     private $entityManager;
@@ -56,6 +61,29 @@ class BoulderErrorController extends AbstractController
             ->getArrayResult();
 
         return $this->json($errors);
+    }
+
+    /**
+     * @Route(methods={"POST"})
+     */
+    public function create(Request $request)
+    {
+        $boulderError = new BoulderError();
+        $boulderError->setAuthor($this->getUser());
+
+        $form = $this->createForm(BoulderErrorType::class, $boulderError);
+        $data = json_decode($request->getContent());
+
+        $form->submit($data, true);
+
+        if (!$form->isValid()) {
+            return $this->json($this->getFormErrors($form));
+        }
+
+        $this->entityManager->persist($boulderError);
+        $this->entityManager->flush();
+
+        return $this->json(null, Response::HTTP_CREATED);
     }
 
     /**

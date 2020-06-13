@@ -20,7 +20,7 @@ services:
   postgres:
     image: postgres:12-alpine
     volumes:
-      - ./var/data/blocbeta/db:/data/db
+      - ~/docker-volumes/blocbeta/db:/data/db:cached
     ports:
       - "5432:5432"
     environment:
