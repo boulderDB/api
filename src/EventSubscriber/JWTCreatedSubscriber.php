@@ -39,6 +39,17 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
                 'id' => $location->getId(),
                 'name' => $location->getName(),
                 'url' => $location->getUrl(),
+                'public' => $location->isPublic(),
+                'city' => $location->getCity(),
+                'zip' => $location->getZip(),
+                'address_line_one' => $location->getAddressLineOne(),
+                'address_line_two' => $location->getAddressLineTwo(),
+                'country_code' => $location->getCountryCode(),
+                'image' => $location->getImage(),
+                'website' => $location->getWebsite(),
+                'facebook' => $location->getFacebook(),
+                'instagram' => $location->getInstagram(),
+                'twitter' => $location->getTwitter(),
             ];
         }
 
