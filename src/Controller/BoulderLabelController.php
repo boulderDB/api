@@ -54,6 +54,8 @@ class BoulderLabelController extends AbstractController
             return $label->getTitle();
         }, $keys);
 
+        $labels = array_unique($labels);
+
         return $this->json($labels);
     }
 
