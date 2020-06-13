@@ -93,8 +93,27 @@ class GlobalController extends AbstractController
      */
     public function location()
     {
+        $fields = [
+            'id',
+            'name',
+            'url',
+            'public',
+            'city',
+            'zip',
+            'address_line_one',
+            'address_line_two',
+            'country_code',
+            'image',
+            'website',
+            'facebook',
+            'instagram',
+            'twitter',
+        ];
+
+        $fields = implode(', ', $fields);
+
         $connection = $this->entityManager->getConnection();
-        $statement = 'select id, name, url, public from tenant';
+        $statement = "select {$fields} from tenant where public = true";
         $query = $connection->prepare($statement);
 
         $query->execute();

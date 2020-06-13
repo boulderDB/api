@@ -104,7 +104,7 @@ class RankingController extends AbstractController
             return $rank['score'] > 0;
         });
 
-        foreach ($ranking as $key => &$rank) {
+        foreach ($ranking as $key => $rank) {
             if ($key === count($ranking) - 1) {
                 $rank['advance'] = 0;
             } else {
