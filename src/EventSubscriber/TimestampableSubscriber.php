@@ -2,7 +2,6 @@
 
 namespace App\EventSubscriber;
 
-use App\Components\Entity\LocationResourceInterface;
 use App\Components\Entity\TimestampableInterface;
 use App\Service\ContextService;
 use Doctrine\Common\EventSubscriber;
@@ -10,7 +9,7 @@ use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 
-class LocationResourceSubscriber implements EventSubscriber
+class TimestampableSubscriber implements EventSubscriber
 {
     private $contextService;
 
@@ -31,8 +30,8 @@ class LocationResourceSubscriber implements EventSubscriber
     {
         $subject = $args->getObject();
 
-        if ($subject instanceof LocationResourceInterface) {
-            $subject->setLocation($this->contextService->getLocation());
+        if ($subject instanceof TimestampableInterface) {
+            $subject->setCreatedAt(new \DateTime());
         }
     }
 
@@ -40,8 +39,8 @@ class LocationResourceSubscriber implements EventSubscriber
     {
         $subject = $args->getObject();
 
-        if ($subject instanceof LocationResourceInterface) {
-            $subject->setLocation($this->contextService->getLocation());
+        if ($subject instanceof TimestampableInterface) {
+            $subject->setUpdatedAt(new \DateTime());
         }
     }
 }

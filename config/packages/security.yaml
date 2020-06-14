@@ -25,8 +25,13 @@ security:
         success_handler: lexik_jwt_authentication.handler.authentication_success
         failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
+    documentation:
+      pattern:  ^/api/documentation
+      stateless: true
+      anonymous: true
+
     api:
-      pattern:   ^/api
+      pattern: ^/api
       stateless: true
       guard:
         authenticators:
@@ -35,5 +40,6 @@ security:
   # Easy way to control access for large sections of your site
   # Note: Only the *first* access control that matches will be used
   access_control:
+    - { path: ^/api/documentation, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

@@ -31,23 +31,14 @@ class UserType extends AbstractType
             ])
             ->add('armSpan', NumberType::class, [
                 'constraints' => [
-                    new NotBlank(),
                     new GreaterThanOrEqual(120),
                     new LessThanOrEqual(220)
                 ]
             ])
             ->add('height', NumberType::class, [
                 'constraints' => [
-                    new NotBlank(),
                     new GreaterThanOrEqual(120),
                     new LessThanOrEqual(220)
-                ]
-            ])
-            ->add('weight', NumberType::class, [
-                'constraints' => [
-                    new NotBlank(),
-                    new GreaterThanOrEqual(40),
-                    new LessThanOrEqual(120)
                 ]
             ]);
     }

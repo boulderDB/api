@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Components\Entity\TimestampableInterface;
 use App\Components\Entity\TimestampTrait;
 use App\Components\Entity\LocationResourceInterface;
 use App\Components\Entity\LocationTrait;
@@ -12,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(indexes={@ORM\Index(name="user", columns={"user_id"})})
  * @ORM\HasLifecycleCallbacks()
  */
-class Ascent implements LocationResourceInterface
+class Ascent implements LocationResourceInterface, TimestampableInterface
 {
     const RESOURCE_TYPE = 'ascent';
 

@@ -64,7 +64,7 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/me", methods={"delete"})
+     * @Route("/me", methods={"DELETE"})
      */
     public function deleteMe()
     {
@@ -86,6 +86,14 @@ class GlobalController extends AbstractController
             "message" => "Your account was scheduled for deletion and will be removed on {$current->format('c')}",
             "time" => $current->format('c')
         ], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/register", methods={"POST"})
+     */
+    public function register()
+    {
+
     }
 
     /**
