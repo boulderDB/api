@@ -6,6 +6,7 @@ use App\Components\Controller\ApiControllerTrait;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
 use App\Form\UserType;
+use App\Serializer\LocationSerializer;
 use App\Serializer\UserSerializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -108,9 +109,9 @@ class GlobalController extends AbstractController
             'public',
             'city',
             'zip',
-            'address_line_one as addressLineOne',
-            'address_line_two as addressLineTwo',
-            'country_code as countryCodes',
+            'address_line_one',
+            'address_line_two',
+            'country_code',
             'image',
             'website',
             'facebook',
@@ -127,6 +128,10 @@ class GlobalController extends AbstractController
         $query->execute();
         $results = $query->fetchAll();
 
-        return $this->json($results);
+        return $this->json(
+            array_map(function ($result) {
+                return LocationSerializer::serializeArray($result);
+            }, $results)
+        );
     }
 }
