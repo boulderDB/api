@@ -49,13 +49,6 @@ class BoulderController extends AbstractController
      */
     public function show(string $id)
     {
-        if (!static::isValidId($id)) {
-            return $this->json([
-                "code" => Response::HTTP_BAD_REQUEST,
-                "message" => "Invalid id"
-            ]);
-        }
-
         $queryBuilder = $this->getBoulderQueryBuilder("
             partial ascent.{id, userId, type, createdAt}, 
             partial user.{id, username, visible}"
@@ -91,18 +84,13 @@ class BoulderController extends AbstractController
         $form->submit(json_decode($request->getContent(), true));
 
         if (!$form->isValid()) {
-            return $this->json([
-                "code" => Response::HTTP_BAD_REQUEST,
-                "message" => $this->getFormErrors($form)
-            ]);
+            return $this->badRequest($this->getFormErrors($form));
         }
 
         $this->entityManager->persist($boulder);
         $this->entityManager->flush();
 
-        return $this->json([
-            'id' => $boulder->getId()
-        ]);
+        return $this->created($boulder->getId());
     }
 
     /**
@@ -112,36 +100,23 @@ class BoulderController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        if (!static::isValidId($id)) {
-            return $this->json([
-                "code" => Response::HTTP_BAD_REQUEST,
-                "message" => "Invalid id"
-            ]);
-        }
-
         $boulder = $this->boulderRepository->find($id);
 
         if (!$boulder) {
-            return $this->json([
-                "code" => Response::HTTP_NO_CONTENT,
-                "message" => "Boulder $id not found"
-            ]);
+            return $this->notFound("Boulder", $id);
         }
 
         $form = $this->createForm(BoulderType::class, $boulder);
         $form->submit(json_decode($request->getContent(), true), false);
 
         if (!$form->isValid()) {
-            return $this->json([
-                "code" => Response::HTTP_BAD_REQUEST,
-                "message" => $this->getFormErrors($form)
-            ]);
+            return $this->badRequest($this->getFormErrors($form));
         }
 
         $this->entityManager->persist($boulder);
         $this->entityManager->flush();
 
-        return $this->json(null, Response::HTTP_NO_CONTENT);
+        return $this->noContent();
     }
 
     /**

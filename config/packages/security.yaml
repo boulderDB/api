@@ -30,6 +30,10 @@ security:
       stateless: true
       anonymous: true
 
+    register:
+      pattern:  ^/api/register
+      anonymous: true
+
     api:
       pattern: ^/api
       stateless: true
@@ -41,5 +45,6 @@ security:
   # Note: Only the *first* access control that matches will be used
   access_control:
     - { path: ^/api/documentation, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

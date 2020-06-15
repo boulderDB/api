@@ -48,7 +48,7 @@ class BoulderDoubtController extends AbstractController
                         doubt.created_at
                     FROM
                         boulder_doubt AS doubt
-                        INNER JOIN users AS author ON author.id = users.id
+                        INNER JOIN users AS author ON author.id = author_id
                     WHERE
                         tenant_id = :locationId
                         AND status != :status

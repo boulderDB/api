@@ -1,4 +1,4 @@
-version: "3.1"
+ssversion: "3.1"
 services:
   php-fpm:
     working_dir: /var/www

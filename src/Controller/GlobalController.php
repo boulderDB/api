@@ -6,13 +6,19 @@ use App\Components\Controller\ApiControllerTrait;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
 use App\Form\UserType;
+use App\Repository\UserRepository;
 use App\Serializer\LocationSerializer;
 use App\Serializer\UserSerializer;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class GlobalController extends AbstractController
 {
@@ -22,13 +28,19 @@ class GlobalController extends AbstractController
 
     private $entityManager;
     private $redis;
+    private $userRepository;
+    private $passwordEncoder;
 
     public function __construct(
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        UserRepository $userRepository,
+        UserPasswordEncoderInterface $passwordEncoder
     )
     {
         $this->entityManager = $entityManager;
         $this->redis = RedisConnectionFactory::create();
+        $this->userRepository = $userRepository;
+        $this->passwordEncoder = $passwordEncoder;
     }
 
     /**
@@ -50,8 +62,8 @@ class GlobalController extends AbstractController
     public function updateMe(Request $request)
     {
         $user = $this->getUser();
-
         $form = $this->createForm(UserType::class, $user);
+
         $form->submit(json_decode($request->getContent(), true), false);
 
         if (!$form->isValid()) {
@@ -92,9 +104,49 @@ class GlobalController extends AbstractController
     /**
      * @Route("/register", methods={"POST"})
      */
-    public function register()
+    public function register(Request $request)
     {
+        self::rateLimit($request, 'register');
 
+        $user = new User();
+
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->add(...UserType::usernameField());
+        $form->add(...UserType::passWordField());
+
+        $form->submit(json_decode($request->getContent(), true));
+
+        if ($form->isSubmitted()) {
+            // check bot traps and return fake id response if filled
+            if ($form->getExtraData()['firstName'] || $form->getExtraData()['lastName']) {
+                return $this->created(42);
+            }
+
+            if ($this->userRepository->userExists('email', $form->getData()->getEmail())) {
+                $form->get('email')->addError(
+                    new FormError('This email is already taken')
+                );
+            }
+
+            if ($this->userRepository->userExists('username', $form->getData()->getUsername())) {
+                $form->get('username')->addError(
+                    new FormError('This username is already taken')
+                );
+            }
+        }
+
+        if (!$form->isValid()) {
+            return $this->badRequest($this->getFormErrors($form));
+        }
+
+        $password = $this->passwordEncoder->encodePassword($user, $user->getPlainPassword());
+        $user->setPassword($password);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $this->created($user->getId());
     }
 
     /**

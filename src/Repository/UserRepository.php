@@ -12,4 +12,28 @@ class UserRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, User::class);
     }
+
+    public function userExists(string $property, string $value): bool
+    {
+        $allowedProperties = [
+            "username",
+            "email"
+        ];
+
+        if (!in_array($property, $allowedProperties)) {
+            return false;
+        }
+
+        $connection = $this->getEntityManager()->getConnection();
+        $statement = "select id from users where {$property} = :property";
+        $query = $connection->prepare($statement);
+
+        $query->execute([
+            'property' => $value
+        ]);
+
+        $result = $query->fetch();
+
+        return $result ? true : false;
+    }
 }

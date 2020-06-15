@@ -56,7 +56,7 @@ class AscentController extends AbstractController
 
         if (!$ascent->getBoulder()->isActive()) {
             return $this->json([
-                'code' => Response::HTTP_NOT_ACCEPTABLE,
+                'code' => Response::HTTP_GONE,
                 'message' => "Boulder {$ascent->getBoulder()->getId()} is deactivated"
             ]);
         }
@@ -75,7 +75,7 @@ class AscentController extends AbstractController
         $ascent = $this->entityManager->getRepository(Ascent::class)->find($id);
 
         if (!$ascent) {
-            return $this->json("Ascent {$id} not found", Response::HTTP_NOT_FOUND);
+            return $this->notFound("Ascent", $id);
         }
 
         $this->entityManager->remove($ascent);
@@ -144,7 +144,7 @@ class AscentController extends AbstractController
         $ascent = $this->entityManager->getRepository(Ascent::class)->find($id);
 
         if (!$ascent) {
-            return $this->json(ResponseFactory::createError("Ascent $id not found", Response::HTTP_BAD_REQUEST), Response::HTTP_BAD_REQUEST);
+            return $this->notFound("Ascent", $id);
         }
 
         $ascentDoubt->setBoulder($ascent->getBoulder());

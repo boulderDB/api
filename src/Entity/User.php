@@ -162,6 +162,9 @@ class User implements UserInterface, \Serializable, EquatableInterface
         $this->ascents = new ArrayCollection();
         $this->boulders = new ArrayCollection();
         $this->events = new ArrayCollection();
+
+        $this->visible = true;
+        $this->active = true;
     }
 
     public function getId()
@@ -384,7 +387,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
      */
     public function isVisible(): bool
     {
-        return $this->visible;
+        return $this->visible === null ? false : $this->visible;
     }
 
     /**
