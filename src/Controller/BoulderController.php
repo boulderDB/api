@@ -57,9 +57,8 @@ class BoulderController extends AbstractController
         }
 
         $queryBuilder = $this->getBoulderQueryBuilder("
-            partial ascent.{id, userId, type}, 
-            partial ascent.{id, type, createdAt}, 
-            partial user.{id,username,visible}"
+            partial ascent.{id, userId, type, createdAt}, 
+            partial user.{id, username, visible}"
         );
 
         /**
