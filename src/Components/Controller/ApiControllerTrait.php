@@ -55,6 +55,14 @@ trait ApiControllerTrait
         return $errors;
     }
 
+    private function internalError()
+    {
+        return $this->json([
+            "code" => Response::HTTP_INTERNAL_SERVER_ERROR,
+            "message" => "Uh oh, that was a slip."
+        ]);
+    }
+
     private function notFound(string $resource, string $id)
     {
         return $this->json([

@@ -14,6 +14,8 @@ use App\Repository\BoulderRepository;
 use App\Service\ContextService;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -57,13 +59,19 @@ class BoulderController extends AbstractController
         /**
          * @var Boulder $boulder
          */
-        $boulder = $queryBuilder
-            ->leftJoin('boulder.ascents', 'ascent')
-            ->leftJoin('ascent.user', 'user')
-            ->where('boulder.id = :id')
-            ->setParameter('id', $id)
-            ->getQuery()
-            ->getSingleResult(AbstractQuery::HYDRATE_ARRAY);
+        try {
+            $boulder = $queryBuilder
+                ->leftJoin('boulder.ascents', 'ascent')
+                ->leftJoin('ascent.user', 'user')
+                ->where('boulder.id = :id')
+                ->setParameter('id', (int)$id)
+                ->getQuery()
+                ->getSingleResult(AbstractQuery::HYDRATE_ARRAY);
+        } catch (NoResultException $e) {
+            return $this->notFound("Boulder", $id);
+        } catch (NonUniqueResultException $e) {
+            return $this->internalError();
+        }
 
         $boulder = self::replaceLegacyNames($boulder);
         $boulder['ascents'] = $this->filterAscents($boulder['ascents']);
