@@ -17,6 +17,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Boulder implements LocationResourceInterface, TimestampableInterface
 {
+    public const DEFAULT_SCORE = 1000;
+
     use TimestampTrait;
     use LocationTrait;
 
@@ -132,7 +134,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
         $this->events = new ArrayCollection();
         $this->tags = new ArrayCollection();
 
-        $this->points = Constants::BOULDER_DEFAULT_SCORE;
+        $this->points = self::DEFAULT_SCORE;
     }
 
     public function getId()

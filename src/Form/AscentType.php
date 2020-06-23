@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Components\Constants;
+use App\Components\Scoring\ScoringInterface;
 use App\Entity\Ascent;
 use App\Entity\Boulder;
 use App\Entity\User;
@@ -24,7 +25,10 @@ class AscentType extends AbstractType
             ])
             ->add('type', ChoiceType::class, [
                     'constraints' => [new NotBlank()],
-                    'choices' => array_combine(Constants::ASCENT_TYPES, Constants::ASCENT_TYPES)
+                    'choices' => array_combine(
+                        ScoringInterface::ASCENT_TYPES,
+                        ScoringInterface::ASCENT_TYPES
+                    )
                 ]
             );
     }

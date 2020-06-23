@@ -15,7 +15,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Ascent implements LocationResourceInterface, TimestampableInterface
 {
-    const RESOURCE_TYPE = 'ascent';
+    public const ASCENT_TOP = 'top';
+    public const ASCENT_FLASH = 'flash';
+    public const ASCENT_RESIGNED = 'resignation';
 
     use TimestampTrait;
     use LocationTrait;
@@ -97,57 +99,41 @@ class Ascent implements LocationResourceInterface, TimestampableInterface
         $this->boulder = $boulder;
     }
 
-    /**
-     * @return string
-     */
     public function getType()
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     */
     public function setType(string $type)
     {
         $this->type = $type;
     }
 
-    /**
-     * @return int
-     */
+    public function isType(string $type): bool
+    {
+        return $type === $this->getType();
+    }
+
     public function getScore()
     {
         return $this->score;
     }
 
-    /**
-     * @param int $score
-     */
     public function setScore(int $score)
     {
         $this->score = round($score);
     }
 
-    /**
-     * @return User
-     */
     public function getUser()
     {
         return $this->user;
     }
 
-    /**
-     * @param User $user
-     */
     public function setUser(User $user)
     {
         $this->user = $user;
     }
 
-    /**
-     * @return string
-     */
     public function getChecksum()
     {
         return $this->checksum;
@@ -159,10 +145,5 @@ class Ascent implements LocationResourceInterface, TimestampableInterface
     public function setChecksum()
     {
         $this->checksum = md5($this->boulder->getId() . $this->user->getId());
-    }
-
-    public function getResourceType(): string
-    {
-        return self::RESOURCE_TYPE;
     }
 }

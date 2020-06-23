@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-use App\Components\Constants;
 use App\Entity\Ascent;
 use App\Entity\Location;
 use App\Entity\User;
@@ -42,7 +41,7 @@ class IndexAllTimeRankingCommand extends Command
 
     protected function configure()
     {
-        $this->setDescription('Index all time ranking');
+        $this->setDescription('Index all time rankings');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -55,8 +54,9 @@ class IndexAllTimeRankingCommand extends Command
         $locations = $this->locationRepository->findAll();
 
         foreach ($locations as $location) {
-
             $locationId = $location->getId();
+
+            $io->writeln("Processing location $locationId");
 
             $from = new \DateTime();
             $from->modify('-6 months');
@@ -87,7 +87,7 @@ class IndexAllTimeRankingCommand extends Command
                     /**
                      * @var Ascent $ascent
                      */
-                    return $ascent->getType() === Constants::ASCENT_FLASHED && $ascent->getLocation()->getId() === $locationId;
+                    return $ascent->getType() === Ascent::ASCENT_FLASH && $ascent->getLocation()->getId() === $locationId;
                 })->count();
 
                 $tops = $user->getAscents()->filter(function ($ascent) use ($locationId) {
@@ -95,7 +95,7 @@ class IndexAllTimeRankingCommand extends Command
                     /**
                      * @var Ascent $ascent
                      */
-                    return $ascent->getType() === Constants::ASCENT_TOPPED && $ascent->getLocation()->getId() === $locationId;
+                    return $ascent->getType() === Ascent::ASCENT_TOP && $ascent->getLocation()->getId() === $locationId;
                 })->count();
 
                 $total = $flashes + $tops;

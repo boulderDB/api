@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Components\Constants;
 use App\Components\Controller\ApiControllerTrait;
 use App\Components\Controller\ContextualizedControllerTrait;
+use App\Components\Scoring\ScoringInterface;
 use App\Entity\Boulder;
 use App\Entity\BoulderLabel;
 use App\Factory\RedisConnectionFactory;
@@ -153,7 +154,7 @@ class BoulderController extends AbstractController
     private function filterAscents(array $ascents)
     {
         return array_filter($ascents, function ($ascent) {
-            if (!in_array($ascent["type"], Constants::SCORED_ASCENT_TYPES)) {
+            if (!in_array($ascent["type"], ScoringInterface::SCORED_ASCENT_TYPES)) {
                 return false;
             }
 

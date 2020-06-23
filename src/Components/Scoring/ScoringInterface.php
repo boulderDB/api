@@ -2,11 +2,27 @@
 
 namespace App\Components\Scoring;
 
+use App\Entity\Ascent;
+use App\Struct\BoulderStruct;
+
 interface ScoringInterface
 {
-    public function calculateAscentScore(array $ascent): int;
+    public const ASCENT_TYPES = [
+        Ascent::ASCENT_FLASH,
+        Ascent::ASCENT_TOP,
+        Ascent::ASCENT_RESIGNED
+    ];
 
-    public function calculateRanking(array $boulders): array;
+    public const SCORED_ASCENT_TYPES = [
+        Ascent::ASCENT_FLASH,
+        Ascent::ASCENT_TOP,
+    ];
 
-    public function sortRanking(array $ranking): void;
+    /**
+     * @param BoulderStruct[] $boulders
+     * @return array
+     */
+    public function calculate(array $boulders): array;
+
+    public function getIdentifier(): string;
 }

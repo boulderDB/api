@@ -72,17 +72,17 @@ class CompareController extends AbstractController
 
         foreach ($comparisons as $comparison) {
 
-            if ($comparison->getA() === Constants::ASCENT_FLASHED) {
+            if ($comparison->getA() === Ascent::ASCENT_FLASH) {
                 $comparison->setPositionA(2);
-            } else if ($comparison->getA() === Constants::ASCENT_TOPPED) {
+            } else if ($comparison->getA() === Ascent::ASCENT_TOP) {
                 $comparison->setPositionA(1);
             } else {
                 $comparison->setPositionA(0);
             }
 
-            if ($comparison->getB() === Constants::ASCENT_FLASHED) {
+            if ($comparison->getB() === Ascent::ASCENT_FLASH) {
                 $comparison->setPositionB(2);
-            } else if ($comparison->getB() === Constants::ASCENT_TOPPED) {
+            } else if ($comparison->getB() === Ascent::ASCENT_TOP) {
                 $comparison->setPositionB(1);
             } else {
                 $comparison->setPositionB(0);
