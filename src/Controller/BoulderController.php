@@ -6,6 +6,7 @@ use App\Components\Constants;
 use App\Components\Controller\ApiControllerTrait;
 use App\Components\Controller\ContextualizedControllerTrait;
 use App\Components\Scoring\ScoringInterface;
+use App\Entity\Ascent;
 use App\Entity\Boulder;
 use App\Entity\BoulderLabel;
 use App\Factory\RedisConnectionFactory;
@@ -68,6 +69,7 @@ class BoulderController extends AbstractController
                 ->setParameter('id', (int)$id)
                 ->getQuery()
                 ->getSingleResult(AbstractQuery::HYDRATE_ARRAY);
+
         } catch (NoResultException $e) {
             return $this->notFound("Boulder", $id);
         } catch (NonUniqueResultException $e) {
@@ -151,10 +153,17 @@ class BoulderController extends AbstractController
         return $this->json($results);
     }
 
-    private function filterAscents(array $ascents)
+    private function filterAscents(array $ascents): array
     {
-        return array_filter($ascents, function ($ascent) {
-            if (!in_array($ascent["type"], ScoringInterface::SCORED_ASCENT_TYPES)) {
+        $types = [
+            Ascent::ASCENT_FLASH,
+            Ascent::ASCENT_TOP,
+            Ascent::ASCENT_FLASH . Ascent::PENDING_DOUBT_FLAG,
+            Ascent::ASCENT_TOP . Ascent::PENDING_DOUBT_FLAG,
+        ];
+
+        $ascents =  array_filter($ascents, function ($ascent) use ($types) {
+            if (!in_array($ascent["type"], $types)) {
                 return false;
             }
 
@@ -164,6 +173,8 @@ class BoulderController extends AbstractController
 
             return true;
         });
+
+        return array_values($ascents);
     }
 
     private function getLabels(string $id)

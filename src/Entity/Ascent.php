@@ -19,6 +19,8 @@ class Ascent implements LocationResourceInterface, TimestampableInterface
     public const ASCENT_FLASH = 'flash';
     public const ASCENT_RESIGNED = 'resignation';
 
+    public const PENDING_DOUBT_FLAG = '-pending-doubt';
+
     use TimestampTrait;
     use LocationTrait;
 
@@ -116,12 +118,12 @@ class Ascent implements LocationResourceInterface, TimestampableInterface
 
     public function setDoubted()
     {
-        $this->setType($this->getType() . '-pending-doubt');
+        $this->setType($this->getType() . Ascent::PENDING_DOUBT_FLAG);
     }
 
     public function isDoubted(): bool
     {
-        return strpos($this->getType(), '-pending-doubt') !== false;
+        return strpos($this->getType(), Ascent::PENDING_DOUBT_FLAG) !== false;
     }
 
     public function getScore()

@@ -60,7 +60,7 @@ trait ApiControllerTrait
         return $this->json([
             "code" => Response::HTTP_INTERNAL_SERVER_ERROR,
             "message" => "Uh oh, that was a slip."
-        ]);
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     private function notFound(string $resource, string $id)
@@ -68,7 +68,7 @@ trait ApiControllerTrait
         return $this->json([
             "code" => Response::HTTP_NOT_FOUND,
             "message" => "$resource '$id' not found"
-        ]);
+        ], Response::HTTP_NOT_FOUND);
     }
 
     private function badRequest(array $formErrors)
@@ -76,7 +76,7 @@ trait ApiControllerTrait
         return $this->json([
             "code" => Response::HTTP_BAD_REQUEST,
             "message" => $formErrors
-        ]);
+        ], Response::HTTP_BAD_REQUEST);
     }
 
     private function noContent()

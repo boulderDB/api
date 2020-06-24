@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Components\Entity\TimestampableInterface;
 use App\Components\Entity\TimestampTrait;
 use App\Components\Entity\LocationResourceInterface;
 use App\Components\Entity\LocationTrait;
@@ -9,9 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
+ * @ORM\Table(name="boulder_doubt")
  * @ORM\HasLifecycleCallbacks()
  */
-class AscentDoubt implements LocationResourceInterface
+class AscentDoubt implements LocationResourceInterface, TimestampableInterface
 {
     use TimestampTrait;
     use LocationTrait;

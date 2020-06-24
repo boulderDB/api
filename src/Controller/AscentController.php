@@ -51,7 +51,7 @@ class AscentController extends AbstractController
         $form->submit(json_decode($request->getContent(), true), false);
 
         if (!$form->isValid()) {
-            return $this->json($this->getFormErrors($form));
+            return $this->badRequest($this->getFormErrors($form));
         }
 
         if (!$ascent->getBoulder()->isActive()) {

@@ -36,9 +36,14 @@ class RankingController extends AbstractController
     public function current()
     {
         $cacheKey = IndexCurrentRankingCommand::getCacheKey($this->contextService->getLocation()->getId());
-        $data = $this->redis->get($cacheKey);
 
-        return $this->json(json_decode($data));
+        if (!$this->redis->exists($cacheKey)) {
+            $data = [];
+        } else {
+            $data = json_decode($this->redis->get($cacheKey));
+        }
+
+        return $this->json($data);
     }
 
     /**
