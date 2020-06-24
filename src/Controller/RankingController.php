@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Command\IndexCurrentRankingCommand;
 use App\Factory\RedisConnectionFactory;
 use App\Repository\BoulderRepository;
 use App\Scoring\DefaultScoring;
@@ -34,18 +35,10 @@ class RankingController extends AbstractController
      */
     public function current()
     {
-        $boulders = $this->boulderRepository->getAscentData(
-            $this->contextService->getLocation()->getId()
-        );
+        $cacheKey = IndexCurrentRankingCommand::getCacheKey($this->contextService->getLocation()->getId());
+        $data = $this->redis->get($cacheKey);
 
-        $boulderStructs = array_map(function ($boulder) {
-            return BoulderStruct::fromArray($boulder);
-        }, $boulders);
-
-        $defaultScoring = new DefaultScoring();
-        $ranking = $defaultScoring->calculate($boulderStructs);
-
-        return $this->json($ranking);
+        return $this->json(json_decode($data));
     }
 
     /**

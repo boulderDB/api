@@ -114,6 +114,16 @@ class Ascent implements LocationResourceInterface, TimestampableInterface
         return $type === $this->getType();
     }
 
+    public function setDoubted()
+    {
+        $this->setType($this->getType() . '-pending-doubt');
+    }
+
+    public function isDoubted(): bool
+    {
+        return strpos($this->getType(), '-pending-doubt') !== false;
+    }
+
     public function getScore()
     {
         return $this->score;

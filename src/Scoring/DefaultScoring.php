@@ -4,6 +4,7 @@ namespace App\Scoring;
 
 use App\Components\Scoring\ScoringInterface;
 use App\Entity\Ascent;
+use App\Struct\AscentStruct;
 use App\Struct\BoulderStruct;
 
 class DefaultScoring implements ScoringInterface
@@ -20,7 +21,7 @@ class DefaultScoring implements ScoringInterface
             $points = $boulder->getPoints();
 
             /**
-             * @var Ascent $ascent
+             * @var AscentStruct $ascent
              */
             foreach ($boulder->getAscents() as $ascent) {
 
@@ -46,7 +47,13 @@ class DefaultScoring implements ScoringInterface
                         'boulders' => 0,
                         'tops' => 0,
                         'flashes' => 0,
-                        'user' => $ascent->getUser()->getId()
+                        'user' => [
+                            'id' => $ascent->getUser()->getId(),
+                            'gender' => $ascent->getUser()->getGender(),
+                            'media' => $ascent->getUser()->getMedia(),
+                            'lastActivity' => $ascent->getUser()->getLastActivity()->format('c'),
+                            'username' => $ascent->getUser()->getUsername()
+                        ]
                     ];
                 } else {
                     $ranking[$userId]['score'] += $ascent->getScore();
@@ -89,6 +96,6 @@ class DefaultScoring implements ScoringInterface
 
     public function getIdentifier(): string
     {
-      return 'default';
+        return 'default';
     }
 }

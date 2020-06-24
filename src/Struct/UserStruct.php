@@ -14,7 +14,7 @@ class UserStruct
 
     private \DateTime $lastActivity;
 
-    private string $media;
+    private ?string $media = null;
 
     public static function fromArray(array $data)
     {
@@ -90,7 +90,7 @@ class UserStruct
         $this->lastActivity = $lastActivity;
     }
 
-    public function getMedia(): string
+    public function getMedia(): ?string
     {
         return $this->media;
     }

@@ -156,7 +156,11 @@ class AscentController extends AbstractController
             return $this->json($this->getFormErrors($form));
         }
 
+        $ascent->setDoubted();
+
+        $this->entityManager->persist($ascent);
         $this->entityManager->persist($ascentDoubt);
+
         $this->entityManager->flush();
 
         return $this->json(null, Response::HTTP_CREATED);
