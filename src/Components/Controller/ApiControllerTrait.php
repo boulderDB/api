@@ -81,7 +81,7 @@ trait ApiControllerTrait
 
     private function noContent()
     {
-        return $this->json(null, Response::HTTP_NOT_FOUND);
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
     private function created(string $id)

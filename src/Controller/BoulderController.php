@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Components\Constants;
 use App\Components\Controller\ApiControllerTrait;
 use App\Components\Controller\ContextualizedControllerTrait;
-use App\Components\Scoring\ScoringInterface;
 use App\Entity\Ascent;
 use App\Entity\Boulder;
 use App\Entity\BoulderLabel;
@@ -84,7 +83,7 @@ class BoulderController extends AbstractController
     }
 
     /**
-     * @Route(methods={"POST"})
+     * @Route("", methods={"POST"})
      */
     public function create(Request $request)
     {
@@ -110,7 +109,6 @@ class BoulderController extends AbstractController
     public function update(Request $request, string $id)
     {
         $this->denyUnlessLocationAdmin();
-
         $boulder = $this->boulderRepository->find($id);
 
         if (!$boulder) {
@@ -131,7 +129,7 @@ class BoulderController extends AbstractController
     }
 
     /**
-     * @Route(methods={"GET"})
+     * @Route("", methods={"GET"})
      */
     public function index()
     {
@@ -151,6 +149,41 @@ class BoulderController extends AbstractController
         }, $results);
 
         return $this->json($results);
+    }
+
+    /**
+     * @Route("", methods={"POST"})
+     */
+    public function mass(Request $request)
+    {
+        $form = $this->createForm(MassOperationType::class);
+        $form->submit(json_decode($request->getContent(), true), false);
+
+        if (!$form->isValid()) {
+            return $this->json([
+                "code" => Response::HTTP_BAD_REQUEST,
+                "message" => $this->getFormErrors($form)
+            ]);
+        }
+
+        /**
+         * @var Boulder $boulder
+         */
+        foreach ($form->getData()["items"] as $boulder) {
+            if ($form->getData()["operation"] === MassOperationType::OPERATION_DEACTIVATE) {
+                $boulder->setStatus(Boulder::STATUS_INACTIVE);
+            }
+
+            if ($form->getData()["operation"] === MassOperationType::OPERATION_PRUNE_ASCENTS) {
+                $boulder->clearAscents();
+            }
+
+            $this->entityManager->persist($boulder);
+        }
+
+        $this->entityManager->flush();
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
     private function filterAscents(array $ascents): array
@@ -207,41 +240,6 @@ class BoulderController extends AbstractController
         return $boulder;
     }
 
-    /**
-     * @Route("/mass", methods={"PUT"})
-     */
-    public function massOperation(Request $request)
-    {
-        $form = $this->createForm(MassOperationType::class);
-        $form->submit(json_decode($request->getContent(), true), false);
-
-        if (!$form->isValid()) {
-            return $this->json([
-                "code" => Response::HTTP_BAD_REQUEST,
-                "message" => $this->getFormErrors($form)
-            ]);
-        }
-
-        /**
-         * @var Boulder $boulder
-         */
-        foreach ($form->getData()["items"] as $boulder) {
-            if ($form->getData()["operation"] === MassOperationType::OPERATION_DEACTIVATE) {
-                $boulder->setStatus(Boulder::STATUS_INACTIVE);
-            }
-
-            if ($form->getData()["operation"] === MassOperationType::OPERATION_PRUNE_ASCENTS) {
-                $boulder->clearAscents();
-            }
-
-            $this->entityManager->persist($boulder);
-        }
-
-        $this->entityManager->flush();
-
-        return $this->json(null, Response::HTTP_NO_CONTENT);
-    }
-
     private function getBoulderQueryBuilder(string $select = null)
     {
         $partials = "
@@ -251,7 +249,8 @@ class BoulderController extends AbstractController
                 partial tag.{id}, 
                 partial setter.{id},
                 partial holdStyle.{id}, 
-                partial grade.{id}
+                partial grade.{id},
+                partial internalGrade.{id}
         ";
 
         if ($select) {
@@ -266,6 +265,7 @@ class BoulderController extends AbstractController
             ->leftJoin('boulder.startWall', 'startWall')
             ->leftJoin('boulder.endWall', 'endWall')
             ->innerJoin('boulder.grade', 'grade')
+            ->leftJoin('boulder.internalGrade', 'internalGrade')
             ->innerJoin('boulder.color', 'holdStyle');
     }
 }
