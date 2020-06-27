@@ -13,6 +13,15 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function findUserByUsername(string $username): ?User
+    {
+        return $this->createQueryBuilder('user')
+            ->where('lower(user.username) = lower(:username)')
+            ->setParameter('username', $username)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function userExists(string $property, string $value): bool
     {
         $allowedProperties = [
@@ -25,11 +34,11 @@ class UserRepository extends ServiceEntityRepository
         }
 
         $connection = $this->getEntityManager()->getConnection();
-        $statement = "select id from users where {$property} = :property";
+        $statement = "select id from users where {$property} = lower(:property)";
         $query = $connection->prepare($statement);
 
         $query->execute([
-            'property' => $value
+            'property' => strtolower($value)
         ]);
 
         $result = $query->fetch();

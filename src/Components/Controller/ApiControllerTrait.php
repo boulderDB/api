@@ -71,11 +71,12 @@ trait ApiControllerTrait
         ], Response::HTTP_NOT_FOUND);
     }
 
-    private function badRequest(array $formErrors)
+    private function badRequest(array $formErrors = null, string $message = null)
     {
         return $this->json([
             "code" => Response::HTTP_BAD_REQUEST,
-            "message" => $formErrors
+            "message" => $message,
+            "form" => $formErrors,
         ], Response::HTTP_BAD_REQUEST);
     }
 

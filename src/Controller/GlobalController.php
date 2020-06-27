@@ -5,24 +5,26 @@ namespace App\Controller;
 use App\Components\Controller\ApiControllerTrait;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
+use App\Form\PasswordResetRequestType;
+use App\Form\PasswordResetType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Serializer\LocationSerializer;
 use App\Serializer\UserSerializer;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class GlobalController extends AbstractController
 {
     const ACCOUNT_DELETION_TIMEOUT = '+1 day';
+    const PASSWORD_RESET_EXPIRY = 60 * 60;
 
     use ApiControllerTrait;
 
@@ -30,17 +32,20 @@ class GlobalController extends AbstractController
     private $redis;
     private $userRepository;
     private $passwordEncoder;
+    private $mailer;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
-        UserPasswordEncoderInterface $passwordEncoder
+        UserPasswordEncoderInterface $passwordEncoder,
+        MailerInterface $mailer
     )
     {
         $this->entityManager = $entityManager;
         $this->redis = RedisConnectionFactory::create();
         $this->userRepository = $userRepository;
         $this->passwordEncoder = $passwordEncoder;
+        $this->mailer = $mailer;
     }
 
     /**
@@ -99,6 +104,99 @@ class GlobalController extends AbstractController
             "message" => "Your account was scheduled for deletion and will be removed on {$current->format('c')}",
             "time" => $current->format('c')
         ], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/request-reset", methods={"POST"})
+     */
+    public function requestReset(Request $request)
+    {
+        self::rateLimit($request, 'reset', 10);
+
+        $form = $this->createForm(PasswordResetRequestType::class);
+        $form->submit(json_decode($request->getContent(), true));
+
+        $username = $form->getData()['username'];
+
+        if ($form->isSubmitted()) {
+            if (!$this->userRepository->userExists('username', $username)) {
+                $form->get('username')->addError(
+                    new FormError("Username '$username' not found")
+                );
+            }
+        }
+
+        if (!$form->isValid()) {
+            return $this->badRequest($this->getFormErrors($form));
+        }
+
+        /**
+         * @var User $user
+         */
+        $user = $this->userRepository->findUserByUsername($username);
+
+        $clientHostname = $_ENV['CLIENT_HOSTNAME'];
+        $storageKey = "pending_password_reset_{$user->getId()}";
+        $hash = hash('sha256', $storageKey);
+
+        $this->redis->set($hash, $user->getId(), self::PASSWORD_RESET_EXPIRY);
+
+        $email = (new Email())
+            ->from('info@blocbeta.com')
+            ->to($user->getEmail())
+            ->subject('Password reset')
+            ->html("<p>Please use the following <a href='$clientHostname/password-reset/$hash'>link</a> to reset your password.</p>");
+
+        $this->mailer->send($email);
+
+        return $this->noContent();
+    }
+
+    /**
+     * @Route("/reset/{hash}", methods={"GET"})
+     */
+    public function checkReset(string $hash)
+    {
+        if (!$this->redis->exists($hash)) {
+            return $this->badRequest(null, 'Hash invalid');
+        }
+
+        return $this->noContent();
+    }
+
+    /**
+     * @Route("/reset/{hash}", methods={"POST"})
+     */
+    public function reset(Request $request, string $hash)
+    {
+        if (!$this->redis->exists($hash)) {
+            return $this->badRequest([
+                'hash' => "Hash invalid"
+            ]);
+        }
+
+        $userId = $this->redis->get($hash);
+
+        /**
+         * @var User $user
+         */
+        $user = $this->userRepository->find($userId);
+
+        $form = $this->createForm(PasswordResetType::class);
+        $form->submit(json_decode($request->getContent(), true));
+
+        if (!$form->isValid()) {
+            return $this->badRequest($this->getFormErrors($form));
+        }
+
+        $password = $this->passwordEncoder->encodePassword($user, $form->getData()['password']);
+        $user->setPassword($password);
+        $this->redis->del($hash);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $this->noContent();
     }
 
     /**

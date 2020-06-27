@@ -25,13 +25,8 @@ security:
         success_handler: lexik_jwt_authentication.handler.authentication_success
         failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-    documentation:
-      pattern:  ^/api/documentation
-      stateless: true
-      anonymous: true
-
-    register:
-      pattern:  ^/api/register
+    public:
+      pattern:  ^/api/(request-reset|reset|documentation)
       anonymous: true
 
     api:
@@ -45,6 +40,9 @@ security:
   # Note: Only the *first* access control that matches will be used
   access_control:
     - { path: ^/api/documentation, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/api/reset-request, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/api/reset, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    -
     - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
