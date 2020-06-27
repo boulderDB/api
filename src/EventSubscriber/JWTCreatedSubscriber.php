@@ -28,6 +28,7 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
 
         $payload['username'] =  $user->getUsername();
         $payload['id'] =  $user->getId();
+        $payload['visible'] =  $user->isVisible();
 
         if ($user->getLastVisitedLocation()) {
             /**
