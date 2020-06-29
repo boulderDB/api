@@ -2,7 +2,7 @@
 
 namespace App\Components\Controller;
 
-use App\Components\Constants;
+use App\Entity\User;
 use App\Service\ContextService;
 
 /**
@@ -14,6 +14,6 @@ trait ContextualizedControllerTrait
 {
     protected function denyUnlessLocationAdmin()
     {
-        $this->denyAccessUnlessGranted($this->contextService->getLocationRole(Constants::ROLE_ADMIN));
+        $this->denyAccessUnlessGranted($this->contextService->getLocationRole(User::ROLE_ADMIN));
     }
 }

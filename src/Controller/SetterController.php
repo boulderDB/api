@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Components\Constants;
 use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
@@ -42,7 +41,7 @@ class SetterController extends AbstractController
     {
         $connection = $this->entityManager->getConnection();
         $parameters = [
-            'role' => '%"' . addcslashes($this->contextService->getLocationRole(Constants::ROLE_SETTER), '%_') . '"%'
+            'role' => '%"' . addcslashes($this->contextService->getLocationRole(User::ROLE_SETTER), '%_') . '"%'
         ];
 
         $statement = 'select id, username from users where roles like :role';
@@ -95,7 +94,7 @@ class SetterController extends AbstractController
             );
         }
 
-        $user->removeRole($this->contextService->getLocationRole(Constants::ROLE_SETTER));
+        $user->removeRole($this->contextService->getLocationRole(User::ROLE_SETTER));
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -112,7 +111,7 @@ class SetterController extends AbstractController
 
         $connection = $this->entityManager->getConnection();
         $parameters = [
-            'role' => '%"' . addcslashes($this->contextService->getLocationRole(Constants::ROLE_ADMIN), '%_') . '"%'
+            'role' => '%"' . addcslashes($this->contextService->getLocationRole(User::ROLE_ADMIN), '%_') . '"%'
         ];
 
         $statement = 'select id, username from users where roles like :role';

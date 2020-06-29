@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Components\Constants;
 use App\Components\Entity\LocationResourceInterface;
 use App\Components\Entity\TimestampableInterface;
 use App\Components\Entity\TimestampTrait;
@@ -179,7 +178,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
 
     public function getInternalGrade(): ?Grade
     {
-        return $this->internalGrade ? $this->internalGrade : $this->grade;
+        return $this->internalGrade;
     }
 
     public function setInternalGrade(Grade $internalGrade): void

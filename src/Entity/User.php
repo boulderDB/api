@@ -16,6 +16,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface, \Serializable, EquatableInterface
 {
+    const ROLE_SETTER = 'ROLE_SETTER';
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+
     use TimestampTrait;
 
     /**

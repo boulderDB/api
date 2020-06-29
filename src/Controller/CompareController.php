@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Components\Constants;
 use App\Entity\Ascent;
 use App\Entity\Boulder;
 use App\Entity\User;

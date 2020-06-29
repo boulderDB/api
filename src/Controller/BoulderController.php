@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Components\Constants;
 use App\Components\Controller\ApiControllerTrait;
 use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\Ascent;
@@ -138,7 +137,7 @@ class BoulderController extends AbstractController
         $results = $builder->where('boulder.location = :location')
             ->andWhere('boulder.status = :status')
             ->setParameter('location', $this->contextService->getLocation()->getId())
-            ->setParameter('status', Constants::STATUS_ACTIVE)
+            ->setParameter('status', Boulder::STATUS_ACTIVE)
             ->getQuery()
             ->getArrayResult();
 

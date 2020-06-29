@@ -2,10 +2,8 @@
 
 namespace App\Controller;
 
-use App\Components\Constants;
 use App\Components\Controller\ApiControllerTrait;
 use App\Components\Controller\ContextualizedControllerTrait;
-use App\Entity\Boulder;
 use App\Entity\BoulderError;
 use App\Form\BoulderErrorType;
 use App\Service\ContextService;

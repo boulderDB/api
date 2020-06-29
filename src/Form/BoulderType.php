@@ -2,13 +2,13 @@
 
 namespace App\Form;
 
-use App\Components\Constants;
 use App\Entity\Boulder;
 use App\Entity\Grade;
 use App\Entity\HoldStyle;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Entity\Wall;
+use App\Service\ContextService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -22,51 +22,78 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class BoulderType extends AbstractType
 {
+    private $contextService;
+
+    public function __construct(ContextService $contextService)
+    {
+        $this->contextService = $contextService;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $setterRole = $this->contextService->getLocationRole(User::ROLE_SETTER);
+        $locationId = $this->contextService->getLocation()->getId();
+
+        $setterQuery = function (EntityRepository $entityRepository) use ($setterRole) {
+
+            return $entityRepository->createQueryBuilder('user')
+                ->where('user.roles LIKE :role')
+                ->setParameter('role', '%"' . $setterRole . '"%')
+                ->orderBy('lower(user.username)', 'ASC');
+        };
+
+        $locationQuery = function (EntityRepository $entityRepository) use ($locationId) {
+
+            return $entityRepository->createQueryBuilder('locationResource')
+                ->where('locationResource.location = :location')
+                ->setParameter('location', $locationId);
+        };
+
         $builder
             ->add('name', TextType::class, [
                 'constraints' => [new NotBlank()]
             ])
             ->add('holdStyle', EntityType::class, [
                 'class' => HoldStyle::class,
-                'constraints' => [new NotBlank()]
+                'constraints' => [new NotBlank()],
+                'query_builder' => $locationQuery
             ])
             ->add('grade', EntityType::class,
                 [
                     'class' => Grade::class,
-                    'constraints' => [new NotBlank()]
+                    'constraints' => [new NotBlank()],
+                    'query_builder' => $locationQuery
                 ]
             )
             ->add('internalGrade', EntityType::class,
                 [
-                    'class' => Grade::class
+                    'class' => Grade::class,
+                    'query_builder' => $locationQuery
                 ]
             )
             ->add('startWall', EntityType::class, [
                 'class' => Wall::class,
-                'constraints' => [new NotBlank()]
+                'constraints' => [new NotBlank()],
+                'query_builder' => $locationQuery
             ])
             ->add('endWall', EntityType::class, [
-                'class' => Wall::class
+                'class' => Wall::class,
+                'query_builder' => $locationQuery
+
             ])
             ->add('setters', EntityType::class,
                 [
                     'class' => User::class,
                     'multiple' => true,
                     'constraints' => [new NotNull()],
-                    'query_builder' => function (EntityRepository $entityRepository) {
-                        return $entityRepository->createQueryBuilder('user')
-                            ->where('user.roles LIKE :roles')
-                            ->setParameter('roles', '%"' . Constants::ROLE_SETTER . '"%')
-                            ->orderBy('lower(user.username)', 'ASC');
-                    },
+                    'query_builder' => $setterQuery
                 ]
             )
             ->add('tags', EntityType::class, [
                 'class' => Tag::class,
                 'multiple' => true,
-                'constraints' => [new NotNull()]
+                'constraints' => [new NotNull()],
+                'query_builder' => $locationQuery
             ])
             ->add('points', IntegerType::class, [
                 'constraints' => [new NotBlank()]
@@ -74,8 +101,8 @@ class BoulderType extends AbstractType
             ->add('status', ChoiceType::class, [
                     'constraints' => [new NotBlank()],
                     'choices' => [
-                        'active' => Constants::STATUS_ACTIVE,
-                        'removed' => Constants::STATUS_INACTIVE
+                        'active' => Boulder::STATUS_ACTIVE,
+                        'removed' => Boulder::STATUS_INACTIVE
                     ]
                 ]
             );

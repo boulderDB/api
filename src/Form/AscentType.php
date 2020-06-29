@@ -2,11 +2,9 @@
 
 namespace App\Form;
 
-use App\Components\Constants;
 use App\Components\Scoring\ScoringInterface;
 use App\Entity\Ascent;
 use App\Entity\Boulder;
-use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

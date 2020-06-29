@@ -22,21 +22,11 @@ class LocationResourceSubscriber implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
-            Events::prePersist,
-            Events::preUpdate,
+            Events::prePersist
         ];
     }
 
     public function prePersist(LifecycleEventArgs $args)
-    {
-        $subject = $args->getObject();
-
-        if ($subject instanceof LocationResourceInterface) {
-            $subject->setLocation($this->contextService->getLocation());
-        }
-    }
-
-    public function preUpdate(PreUpdateEventArgs $args)
     {
         $subject = $args->getObject();
 
