@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\User;
 
 use App\Entity\User;
+use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Command\Command;
@@ -13,7 +14,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class AddRoleCommand extends Command
 {
-    protected static $defaultName = 'blocbeta:admin:add-role';
+    protected static $defaultName = 'blocbeta:user:add-role';
+
     private $entityManager;
 
     public function __construct(
@@ -39,11 +41,19 @@ class AddRoleCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        $role = $input->getArgument('role');
+        $locationId = $input->getArgument('locationId');
+
+        if (!in_array($role, [User::SETTER, User::ADMIN])) {
+            $io->error("Role {$role}");
+
+            return 1;
+        }
+
         /**
          * @var EntityRepository $userRepository
          */
         $userRepository = $this->entityManager->getRepository(User::class);
-        $role = "ROLE_" . strtoupper($input->getArgument('role')) . "@{$input->getArgument('locationId')}";
 
         /**
          * @var User $user
@@ -54,12 +64,14 @@ class AddRoleCommand extends Command
             ->getQuery()
             ->getSingleResult();
 
-        $user->addRole($role);
+        $locationRole = ContextService::getLocationRoleName($role, $locationId);
+
+        $user->addRole($locationRole);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $io->success("Added role {$role} to user {$user->getUsername()}");
+        $io->success("Added role {$role} ({$locationRole}) to user {$user->getUsername()}");
 
         return 0;
     }

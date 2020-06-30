@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Ranking;
 
 use App\Entity\Location;
 use App\Factory\RedisConnectionFactory;
@@ -13,9 +13,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class IndexCurrentRankingCommand extends Command
+class IndexCurrentCommand extends Command
 {
-    protected static $defaultName = 'blocbeta:index-current-ranking';
+    protected static $defaultName = 'blocbeta:ranking:index-current';
 
     private \Redis $redis;
     private LocationRepository $locationRepository;

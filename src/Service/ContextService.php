@@ -21,12 +21,17 @@ class ContextService
         $this->location = $location;
     }
 
+    public static function getLocationRoleName(string $role, int $locationId): string
+    {
+        return "{$role}@{$locationId}";
+    }
+
     public function getLocationRole(string $role): ?string
     {
         if (!$this->getLocation()) {
             return null;
         }
 
-        return "{$role}@{$this->getLocation()->getId()}";
+        return self::getLocationRoleName($role, $this->getLocation()->getId());
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Command\IndexCurrentRankingCommand;
+use App\Command\IndexCurrentCommand;
 use App\Factory\RedisConnectionFactory;
 use App\Repository\BoulderRepository;
 use App\Scoring\DefaultScoring;
@@ -35,7 +35,7 @@ class RankingController extends AbstractController
      */
     public function current()
     {
-        $cacheKey = IndexCurrentRankingCommand::getCacheKey($this->contextService->getLocation()->getId());
+        $cacheKey = IndexCurrentCommand::getCacheKey($this->contextService->getLocation()->getId());
 
         if (!$this->redis->exists($cacheKey)) {
             $data = [];

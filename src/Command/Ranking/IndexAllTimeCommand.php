@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Ranking;
 
 use App\Entity\Ascent;
 use App\Entity\Location;
@@ -14,9 +14,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class IndexAllTimeRankingCommand extends Command
+class IndexAllTimeCommand extends Command
 {
-    protected static $defaultName = 'blocbeta:index-all-time-ranking';
+    protected static $defaultName = 'blocbeta:ranking:index-all-time';
 
     private $locationRepository;
     private $boulderRepository;
