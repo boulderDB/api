@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 /**
  * @Route("/tag")
  */
-class TagController extends AbstractController
+class BoulderTagController extends AbstractController
 {
     private $entityManager;
     private $contextService;

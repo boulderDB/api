@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Ascent;
 use App\Entity\AscentDoubt;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -17,7 +16,7 @@ class AscentDoubtRepository extends ServiceEntityRepository
     public function getDoubts(int $locationId, int $userId, int $status = AscentDoubt::STATUS_UNRESOLVED)
     {
         $connection = $this->getEntityManager()->getConnection();
-        $statusCondition = $status === AscentDoubt::STATUS_UNRESOLVED ?  "status != 2" : "status = :status";
+        $statusCondition = $status === AscentDoubt::STATUS_UNRESOLVED ? "status != 2" : "status = :status";
 
         $statement = "
                         SELECT
@@ -45,6 +44,8 @@ class AscentDoubtRepository extends ServiceEntityRepository
             'status' => $status
         ]);
 
-        return $query->fetchAll();
+        $doubts = $query->fetchAll();
+
+        return $doubts ? $doubts : [];
     }
 }

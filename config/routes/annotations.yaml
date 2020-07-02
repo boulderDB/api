@@ -29,7 +29,7 @@ ranking:
   prefix: /api/{location}/
 
 tag:
-  resource: ../../src/Controller/TagController.php
+  resource: ../../src/Controller/BoulderTagControllertroller.php
   type: annotation
   prefix: /api/{location}/
 

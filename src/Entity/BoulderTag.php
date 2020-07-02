@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class Tag implements LocationResourceInterface
+class BoulderTag implements LocationResourceInterface
 {
     use LocationTrait;
 
