@@ -6,6 +6,7 @@ use App\Components\Entity\TimestampableInterface;
 use App\Components\Entity\TimestampTrait;
 use App\Components\Entity\LocationResourceInterface;
 use App\Components\Entity\LocationTrait;
+use App\Components\Entity\UserResourceInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -13,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(indexes={@ORM\Index(name="user", columns={"user_id"})})
  * @ORM\HasLifecycleCallbacks()
  */
-class Ascent implements LocationResourceInterface, TimestampableInterface
+class Ascent implements LocationResourceInterface, TimestampableInterface, UserResourceInterface
 {
     public const ASCENT_TOP = 'top';
     public const ASCENT_FLASH = 'flash';
@@ -136,7 +137,7 @@ class Ascent implements LocationResourceInterface, TimestampableInterface
         $this->score = round($score);
     }
 
-    public function getUser()
+    public function getUser(): ?User
     {
         return $this->user;
     }

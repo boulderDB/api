@@ -33,6 +33,10 @@ services:
         tags:
             - { name: 'doctrine.event_subscriber' }
 
+    App\EventSubscriber\UserResourceSubscriber:
+        tags:
+            - { name: 'doctrine.event_subscriber' }
+
     App\EventSubscriber\BoulderSubscriber:
         tags:
             - { name: 'doctrine.event_subscriber' }
