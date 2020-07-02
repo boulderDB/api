@@ -2,12 +2,10 @@
 
 namespace App\Controller;
 
-use App\Command\IndexCurrentCommand;
+use App\Command\Ranking\IndexCurrentCommand;
 use App\Factory\RedisConnectionFactory;
 use App\Repository\BoulderRepository;
-use App\Scoring\DefaultScoring;
 use App\Service\ContextService;
-use App\Struct\BoulderStruct;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
