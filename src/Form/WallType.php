@@ -19,12 +19,10 @@ class WallType extends AbstractType
             ->add('name', TextType::class, [
                 'constraints' => [new NotBlank()]
             ])
-            ->add('description', ChoiceType::class, [
+            ->add('description', TextType::class, [
                 'constraints' => [new NotBlank()]
             ])
-            ->add('media', UrlType::class, [
-                'constraints' => [new NotBlank()]
-            ]);
+            ->add('media', UrlType::class, []);
     }
 
     public function configureOptions(OptionsResolver $resolver)

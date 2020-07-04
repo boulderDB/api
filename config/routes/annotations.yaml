@@ -29,7 +29,7 @@ ranking:
   prefix: /api/{location}/
 
 tag:
-  resource: ../../src/Controller/BoulderTagControllertroller.php
+  resource: ../../src/Controller/BoulderTagController.php
   type: annotation
   prefix: /api/{location}/
 
@@ -44,7 +44,7 @@ boulderError:
   prefix: /api/{location}/
 
 boulderDoubt:
-  resource: ../../src/Controller/BoulderDoubtController.php
+  resource: ../../src/Controller/AscentDoubtController.php
   type: annotation
   prefix: /api/{location}/
 

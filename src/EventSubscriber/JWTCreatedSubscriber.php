@@ -40,12 +40,7 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
         $payload['username'] = $user->getUsername();
         $payload['id'] = $user->getId();
         $payload['visible'] = $user->isVisible();
-
-        $payload['doubts'] = $this->ascentDoubtRepository->getDoubts(
-            $this->contextService->getLocation()->getId(),
-            $user->getId(),
-            AscentDoubt::STATUS_UNREAD
-        );
+        $payload['doubts'] = [];
 
         if ($user->getLastVisitedLocation()) {
             /**
@@ -69,6 +64,12 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
                 'instagram' => $location->getInstagram(),
                 'twitter' => $location->getTwitter(),
             ];
+
+            $payload['doubts'] = $this->ascentDoubtRepository->getDoubts(
+                $location->getId(),
+                $user->getId(),
+                AscentDoubt::STATUS_UNREAD
+            );
         }
 
         $event->setData($payload);

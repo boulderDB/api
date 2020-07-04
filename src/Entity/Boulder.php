@@ -105,8 +105,12 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
     private $events;
 
     /**
-     * @ORM\ManyToMany(targetEntity="BoulderTag", fetch="LAZY")
-     * @ORM\JoinTable(name="boulder_tags")
+     * @ORM\ManyToMany(targetEntity="Tag", fetch="LAZY")
+     * @ORM\JoinTable(name="boulder_tags",
+     *     joinColumns={
+     *         @ORM\JoinColumn(name="boulder_id", referencedColumnName="id"),
+     *         @ORM\JoinColumn(name="tag_id", referencedColumnName="id"),
+     *      })
      */
     private $tags;
 

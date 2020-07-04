@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Command\User\ProcessAccountDeletionsCommand;
 use App\Components\Controller\ApiControllerTrait;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
@@ -11,6 +12,7 @@ use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Serializer\LocationSerializer;
 use App\Serializer\UserSerializer;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class GlobalController extends AbstractController
 {
@@ -98,7 +101,10 @@ class GlobalController extends AbstractController
         $current = new \DateTime();
         $current->modify(self::ACCOUNT_DELETION_TIMEOUT);
 
-        $this->redis->set("user_account_deletion_{$user->getId()}", $current->getTimestamp());
+        $this->redis->set(
+            ProcessAccountDeletionsCommand::getAccountDeletionCacheKey($user->getId()),
+            $current->getTimestamp()
+        );
 
         return $this->json([
             "message" => "Your account was scheduled for deletion and will be removed on {$current->format('c')}",
@@ -211,6 +217,11 @@ class GlobalController extends AbstractController
         $form = $this->createForm(UserType::class, $user);
 
         $form->add(...UserType::usernameField());
+        $form->add('email', EmailType::class, [
+            'constraints' => [
+                new NotBlank()
+            ]
+        ]);
         $form->add(...UserType::passWordField());
 
         $form->submit(json_decode($request->getContent(), true));

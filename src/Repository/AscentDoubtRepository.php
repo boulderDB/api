@@ -16,7 +16,7 @@ class AscentDoubtRepository extends ServiceEntityRepository
     public function getDoubts(int $locationId, int $userId, int $status = AscentDoubt::STATUS_UNRESOLVED)
     {
         $connection = $this->getEntityManager()->getConnection();
-        $statusCondition = $status === AscentDoubt::STATUS_UNRESOLVED ? "status != 2" : "status = :status";
+        $statusCondition = $status === AscentDoubt::STATUS_UNRESOLVED ? "boulder.status != 2" : "boulder.status = :status";
 
         $statement = "
                         SELECT
@@ -29,10 +29,10 @@ class AscentDoubtRepository extends ServiceEntityRepository
                         
                         FROM boulder_doubt AS doubt
                         
-                        INNER JOIN users AS author ON author.id = author_id,
+                        INNER JOIN users AS author ON author.id = author_id
                         INNER JOIN boulder ON doubt.boulder_id = boulder.id
                         
-                        WHERE tenant_id = :locationId
+                        WHERE boulder.tenant_id = :locationId
                         AND recipient_id = :recipientId
                         AND {$statusCondition}";
 
