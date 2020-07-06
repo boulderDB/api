@@ -16,9 +16,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface, \Serializable, EquatableInterface
 {
+    public const USER = 'USER';
     public const SETTER = 'SETTER';
     public const ADMIN = 'ADMIN';
 
+    public const ROLE_USER = 'ROLE_' . self::USER;
     public const ROLE_SETTER = 'ROLE_' . self::SETTER;
     public const ROLE_ADMIN = 'ROLE_' . self::ADMIN;
 
@@ -112,7 +114,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
      * @var boolean
      * @ORM\Column(type="boolean")
      */
-    private $visible;
+    private $visible = true;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Ascent", mappedBy="user", fetch="LAZY")
@@ -171,6 +173,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
 
         $this->visible = true;
         $this->active = true;
+        $this->roles = [self::ROLE_USER];
     }
 
     public function getId()
@@ -393,7 +396,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
      */
     public function isVisible(): bool
     {
-        return $this->visible === null ? false : $this->visible;
+        return $this->visible;
     }
 
     /**
@@ -476,18 +479,12 @@ class User implements UserInterface, \Serializable, EquatableInterface
         $this->events = $events;
     }
 
-    /**
-     * @return int
-     */
-    public function getLastVisitedLocation()
+    public function getLastVisitedLocation(): ?int
     {
         return $this->lastVisitedLocation;
     }
 
-    /**
-     * @param int $lastVisitedLocation
-     */
-    public function setLastVisitedLocation(int $lastVisitedLocation)
+    public function setLastVisitedLocation(int $lastVisitedLocation): void
     {
         $this->lastVisitedLocation = $lastVisitedLocation;
     }

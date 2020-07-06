@@ -36,7 +36,7 @@ class ProcessAccountDeletionsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $deletions = $this->redis->keys("user-account-deletion:*");
+        $deletions = $this->redis->keys("deletion:user=*");
         $repository = $this->entityManager->getRepository(User::class);
 
         foreach ($deletions as $key => $deletion) {

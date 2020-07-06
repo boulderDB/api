@@ -26,7 +26,7 @@ security:
         failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
     public:
-      pattern:  ^/api/(request-reset|reset|documentation)
+      pattern:  ^/api/(request-reset|reset|documentation|register)
       anonymous: true
 
     api:

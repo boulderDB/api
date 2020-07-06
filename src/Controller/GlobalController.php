@@ -12,6 +12,7 @@ use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Serializer\LocationSerializer;
 use App\Serializer\UserSerializer;
+use App\Service\ContextService;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,7 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -36,12 +38,16 @@ class GlobalController extends AbstractController
     private $userRepository;
     private $passwordEncoder;
     private $mailer;
+    private $contextService;
+    private $tokenStorage;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
         UserPasswordEncoderInterface $passwordEncoder,
-        MailerInterface $mailer
+        MailerInterface $mailer,
+        ContextService $contextService,
+        TokenStorageInterface $tokenStorage
     )
     {
         $this->entityManager = $entityManager;
@@ -49,6 +55,8 @@ class GlobalController extends AbstractController
         $this->userRepository = $userRepository;
         $this->passwordEncoder = $passwordEncoder;
         $this->mailer = $mailer;
+        $this->contextService = $contextService;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -228,8 +236,8 @@ class GlobalController extends AbstractController
 
         if ($form->isSubmitted()) {
             // check bot traps and return fake id response if filled
-            if ($form->getExtraData()['firstName'] || $form->getExtraData()['lastName']) {
-                return $this->created(42);
+            if (isset($form->getExtraData()['firstName']) || isset($form->getExtraData()['lastName'])) {
+                return $this->created('everything is fine');
             }
 
             if ($this->userRepository->userExists('email', $form->getData()->getEmail())) {
@@ -294,5 +302,31 @@ class GlobalController extends AbstractController
                 return LocationSerializer::serializeArray($result);
             }, $results)
         );
+    }
+
+    /**
+     * @Route("/{location}/ping", methods={"GET"})
+     */
+    public function ping(Request $request)
+    {
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        $location = $this->contextService->getLocation();
+
+        if ($user->getLastVisitedLocation() !== $location->getId()) {
+            $user->setLastVisitedLocation($location->getId());
+
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+        }
+
+        $this->redis->select(RedisConnectionFactory::DB_TRACKING);
+        $this->redis->incr("session:user={$user->getId()}:location={$location->getId()}");
+
+        dd(hash('sha256', $this->tokenStorage->getToken()->getCredentials()));
+
+        return $this->noContent();
     }
 }

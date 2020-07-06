@@ -4,6 +4,9 @@ namespace App\Factory;
 
 class RedisConnectionFactory
 {
+    public const DB_DEFAULT = 0;
+    public const DB_TRACKING = 1;
+
     public static function create()
     {
         $redis = new \Redis();
