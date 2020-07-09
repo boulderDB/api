@@ -307,7 +307,7 @@ class GlobalController extends AbstractController
     /**
      * @Route("/{location}/ping", methods={"GET"})
      */
-    public function ping(Request $request)
+    public function ping()
     {
         /**
          * @var User $user
@@ -322,10 +322,9 @@ class GlobalController extends AbstractController
             $this->entityManager->flush();
         }
 
+        $hash = hash('sha256', $this->tokenStorage->getToken()->getCredentials());
         $this->redis->select(RedisConnectionFactory::DB_TRACKING);
-        $this->redis->incr("session:user={$user->getId()}:location={$location->getId()}");
-
-        dd(hash('sha256', $this->tokenStorage->getToken()->getCredentials()));
+        $this->redis->incr("session={$hash}:user={$user->getId()}:location={$location->getId()}");
 
         return $this->noContent();
     }
