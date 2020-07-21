@@ -47,6 +47,7 @@ class DefaultScoring implements ScoringInterface
                         'boulders' => 0,
                         'tops' => 0,
                         'flashes' => 0,
+                        'advance' => 0,
                         'user' => [
                             'id' => $ascent->getUser()->getId(),
                             'gender' => $ascent->getUser()->getGender(),
@@ -74,18 +75,18 @@ class DefaultScoring implements ScoringInterface
         }
 
         $ranking = array_values($ranking);
-        $ranking = array_filter($ranking, function ($rank) {
-            return $rank['score'] > 0;
-        });
 
         foreach ($ranking as $key => $rank) {
-            if ($key === count($ranking) - 1) {
-                $rank['advance'] = 0;
-            } else {
+            if ($key < count($ranking) - 1) {
                 $rank['advance'] = $rank['score'] - $ranking[$key + 1]['score'];
                 $rank['advance'] = round($rank['advance']);
             }
+
         }
+
+        $ranking = array_filter($ranking, function ($rank) {
+            return $rank['score'] > 0;
+        });
 
         usort($ranking, function ($a, $b) {
             return $a['score'] < $b['score'];
