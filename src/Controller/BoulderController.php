@@ -64,6 +64,7 @@ class BoulderController extends AbstractController
                 ->leftJoin('boulder.ascents', 'ascent')
                 ->leftJoin('ascent.user', 'user')
                 ->where('boulder.id = :id')
+                ->andWhere('user.visible = true')
                 ->setParameter('id', (int)$id)
                 ->getQuery()
                 ->getSingleResult(AbstractQuery::HYDRATE_ARRAY);

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Components\Controller\ApiControllerTrait;
+use App\Components\Scoring\ScoringInterface;
 use App\Entity\Ascent;
 use App\Entity\AscentDoubt;
 use App\Entity\Boulder;
@@ -92,10 +93,12 @@ class AscentController extends AbstractController
         $results = $this->entityManager->createQueryBuilder()
             ->select('
                 partial boulder.{id, points},
-                partial ascent.{id, userId, type}
+                partial ascent.{id, userId, type},
+                partial user.{id, visible}
             ')
             ->from(Boulder::class, 'boulder')
             ->leftJoin('boulder.ascents', 'ascent')
+            ->leftJoin('ascent.user', 'user', 'WITH')
             ->where('boulder.status = :status')
             ->andWhere('boulder.location = :location')
             ->setParameter('location', $this->contextService->getLocation()->getId())
@@ -107,22 +110,29 @@ class AscentController extends AbstractController
         $scores = [];
 
         foreach ($results as $result) {
-
             $boulderId = $result['id'];
-            $ascents = count($result['ascents']) ? count($result['ascents']) : 0;
             $userId = $this->getUser()->getId();
 
-            if ($ascents === 0) {
+            $ascents = array_filter($result['ascents'], function ($ascent) use ($boulderId) {
+                if (in_array($ascent['type'], ScoringInterface::SCORED_ASCENT_TYPES) && $ascent['user']['visible'] === true) {
+                    return true;
+                }
+
+                return false;
+            });
+
+            $ascentCount = count($ascents) ? count($ascents) : 0;
+
+            if ($ascentCount === 0) {
                 $points = $result['points'];
             } else {
-                $points = $result['points'] / ($ascents + 1);
+                $points = $result['points'] / ($ascentCount + 1);
             }
 
             $scores[] = [
                 'boulderId' => $boulderId,
                 'points' => round($points),
-
-                'ascents' => $ascents,
+                'ascents' => $ascentCount,
                 'me' => self::filterUserAscent($result['ascents'], $userId)
             ];
         }

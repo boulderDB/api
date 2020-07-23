@@ -16,7 +16,7 @@ class AscentDoubtRepository extends ServiceEntityRepository
     public function getDoubts(int $locationId, int $userId, int $status = AscentDoubt::STATUS_UNRESOLVED)
     {
         $connection = $this->getEntityManager()->getConnection();
-        $statusCondition = $status === AscentDoubt::STATUS_UNRESOLVED ? "boulder.status != 2" : "boulder.status = :status";
+        $statusCondition = $status === AscentDoubt::STATUS_UNRESOLVED ? "boulder.status != :status" : "boulder.status = :status";
 
         $statement = "
                         SELECT

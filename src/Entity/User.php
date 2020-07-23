@@ -112,7 +112,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
 
     /**
      * @var boolean
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean",)
      */
     private $visible = true;
 

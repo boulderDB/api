@@ -6,8 +6,8 @@ namespace App\Controller;
 use App\Entity\AscentDoubt;
 use App\Repository\AscentDoubtRepository;
 use App\Service\ContextService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -50,9 +50,9 @@ class AscentDoubtController extends AbstractController
     }
 
     /**
-     * @Route("/unresolved", methods={"GET"})
+     * @Route(methods={"GET"})
      */
-    public function unresolved()
+    public function index(Request $request)
     {
         $doubts = $this->ascentDoubtRepository->getDoubts(
             $this->contextService->getLocation()->getId(),

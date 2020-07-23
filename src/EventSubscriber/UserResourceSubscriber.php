@@ -25,6 +25,7 @@ class UserResourceSubscriber implements EventSubscriber
             $user->setLastActivity(new \DateTime());
 
             $args->getObjectManager()->persist($user);
+            $args->getObjectManager()->flush();
         }
     }
 }

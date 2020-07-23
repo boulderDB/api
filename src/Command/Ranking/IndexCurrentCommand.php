@@ -42,6 +42,7 @@ class IndexCurrentCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $current = new \DateTime();
 
         /**
          * @var Location[] $locations
@@ -61,6 +62,8 @@ class IndexCurrentCommand extends Command
 
             $defaultScoring = new DefaultScoring();
             $ranking = $defaultScoring->calculate($boulderStructs);
+
+            $ranking['lastRun'] = $current->format('c');
 
             $this->redis->set(self::getCacheKey($locationId), json_encode($ranking));
         }
