@@ -63,13 +63,18 @@ class IndexCurrentCommand extends Command
             $defaultScoring = new DefaultScoring();
             $ranking = $defaultScoring->calculate($boulderStructs);
 
-            $this->redis->set(self::getCacheKey($locationId) . ':last-run', $current->format('c'));
+            $this->redis->set(self::getTimestampCacheKey($locationId), $current->format('c'));
             $this->redis->set(self::getCacheKey($locationId), json_encode($ranking));
         }
 
         $io->success('All current ranking indexed successfully');
 
         return 0;
+    }
+
+    public static function getTimestampCacheKey(string $locationId): string
+    {
+        return "location-{$locationId}-current-ranking:last-run";
     }
 
     public static function getCacheKey(string $locationId): string

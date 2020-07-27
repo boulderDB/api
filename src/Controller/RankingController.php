@@ -33,7 +33,10 @@ class RankingController extends AbstractController
      */
     public function current()
     {
-        $cacheKey = IndexCurrentCommand::getCacheKey($this->contextService->getLocation()->getId());
+        $locationId = $this->contextService->getLocation()->getId();
+
+        $cacheKey = IndexCurrentCommand::getCacheKey($locationId);
+        $timestampCacheKey = IndexCurrentCommand::getTimestampCacheKey($locationId);
 
         if (!$this->redis->exists($cacheKey)) {
             $data = [];
@@ -41,7 +44,10 @@ class RankingController extends AbstractController
             $data = json_decode($this->redis->get($cacheKey));
         }
 
-        return $this->json($data);
+        return $this->json([
+            'ranking' => $data,
+            'lastRun' => $this->redis->get($timestampCacheKey)
+        ]);
     }
 
     /**
@@ -51,6 +57,9 @@ class RankingController extends AbstractController
     {
         $ranking = $this->redis->get($this->contextService->getLocation()->getId() . "-all-time-ranking");
 
-        return $this->json(json_decode($ranking, true));
+        return $this->json([
+            'data' => json_decode($ranking),
+            'lastRun' => null
+        ], true);
     }
 }
