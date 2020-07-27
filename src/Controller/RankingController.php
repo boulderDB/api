@@ -45,7 +45,7 @@ class RankingController extends AbstractController
         }
 
         return $this->json([
-            'ranking' => $data,
+            'list' => $data,
             'lastRun' => $this->redis->get($timestampCacheKey)
         ]);
     }
@@ -58,7 +58,7 @@ class RankingController extends AbstractController
         $ranking = $this->redis->get($this->contextService->getLocation()->getId() . "-all-time-ranking");
 
         return $this->json([
-            'data' => json_decode($ranking),
+            'list' => json_decode($ranking),
             'lastRun' => null
         ], true);
     }
