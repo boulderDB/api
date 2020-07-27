@@ -63,8 +63,7 @@ class IndexCurrentCommand extends Command
             $defaultScoring = new DefaultScoring();
             $ranking = $defaultScoring->calculate($boulderStructs);
 
-            $ranking['lastRun'] = $current->format('c');
-
+            $this->redis->set(self::getCacheKey($locationId) . ':last-run', $current->format('c'));
             $this->redis->set(self::getCacheKey($locationId), json_encode($ranking));
         }
 
