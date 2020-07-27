@@ -19,14 +19,16 @@ class BoulderRepository extends ServiceEntityRepository
             ->select('
                 partial boulder.{id, points},
                 partial ascent.{id, type},
-                partial user.{id, username, gender, lastActivity, media}
+                partial user.{id, username, gender, lastActivity, media, visible}
             ')
             ->innerJoin('boulder.ascents', 'ascent')
             ->innerJoin('ascent.user', 'user')
             ->where('boulder.location = :location')
             ->andWhere('boulder.status = :status')
+            ->andWhere('boulder.user :visible')
             ->setParameter('location', $locationId)
             ->setParameter('status', Boulder::STATUS_ACTIVE)
+            ->setParameter('visible', true)
             ->getQuery()
             ->getArrayResult();
     }
