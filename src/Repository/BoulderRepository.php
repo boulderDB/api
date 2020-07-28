@@ -25,7 +25,7 @@ class BoulderRepository extends ServiceEntityRepository
             ->innerJoin('ascent.user', 'user')
             ->where('boulder.location = :location')
             ->andWhere('boulder.status = :status')
-            ->andWhere('user.visible :visible')
+            ->andWhere('user.visible = :visible')
             ->setParameter('location', $locationId)
             ->setParameter('status', Boulder::STATUS_ACTIVE)
             ->setParameter('visible', true)
