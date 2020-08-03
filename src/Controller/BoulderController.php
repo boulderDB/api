@@ -16,6 +16,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -61,11 +62,10 @@ class BoulderController extends AbstractController
          */
         try {
             $boulder = $queryBuilder
-                ->leftJoin('boulder.ascents', 'ascent')
-                ->leftJoin('ascent.user', 'user')
+                ->leftJoin('boulder.ascents', 'ascent', Join::ON)
+                ->leftJoin('ascent.user', 'user', Join::WITH, 'user.visible = true')
                 ->where('boulder.id = :id')
-                ->andWhere('user.visible = true')
-                ->setParameter('id', (int)$id)
+                ->setParameter('id', $id)
                 ->getQuery()
                 ->getSingleResult(AbstractQuery::HYDRATE_ARRAY);
 
