@@ -6,6 +6,7 @@ use App\Command\User\ProcessAccountDeletionsCommand;
 use App\Components\Controller\ApiControllerTrait;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
+use App\Factory\ResponseFactory;
 use App\Form\PasswordResetRequestType;
 use App\Form\PasswordResetType;
 use App\Form\UserType;
@@ -339,5 +340,33 @@ class GlobalController extends AbstractController
         $this->redis->incr("session={$hash}:user={$user->getId()}:location={$location->getId()}");
 
         return $this->noContent();
+    }
+
+    /**
+     * @Route("/searchuser", methods={"GET"})
+     */
+    public function search(Request $request)
+    {
+        $term = $request->query->get('username');
+
+        if (!$term) {
+            return $this->json(ResponseFactory::createError("No username provided", Response::HTTP_BAD_REQUEST), Response::HTTP_BAD_REQUEST);
+        }
+
+        $builder = $this->entityManager->createQueryBuilder();
+
+        $users = $builder
+            ->from(User::class, 'user')
+            ->distinct()
+            ->select('user.id, user.username')
+            ->where('user.visible = true')
+            ->andWhere($builder->expr()->like('lower(user.username)', ':term'))
+            ->setParameter('term', '%' . addcslashes(strtolower($term), '%') . '%')
+            ->orderBy('user.username')
+            ->setMaxResults(20)
+            ->getQuery()
+            ->getArrayResult();
+
+        return $this->json($users);
     }
 }
