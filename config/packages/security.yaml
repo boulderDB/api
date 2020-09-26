@@ -42,6 +42,7 @@ security:
     - { path: ^/api/documentation, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/reset-request, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/reset, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/api/location, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     -

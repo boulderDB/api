@@ -14,6 +14,7 @@ use App\Serializer\LocationSerializer;
 use App\Serializer\UserSerializer;
 use App\Service\ContextService;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -230,13 +231,24 @@ class GlobalController extends AbstractController
                 new NotBlank()
             ]
         ]);
+        $form->add('firstName', TextType::class, [
+            'constraints' => [
+                new NotBlank()
+            ]
+        ]);
+        $form->add('lastName', TextType::class, [
+            'constraints' => [
+                new NotBlank()
+            ]
+        ]);
+
         $form->add(...UserType::passWordField());
 
         $form->submit(json_decode($request->getContent(), true));
 
         if ($form->isSubmitted()) {
             // check bot traps and return fake id response if filled
-            if (isset($form->getExtraData()['firstName']) || isset($form->getExtraData()['lastName'])) {
+            if (isset($form->getExtraData()['phone']) || isset($form->getExtraData()['fax'])) {
                 return $this->created('everything is fine');
             }
 
