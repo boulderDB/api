@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Service\ContextService;
+use BlocBeta\Service\ContextService;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

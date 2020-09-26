@@ -5,7 +5,7 @@ namespace App\Controller;
 
 use App\Entity\AscentDoubt;
 use App\Repository\AscentDoubtRepository;
-use App\Service\ContextService;
+use BlocBeta\Service\ContextService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;

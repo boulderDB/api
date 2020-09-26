@@ -7,7 +7,7 @@ use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\Wall;
 use App\Form\WallType;
 use App\Repository\WallRepository;
-use App\Service\ContextService;
+use BlocBeta\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

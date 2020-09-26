@@ -6,7 +6,7 @@ use App\Components\Controller\ApiControllerTrait;
 use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\BoulderError;
 use App\Form\BoulderErrorType;
-use App\Service\ContextService;
+use BlocBeta\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

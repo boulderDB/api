@@ -29,20 +29,20 @@ services:
 
   BlocBeta\EventListener\ExceptionListener:
     tags:
-      - {name: 'kernel.exception'}
+      - { name: kernel.event_listener, event: kernel.exception }
+
+  BlocBeta\EventListener\RequestListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.request }
+
+  BlocBeta\EventListener\UserResourceListener:
+    tags:
+      - { name: 'doctrine.event_subscriber' }
 
   BlocBeta\EventListener\TimestampableListener:
     tags:
       - { name: 'doctrine.event_subscriber' }
 
   BlocBeta\EventListener\LocationResourceListener:
-    tags:
-      - { name: 'doctrine.event_subscriber' }
-
-  BlocBeta\EventListener\UserResourceListener:
-    tags:
-      - { name: 'doctrine.event_subscriber' }
-
-  App\EventListener\BoulderSubscriber:
     tags:
       - { name: 'doctrine.event_subscriber' }

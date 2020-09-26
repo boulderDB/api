@@ -7,7 +7,7 @@ use App\Entity\Boulder;
 use App\Entity\User;
 use App\Factory\ResponseFactory;
 use App\Service\CompareService;
-use App\Service\ContextService;
+use BlocBeta\Service\ContextService;
 use App\Struct\ComparisonStruct;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NoResultException;

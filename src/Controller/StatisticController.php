@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Components\Controller\ApiControllerTrait;
 use App\Entity\Boulder;
-use App\Service\ContextService;
+use BlocBeta\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;

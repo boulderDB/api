@@ -9,6 +9,7 @@ use App\Repository\AscentDoubtRepository;
 use App\Repository\LocationRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class AuthenticationSuccessSubscriber implements EventSubscriberInterface
 {
@@ -34,6 +35,7 @@ class AuthenticationSuccessSubscriber implements EventSubscriberInterface
         $payload = $event->getData();
 
         $payload["expiration"] = $expiration->getTimestamp();
+        $payload["target"] = Request::createFromGlobals()->query->get("target");
 
         /**
          * @var User $user

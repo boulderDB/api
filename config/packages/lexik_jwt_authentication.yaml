@@ -12,3 +12,4 @@ lexik_jwt_authentication:
     set_cookies:
         BEARER:
             secure: false
+            samesite: lax

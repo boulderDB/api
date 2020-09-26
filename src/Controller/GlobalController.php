@@ -13,7 +13,7 @@ use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Serializer\LocationSerializer;
 use App\Serializer\UserSerializer;
-use App\Service\ContextService;
+use BlocBeta\Service\ContextService;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;

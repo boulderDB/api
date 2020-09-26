@@ -11,7 +11,7 @@ use App\Factory\RedisConnectionFactory;
 use App\Form\BoulderType;
 use App\Form\MassOperationType;
 use App\Repository\BoulderRepository;
-use App\Service\ContextService;
+use BlocBeta\Service\ContextService;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;

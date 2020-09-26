@@ -7,7 +7,7 @@ use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\BoulderLabel;
 use App\Factory\RedisConnectionFactory;
 use App\Form\BoulderLabelType;
-use App\Service\ContextService;
+use BlocBeta\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

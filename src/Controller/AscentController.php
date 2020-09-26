@@ -11,7 +11,7 @@ use App\Factory\ResponseFactory;
 use App\Form\AscentDoubtType;
 use App\Form\AscentType;
 use App\Serializer\AscentSerializer;
-use App\Service\ContextService;
+use BlocBeta\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

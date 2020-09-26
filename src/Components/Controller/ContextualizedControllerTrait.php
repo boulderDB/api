@@ -3,7 +3,7 @@
 namespace App\Components\Controller;
 
 use App\Entity\User;
-use App\Service\ContextService;
+use BlocBeta\Service\ContextService;
 
 /**
  * @property ContextService $contextService

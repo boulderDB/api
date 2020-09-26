@@ -8,7 +8,7 @@ use App\Entity\HoldStyle;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Entity\Wall;
-use App\Service\ContextService;
+use BlocBeta\Service\ContextService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
