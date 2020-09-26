@@ -155,15 +155,19 @@ class User implements UserInterface, \Serializable, EquatableInterface
 
     /**
      * @var int
-     * @orm\column(type="integer", nullable=true)
+     * @ORM\column(type="integer", nullable=true)
      */
     private $weight;
 
     /**
-     * @var array
-     * @ORM\Column(type="array", nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      */
-    private $migrations = [];
+    private ?string $firstName = null;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private ?string $lastName = null;
 
     public function __construct()
     {
@@ -366,114 +370,72 @@ class User implements UserInterface, \Serializable, EquatableInterface
     {
         return true;
     }
-
-    /**
-     * @inheritdoc
-     */
+    
     public function isAccountNonLocked()
     {
         return true;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function isCredentialsNonExpired()
     {
         return true;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function isEnabled()
     {
         return $this->active;
     }
 
-    /**
-     * @return bool
-     */
     public function isVisible(): bool
     {
         return $this->visible;
     }
 
-    /**
-     * @param bool $visible
-     */
     public function setVisible(bool $visible)
     {
         $this->visible = $visible;
     }
 
-    /**
-     * @return ArrayCollection
-     */
     public function getAscents()
     {
         return $this->ascents;
     }
 
-    /**
-     * @param ArrayCollection $ascents
-     */
     public function setAscents($ascents)
     {
         $this->ascents = $ascents;
     }
 
-    /**
-     * @param Boulder $boulder
-     */
     public function addBoulder(Boulder $boulder)
     {
         $this->boulders->add($boulder);
     }
 
-    /**
-     * @return ArrayCollection
-     */
     public function getBoulders()
     {
         return $this->boulders;
     }
 
-    /**
-     * @param ArrayCollection $boulders
-     */
     public function setBoulders(ArrayCollection $boulders)
     {
         $this->boulders = $boulders;
     }
 
-    /**
-     * @return UploadedFile
-     */
     public function getMedia()
     {
         return $this->media;
     }
 
-    /**
-     * @param UploadedFile $media
-     */
     public function setMedia($media)
     {
         $this->media = $media;
     }
 
-    /**
-     * @return Event[]
-     */
     public function getEvents()
     {
         return $this->events;
     }
 
-    /**
-     * @param Event[] $events
-     */
     public function setEvents(array $events)
     {
         $this->events = $events;
@@ -488,31 +450,6 @@ class User implements UserInterface, \Serializable, EquatableInterface
     {
         $this->lastVisitedLocation = $lastVisitedLocation;
     }
-
-    /**
-     * @return array
-     */
-    public function getMigrations()
-    {
-        return $this->migrations;
-    }
-
-    /**
-     * @param array $migrations
-     */
-    public function setMigrations(array $migrations)
-    {
-        $this->migrations = $migrations;
-    }
-
-    /**
-     * @param string $migration
-     */
-    public function addMigration(string $migration)
-    {
-        $this->migrations[] = $migration;
-    }
-
     public function isEqualTo(UserInterface $user)
     {
         return $this->getUsername() === $user->getUsername();
@@ -526,5 +463,25 @@ class User implements UserInterface, \Serializable, EquatableInterface
     public function setWeight(int $weight): void
     {
         $this->weight = $weight;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(?string $firstName): void
+    {
+        $this->firstName = $firstName;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): void
+    {
+        $this->lastName = $lastName;
     }
 }
