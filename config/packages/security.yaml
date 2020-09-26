@@ -41,8 +41,8 @@ security:
   access_control:
     - { path: ^/api/reset-request, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/reset, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-    - { path: ^/api/location, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-    - { path: ^/api/user/search, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/api/location, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/api/search-user, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

@@ -343,7 +343,7 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/searchuser", methods={"GET"})
+     * @Route("/search-user", methods={"GET"})
      */
     public function search(Request $request)
     {
