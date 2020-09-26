@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EventSubscriber;
+namespace App\EventListener;
 
 use App\Components\Controller\ApiControllerTrait;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationFailureEvent;

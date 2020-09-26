@@ -1,46 +1,54 @@
 <?php
 
-namespace App\EventSubscriber;
+namespace App\EventListener;
 
 use App\Entity\AscentDoubt;
 use App\Entity\Location;
 use App\Entity\User;
 use App\Repository\AscentDoubtRepository;
 use App\Repository\LocationRepository;
-use App\Service\ContextService;
-use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
+use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class JWTCreatedSubscriber implements EventSubscriberInterface
+class AuthenticationSuccessSubscriber implements EventSubscriberInterface
 {
-    private $locationRepository;
-    private $ascentDoubtRepository;
-    private $contextService;
+    private LocationRepository $locationRepository;
+    private AscentDoubtRepository $ascentDoubtRepository;
+    private \Redis $redis;
 
     public function __construct(
         LocationRepository $locationRepository,
-        AscentDoubtRepository $ascentDoubtRepository,
-        ContextService $contextService
+        AscentDoubtRepository $ascentDoubtRepository
     )
     {
         $this->locationRepository = $locationRepository;
         $this->ascentDoubtRepository = $ascentDoubtRepository;
-        $this->contextService = $contextService;
+
+        $this->redis = new \Redis();
+        $this->redis->connect($_ENV["REDIS_HOST"]);
     }
 
-    public function onJWTCreated(JWTCreatedEvent $event)
+    public function onAuthenticationSuccess(AuthenticationSuccessEvent $event): void
     {
+        $expiration = new \DateTime("+" . $_ENV["JWT_TOKEN_EXPIRATION"] . "seconds");
         $payload = $event->getData();
+
+        $payload["expiration"] = $expiration->getTimestamp();
 
         /**
          * @var User $user
          */
         $user = $event->getUser();
 
-        $payload['username'] = $user->getUsername();
-        $payload['id'] = $user->getId();
-        $payload['visible'] = $user->isVisible();
-        $payload['doubts'] = [];
+        $payload["user"] = [
+            "id" => $user->getId(),
+            "username" => $user->getUsername(),
+            "roles" => $user->getRoles(),
+            "visible" => $user->isVisible(),
+            "actions" => $this->redis->sMembers("user:{$user->getId()}:actions")
+        ];
+
+        $payload["location"] = null;
 
         if ($user->getLastVisitedLocation()) {
             /**
@@ -48,7 +56,7 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
              */
             $location = $this->locationRepository->find($user->getLastVisitedLocation());
 
-            $payload['location'] = [
+            $payload["location"] = [
                 'id' => $location->getId(),
                 'name' => $location->getName(),
                 'url' => $location->getUrl(),
@@ -77,8 +85,6 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return [
-            'lexik_jwt_authentication.on_jwt_created' => 'onJWTCreated'
-        ];
+        return ["lexik_jwt_authentication.on_authentication_success" => "onAuthenticationSuccess"];
     }
 }

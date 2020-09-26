@@ -1,7 +1,5 @@
 doctrine:
   dbal:
-    driver: 'pdo_mysql'
-    server_version: '10'
     url: '%env(resolve:DATABASE_URL)%'
     password: "%env(DATABASE_PASSWORD)%"
 

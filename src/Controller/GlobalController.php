@@ -247,6 +247,10 @@ class GlobalController extends AbstractController
 
         $form->submit(json_decode($request->getContent(), true));
 
+        if (!$form->isValid()) {
+            return $this->badRequest($this->getFormErrors($form));
+        }
+
         if ($form->isSubmitted()) {
             // check bot traps and return fake id response if filled
             if (isset($form->getExtraData()['phone']) || isset($form->getExtraData()['fax'])) {

@@ -20,7 +20,7 @@ services:
   postgres:
     image: postgres:12-alpine
     volumes:
-      - ~/docker-volumes/blocbeta:/var/lib/postgresql
+      - ~/docker-volumes/blocbeta:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     environment:
