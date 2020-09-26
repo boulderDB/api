@@ -67,7 +67,7 @@ class UserController extends AbstractController
         $users = $builder
             ->from(User::class, 'user')
             ->distinct()
-            ->select('user.id, user.username, user.visible, user.roles')
+            ->select('user.id, user.username')
             ->where('user.visible = true')
             ->andWhere($builder->expr()->like('lower(user.username)', ':term'))
             ->setParameter('term', '%' . addcslashes(strtolower($term), '%') . '%')
