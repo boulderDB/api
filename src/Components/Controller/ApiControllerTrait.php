@@ -44,17 +44,6 @@ trait ApiControllerTrait
         return (int)$id > 0;
     }
 
-    private function getFormErrors(FormInterface $form)
-    {
-        $errors = [];
-
-        foreach ($form->getErrors(true) as $error) {
-            $errors[$error->getOrigin()->getName()] = $error->getMessage();
-        }
-
-        return $errors;
-    }
-
     private function internalError()
     {
         return $this->json([

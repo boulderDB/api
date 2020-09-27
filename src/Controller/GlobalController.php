@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Command\User\ProcessAccountDeletionsCommand;
-use App\Components\Controller\ApiControllerTrait;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
 use App\Factory\ResponseFactory;
@@ -13,6 +12,10 @@ use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Serializer\LocationSerializer;
 use App\Serializer\UserSerializer;
+use BlocBeta\Controller\FormErrorTrait;
+use BlocBeta\Controller\RateLimiterTrait;
+use BlocBeta\Controller\RequestTrait;
+use BlocBeta\Controller\ResponseTrait;
 use BlocBeta\Service\ContextService;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -33,15 +36,18 @@ class GlobalController extends AbstractController
     const ACCOUNT_DELETION_TIMEOUT = '+1 day';
     const PASSWORD_RESET_EXPIRY = 60 * 60;
 
-    use ApiControllerTrait;
+    use FormErrorTrait;
+    use ResponseTrait;
+    use RequestTrait;
+    use RateLimiterTrait;
 
-    private $entityManager;
-    private $redis;
-    private $userRepository;
-    private $passwordEncoder;
-    private $mailer;
-    private $contextService;
-    private $tokenStorage;
+    private EntityManagerInterface $entityManager;
+    private \Redis $redis;
+    private UserRepository $userRepository;
+    private UserPasswordEncoderInterface $passwordEncoder;
+    private MailerInterface $mailer;
+    private ContextService $contextService;
+    private TokenStorageInterface $tokenStorage;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -85,7 +91,7 @@ class GlobalController extends AbstractController
         $form->submit(json_decode($request->getContent(), true), false);
 
         if (!$form->isValid()) {
-            return $this->json($this->getFormErrors($form));
+            return $this->badFormRequestResponse($form);
         }
 
         $this->entityManager->persist($user);
@@ -130,26 +136,28 @@ class GlobalController extends AbstractController
         self::rateLimit($request, 'reset', 10);
 
         $form = $this->createForm(PasswordResetRequestType::class);
-        $form->submit(json_decode($request->getContent(), true));
+        $form->submit(self::decodePayLoad($request));
 
-        $username = $form->getData()['username'];
+        if (!$form->isValid()) {
+            return $this->badFormRequestResponse($form);
+        }
 
-        if ($form->isSubmitted()) {
-            if (!$this->userRepository->userExists('username', $username)) {
-                $form->get('username')->addError(
-                    new FormError("Username '$username' not found")
-                );
-            }
+        $email = $form->getData()['email'];
+
+        if (!$this->userRepository->userExists('email', $email)) {
+            $form->get('email')->addError(
+                new FormError("E-Mail '$email' not found")
+            );
         }
 
         if (!$form->isValid()) {
-            return $this->badRequest($this->getFormErrors($form));
+            return $this->badFormRequestResponse($form);
         }
 
         /**
          * @var User $user
          */
-        $user = $this->userRepository->findUserByUsername($username);
+        $user = $this->userRepository->findOneBy(["email" => $email]);
 
         $clientHostname = $_ENV['CLIENT_HOSTNAME'];
         $storageKey = "pending_password_reset_{$user->getId()}";
@@ -165,7 +173,7 @@ class GlobalController extends AbstractController
 
         $this->mailer->send($email);
 
-        return $this->noContent();
+        return $this->noContentResponse();
     }
 
     /**
@@ -174,10 +182,10 @@ class GlobalController extends AbstractController
     public function checkReset(string $hash)
     {
         if (!$this->redis->exists($hash)) {
-            return $this->badRequest(null, 'Hash invalid');
+            return $this->resourceNotFoundResponse("Hash", $hash);
         }
 
-        return $this->noContent();
+        return $this->noContentResponse();
     }
 
     /**
@@ -186,9 +194,7 @@ class GlobalController extends AbstractController
     public function reset(Request $request, string $hash)
     {
         if (!$this->redis->exists($hash)) {
-            return $this->badRequest([
-                'hash' => "Hash invalid"
-            ]);
+            return $this->resourceNotFoundResponse("Hash", $hash);
         }
 
         $userId = $this->redis->get($hash);
@@ -202,7 +208,7 @@ class GlobalController extends AbstractController
         $form->submit(json_decode($request->getContent(), true));
 
         if (!$form->isValid()) {
-            return $this->badRequest($this->getFormErrors($form));
+            return $this->badFormRequestResponse($form);
         }
 
         $password = $this->passwordEncoder->encodePassword($user, $form->getData()['password']);
@@ -212,7 +218,7 @@ class GlobalController extends AbstractController
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        return $this->noContent();
+        return $this->noContentResponse();
     }
 
     /**
@@ -248,13 +254,13 @@ class GlobalController extends AbstractController
         $form->submit(json_decode($request->getContent(), true));
 
         if (!$form->isValid()) {
-            return $this->badRequest($this->getFormErrors($form));
+            return $this->badFormRequestResponse($form);
         }
 
         if ($form->isSubmitted()) {
             // check bot traps and return fake id response if filled
             if (isset($form->getExtraData()['phone']) || isset($form->getExtraData()['fax'])) {
-                return $this->created('everything is fine');
+                return $this->createdResponse(null);
             }
 
             if ($this->userRepository->userExists('email', $form->getData()->getEmail())) {
@@ -271,7 +277,7 @@ class GlobalController extends AbstractController
         }
 
         if (!$form->isValid()) {
-            return $this->badRequest($this->getFormErrors($form));
+            return $this->badFormRequestResponse($form);
         }
 
         $password = $this->passwordEncoder->encodePassword($user, $user->getPlainPassword());
@@ -280,7 +286,7 @@ class GlobalController extends AbstractController
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        return $this->created($user->getId());
+        return $this->createdResponse(["id" => $user->getId()]);
     }
 
     /**
