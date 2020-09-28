@@ -349,7 +349,7 @@ class GlobalController extends AbstractController
         $this->redis->select(RedisConnectionFactory::DB_TRACKING);
         $this->redis->incr("session={$hash}:user={$user->getId()}:location={$location->getId()}");
 
-        return $this->noContent();
+        return $this->noContentResponse();
     }
 
     /**
