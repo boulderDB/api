@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Command\Ranking\IndexCurrentCommand;
+use App\Command\IndexCurrentCommand;
 use App\Factory\RedisConnectionFactory;
 use App\Repository\BoulderRepository;
 use BlocBeta\Service\ContextService;

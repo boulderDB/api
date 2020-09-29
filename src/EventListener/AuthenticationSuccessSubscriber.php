@@ -2,11 +2,11 @@
 
 namespace App\EventListener;
 
-use App\Entity\AscentDoubt;
 use App\Entity\Location;
 use App\Entity\User;
 use App\Repository\AscentDoubtRepository;
 use App\Repository\LocationRepository;
+use BlocBeta\Factory\RedisConnectionFactory;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,61 +25,50 @@ class AuthenticationSuccessSubscriber implements EventSubscriberInterface
         $this->locationRepository = $locationRepository;
         $this->ascentDoubtRepository = $ascentDoubtRepository;
 
-        $this->redis = new \Redis();
-        $this->redis->connect($_ENV["REDIS_HOST"]);
+        $this->redis = RedisConnectionFactory::create();
     }
 
     public function onAuthenticationSuccess(AuthenticationSuccessEvent $event): void
     {
         $expiration = new \DateTime("+" . $_ENV["JWT_TOKEN_EXPIRATION"] . "seconds");
-        $payload = $event->getData();
-
-        $payload["expiration"] = $expiration->getTimestamp();
-        $payload["target"] = Request::createFromGlobals()->query->get("target");
 
         /**
          * @var User $user
          */
         $user = $event->getUser();
 
-        $payload["user"] = [
-            "id" => $user->getId(),
-            "username" => $user->getUsername(),
-            "roles" => $user->getRoles(),
-            "visible" => $user->isVisible(),
-            "actions" => $this->redis->sMembers("user:{$user->getId()}:actions")
-        ];
+        $payload = $event->getData();
 
-        $payload["location"] = null;
+        $payload = array_merge($payload, [
+            "expiration" => $expiration->getTimestamp(),
+            "target" => Request::createFromGlobals()->query->get("target"),
+            "location" => null,
+            "fullRegistration" => false,
+            "user" => [
+                "id" => $user->getId(),
+                "username" => $user->getUsername(),
+                "roles" => $user->getRoles(),
+                "visible" => $user->isVisible(),
+            ]
+        ]);
+
+        if ($user->getLastName() && $user->getLastName()) {
+            $payload["fullRegistration"] = true;
+        }
 
         if ($user->getLastVisitedLocation()) {
+
             /**
              * @var Location $location
              */
             $location = $this->locationRepository->find($user->getLastVisitedLocation());
 
             $payload["location"] = [
-                'id' => $location->getId(),
-                'name' => $location->getName(),
-                'url' => $location->getUrl(),
-                'public' => $location->isPublic(),
-                'city' => $location->getCity(),
-                'zip' => $location->getZip(),
-                'addressLineOne' => $location->getAddressLineOne(),
-                'addressLineTwo' => $location->getAddressLineTwo(),
-                'countryCode' => $location->getCountryCode(),
-                'image' => $location->getImage(),
-                'website' => $location->getWebsite(),
-                'facebook' => $location->getFacebook(),
-                'instagram' => $location->getInstagram(),
-                'twitter' => $location->getTwitter(),
+                "id" => $location->getId(),
+                "name" => $location->getName(),
+                "url" => $location->getUrl(),
+                "public" => $location->isPublic(),
             ];
-
-            $payload['doubts'] = $this->ascentDoubtRepository->getDoubts(
-                $location->getId(),
-                $user->getId(),
-                AscentDoubt::STATUS_UNREAD
-            );
         }
 
         $event->setData($payload);

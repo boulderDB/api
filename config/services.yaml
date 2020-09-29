@@ -46,3 +46,11 @@ services:
   BlocBeta\EventListener\LocationResourceListener:
     tags:
       - { name: 'doctrine.event_subscriber' }
+
+  BlocBeta\EventListener\BoulderListener:
+    tags:
+      - { name: 'doctrine.event_subscriber' }
+
+  BlocBeta\EventListener\AscentListener:
+    tags:
+      - { name: 'doctrine.event_subscriber' }

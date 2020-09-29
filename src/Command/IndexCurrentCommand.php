@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command\Ranking;
+namespace App\Command;
 
 use App\Entity\Location;
 use App\Factory\RedisConnectionFactory;

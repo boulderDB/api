@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c1096ab77023c5b4d26e9bc725e04930",
+    "content-hash": "124d19d9f7cf98c09c0729373513a927",
     "packages": [
         {
             "name": "blocbeta/api-core",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/blocbeta/api-core.git",
-                "reference": "7c4216c54dcd1ad46db3311047ff57e64c303c39"
+                "reference": "831371156e30a5b690676ac9b3bb8ab63201a6f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/blocbeta/api-core/zipball/7c4216c54dcd1ad46db3311047ff57e64c303c39",
-                "reference": "7c4216c54dcd1ad46db3311047ff57e64c303c39",
+                "url": "https://api.github.com/repos/blocbeta/api-core/zipball/831371156e30a5b690676ac9b3bb8ab63201a6f8",
+                "reference": "831371156e30a5b690676ac9b3bb8ab63201a6f8",
                 "shasum": ""
             },
             "require": {
@@ -45,7 +45,7 @@
                 }
             ],
             "description": "BlocBeta API core components",
-            "time": "2020-09-28T13:47:34+00:00"
+            "time": "2020-09-29T12:40:42+00:00"
         },
         {
             "name": "composer/package-versions-deprecated",
@@ -5670,5 +5670,6 @@
         "ext-json": "*",
         "ext-redis": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

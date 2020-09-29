@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command\User;
+namespace App\Command;
 
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;

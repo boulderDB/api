@@ -5,6 +5,11 @@ lexik_jwt_authentication:
     token_ttl: '%env(JWT_TOKEN_EXPIRATION)%'
 
     token_extractors:
+        authorization_header:
+            enabled: true
+            prefix: Bearer
+            name: Authorization
+
         cookie:
             enabled: true
             name: BEARER
