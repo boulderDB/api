@@ -18,3 +18,4 @@ lexik_jwt_authentication:
     BEARER:
       secure: false
       samesite: lax
+      domain: '%env(JWT_TOKEN_COOKIE_DOMAIN)%'
