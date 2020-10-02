@@ -2,6 +2,9 @@
     "blocbeta/api-core": {
         "version": "1.0.0"
     },
+    "clue/stream-filter": {
+        "version": "v1.5.0"
+    },
     "composer/package-versions-deprecated": {
         "version": "1.11.99"
     },
@@ -90,8 +93,20 @@
     "egulias/email-validator": {
         "version": "2.1.17"
     },
+    "guzzlehttp/promises": {
+        "version": "1.4.0"
+    },
+    "guzzlehttp/psr7": {
+        "version": "1.7.0"
+    },
+    "http-interop/http-factory-guzzle": {
+        "version": "1.0.0"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
+    },
+    "jean85/pretty-package-versions": {
+        "version": "1.5.1"
     },
     "laminas/laminas-code": {
         "version": "3.4.1"
@@ -132,6 +147,24 @@
     "php": {
         "version": "7.4"
     },
+    "php-http/client-common": {
+        "version": "2.3.0"
+    },
+    "php-http/discovery": {
+        "version": "1.12.0"
+    },
+    "php-http/httplug": {
+        "version": "2.2.0"
+    },
+    "php-http/message": {
+        "version": "1.9.0"
+    },
+    "php-http/message-factory": {
+        "version": "v1.0.2"
+    },
+    "php-http/promise": {
+        "version": "1.1.0"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
@@ -141,8 +174,38 @@
     "psr/event-dispatcher": {
         "version": "1.0.0"
     },
+    "psr/http-client": {
+        "version": "1.0.1"
+    },
+    "psr/http-factory": {
+        "version": "1.0.1"
+    },
+    "psr/http-message": {
+        "version": "1.0.1"
+    },
     "psr/log": {
         "version": "1.1.3"
+    },
+    "ralouphie/getallheaders": {
+        "version": "3.0.3"
+    },
+    "sentry/sdk": {
+        "version": "2.2.0"
+    },
+    "sentry/sentry": {
+        "version": "2.5.0"
+    },
+    "sentry/sentry-symfony": {
+        "version": "3.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "9746f0823302d7980e5273ef7a69ef3f5ac80914"
+        },
+        "files": [
+            "config/packages/sentry.yaml"
+        ]
     },
     "symfony/cache": {
         "version": "v4.4.8"
@@ -228,6 +291,12 @@
             "src/Kernel.php"
         ]
     },
+    "symfony/http-client": {
+        "version": "v5.1.6"
+    },
+    "symfony/http-client-contracts": {
+        "version": "v2.2.0"
+    },
     "symfony/http-foundation": {
         "version": "v4.4.10"
     },
@@ -307,6 +376,9 @@
         "version": "v1.17.0"
     },
     "symfony/polyfill-php80": {
+        "version": "v1.18.1"
+    },
+    "symfony/polyfill-uuid": {
         "version": "v1.18.1"
     },
     "symfony/property-access": {
