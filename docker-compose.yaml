@@ -3,8 +3,8 @@ services:
   php-fpm:
     working_dir: /var/www
     build: _docker/php-fpm
-    ports:
-      - "9002:9000"
+    expose:
+      - 9000
     volumes:
       - ./:/var/www:cached
 
