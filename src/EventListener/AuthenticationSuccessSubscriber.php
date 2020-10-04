@@ -69,7 +69,6 @@ class AuthenticationSuccessSubscriber implements EventSubscriberInterface
                 "id" => $location->getId(),
                 "name" => $location->getName(),
                 "url" => $location->getUrl(),
-                "public" => $location->isPublic(),
             ];
         }
 

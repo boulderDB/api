@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Command\ProcessAccountDeletionsCommand;
+use App\Entity\Location;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
 use App\Factory\ResponseFactory;
 use App\Form\PasswordResetRequestType;
 use App\Form\PasswordResetType;
 use App\Form\UserType;
+use App\Repository\LocationRepository;
 use App\Repository\UserRepository;
 use App\Serializer\LocationSerializer;
 use App\Serializer\UserSerializer;
@@ -17,6 +19,9 @@ use BlocBeta\Controller\RateLimiterTrait;
 use BlocBeta\Controller\RequestTrait;
 use BlocBeta\Controller\ResponseTrait;
 use BlocBeta\Service\ContextService;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
+use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
+use Namshi\JOSE\JWS;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
@@ -48,6 +53,8 @@ class GlobalController extends AbstractController
     private MailerInterface $mailer;
     private ContextService $contextService;
     private TokenStorageInterface $tokenStorage;
+    private TokenExtractorInterface $tokenExtractor;
+    private LocationRepository $locationRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -55,7 +62,9 @@ class GlobalController extends AbstractController
         UserPasswordEncoderInterface $passwordEncoder,
         MailerInterface $mailer,
         ContextService $contextService,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
+        TokenExtractorInterface $tokenExtractor,
+        LocationRepository $locationRepository
     )
     {
         $this->entityManager = $entityManager;
@@ -65,6 +74,45 @@ class GlobalController extends AbstractController
         $this->mailer = $mailer;
         $this->contextService = $contextService;
         $this->tokenStorage = $tokenStorage;
+        $this->tokenExtractor = $tokenExtractor;
+        $this->locationRepository = $locationRepository;
+    }
+
+    /**
+     * @Route("/context", methods={"GET"})
+     */
+    public function context()
+    {
+        /**
+         * @var JWTUserToken $token
+         */
+        $token = $this->tokenStorage->getToken();
+        $user = $this->getUser();
+
+        /**
+         * @var Location $location
+         */
+        $location = $this->locationRepository->find($user->getLastVisitedLocation());
+
+        $jws = JWS::load($token->getCredentials());
+
+        return $this->okResponse([
+            "expiration" => $jws->getPayload()['exp'],
+            "target" => Request::createFromGlobals()->query->get("target"),
+            "targetLocation" => $location->getUrl(),
+            "location" => [
+                "id" => $location->getId(),
+                "name" => $location->getName(),
+                "url" => $location->getUrl()
+            ],
+            "fullRegistration" => $user->getLastName() && $user->getLastName(),
+            "user" => [
+                "id" => $user->getId(),
+                "username" => $user->getUsername(),
+                "roles" => $user->getRoles(),
+                "visible" => $user->isVisible(),
+            ],
+        ]);
     }
 
     /**
@@ -77,7 +125,7 @@ class GlobalController extends AbstractController
          */
         $user = $this->getUser();
 
-        return $this->json(UserSerializer::serialize($user));
+        return $this->okResponse(UserSerializer::serialize($user));
     }
 
     /**
@@ -187,6 +235,7 @@ class GlobalController extends AbstractController
 
         return $this->noContentResponse();
     }
+
 
     /**
      * @Route("/reset/{hash}", methods={"POST"})
