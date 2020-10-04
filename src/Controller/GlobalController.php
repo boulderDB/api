@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Command\User\ProcessAccountDeletionsCommand;
+use App\Command\ProcessAccountDeletionsCommand;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
 use App\Factory\ResponseFactory;

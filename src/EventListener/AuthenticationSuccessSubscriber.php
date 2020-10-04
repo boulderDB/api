@@ -42,6 +42,7 @@ class AuthenticationSuccessSubscriber implements EventSubscriberInterface
         $payload = array_merge($payload, [
             "expiration" => $expiration->getTimestamp(),
             "target" => Request::createFromGlobals()->query->get("target"),
+            "targetLocation" => null,
             "location" => null,
             "fullRegistration" => false,
             "user" => [
@@ -63,6 +64,7 @@ class AuthenticationSuccessSubscriber implements EventSubscriberInterface
              */
             $location = $this->locationRepository->find($user->getLastVisitedLocation());
 
+            $payload["targetLocation"] = $location->getUrl();
             $payload["location"] = [
                 "id" => $location->getId(),
                 "name" => $location->getName(),
