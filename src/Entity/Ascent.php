@@ -2,24 +2,17 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\TimestampableInterface;
-use App\Components\Entity\TimestampTrait;
-use App\Components\Entity\LocationResourceInterface;
-use App\Components\Entity\LocationTrait;
-use App\Components\Entity\UserResourceInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  * @ORM\Table(indexes={@ORM\Index(name="user", columns={"user_id"})})
- * @ORM\HasLifecycleCallbacks()
  */
 class Ascent implements LocationResourceInterface, TimestampableInterface, UserResourceInterface
 {
     public const ASCENT_TOP = 'top';
     public const ASCENT_FLASH = 'flash';
     public const ASCENT_RESIGNED = 'resignation';
-
     public const PENDING_DOUBT_FLAG = '-pending-doubt';
 
     use TimestampTrait;
@@ -30,111 +23,48 @@ class Ascent implements LocationResourceInterface, TimestampableInterface, UserR
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
-     * @var Boulder
      * @ORM\ManyToOne(targetEntity="Boulder", inversedBy="ascents")
      * @ORM\JoinColumn(name="boulder_id", referencedColumnName="id")
      */
-    private $boulder;
+    private ?Boulder $boulder = null;
 
     /**
-     * @var User
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="ascents")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
-    private $user;
+    private ?User $user = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string", nullable=false)
      */
-    private $type;
+    private ?string $type = null;
 
     /**
-     * @var int
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $score;
+    private ?int $score = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string", unique=true)
      */
-    private $checksum;
+    private ?string $checksum = null;
 
-    /**
-     * @var int
-     * @ORM\Column(name="user_id", type="integer")
-     */
-    private $userId;
-
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId(int $id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return Boulder
-     */
-    public function getBoulder()
+    public function getBoulder(): ?Boulder
     {
         return $this->boulder;
     }
 
-    /**
-     * @param Boulder $boulder
-     */
-    public function setBoulder(Boulder $boulder)
+    public function setBoulder(?Boulder $boulder): void
     {
         $this->boulder = $boulder;
-    }
-
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type)
-    {
-        $this->type = $type;
-    }
-
-    public function isType(string $type): bool
-    {
-        return $type === $this->getType();
-    }
-
-    public function setDoubted()
-    {
-        $this->setType($this->getType() . Ascent::PENDING_DOUBT_FLAG);
-    }
-
-    public function isDoubted(): bool
-    {
-        return strpos($this->getType(), Ascent::PENDING_DOUBT_FLAG) !== false;
-    }
-
-    public function getScore()
-    {
-        return $this->score;
-    }
-
-    public function setScore(int $score)
-    {
-        $this->score = round($score);
     }
 
     public function getUser(): ?User
@@ -142,20 +72,47 @@ class Ascent implements LocationResourceInterface, TimestampableInterface, UserR
         return $this->user;
     }
 
-    public function setUser(User $user)
+    public function setUser(?User $user): void
     {
         $this->user = $user;
     }
 
-    public function getChecksum()
+    public function getType(): ?string
     {
-        return $this->checksum;
+        return $this->type;
     }
 
-    /**
-     * @ORM\PrePersist()
-     */
-    public function setChecksum()
+    public function setType(?string $type): void
+    {
+        $this->type = $type;
+    }
+
+    public function getScore(): ?int
+    {
+        return $this->score;
+    }
+
+    public function setScore(?int $score): void
+    {
+        $this->score = $score;
+    }
+
+    public function isType(string $type): bool
+    {
+        return $type === $this->type;
+    }
+
+    public function setDoubted(): void
+    {
+        $this->type = $this->type . Ascent::PENDING_DOUBT_FLAG;
+    }
+
+    public function isDoubted(): bool
+    {
+        return strpos($this->type, Ascent::PENDING_DOUBT_FLAG) !== false;
+    }
+
+    public function setChecksum(): void
     {
         $this->checksum = md5($this->boulder->getId() . $this->user->getId());
     }

@@ -2,11 +2,9 @@
 
 namespace App\Controller;
 
-use App\Components\Controller\ApiControllerTrait;
-use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\BoulderError;
 use App\Form\BoulderErrorType;
-use BlocBeta\Service\ContextService;
+use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +16,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class BoulderErrorController extends AbstractController
 {
-    use ApiControllerTrait;
     use ContextualizedControllerTrait;
 
     private $entityManager;

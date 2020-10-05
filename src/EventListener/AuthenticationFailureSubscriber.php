@@ -2,7 +2,7 @@
 
 namespace App\EventListener;
 
-use App\Components\Controller\ApiControllerTrait;
+use App\Controller\RateLimiterTrait;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationFailureEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -19,6 +19,6 @@ class AuthenticationFailureSubscriber implements EventSubscriberInterface
 
     public function onAuthenticationFailure(AuthenticationFailureEvent $event)
     {
-        ApiControllerTrait::rateLimit(Request::createFromGlobals(), 'login', 10);
+        RateLimiterTrait::rateLimit(Request::createFromGlobals(), 'login', 10);
     }
 }

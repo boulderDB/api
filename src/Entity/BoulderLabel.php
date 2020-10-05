@@ -2,124 +2,70 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity()
+ */
 class BoulderLabel
 {
     /**
-     * @var string
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="integer")
      */
-    private $key;
+    private ?int $id = null;
 
     /**
-     * @var string
+     * @ORM\ManyToOne(targetEntity="Boulder", inversedBy="ascents")
+     * @ORM\JoinColumn(name="boulder_id", referencedColumnName="id")
      */
-    private $user;
+    private ?Boulder $boulder = null;
 
     /**
-     * @var string
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="ascents")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
-    private $boulder;
+    private ?User $user = null;
 
     /**
-     * @var string
+     * @ORM\Column(type="string")
      */
-    private $location;
+    private ?string $name = null;
 
-    /**
-     * @var string
-     */
-    private $title;
-
-    public static function createKey(string $location, string $user, string $boulder, string $title = null): string
+    public function getId(): ?int
     {
-        return "location={$location}:user={$user}:boulder={$boulder}:label={$title}";
+        return $this->id;
     }
 
-    public function toKey(): string
-    {
-        return self::createKey($this->location, $this->user, $this->boulder, $this->title);
-    }
-
-    public static function fromKey(string $key)
-    {
-        $label = new self();
-        $label->setKey($key);
-
-        // user=1:boulder=2:label=foo
-        $data = [];
-        $parts = explode(":", $key);
-
-        foreach ($parts as $part) {
-            $value = explode("=", $part);
-            $data[$value[0]] = $value[1];
-        }
-
-        $label->setBoulder($data['boulder']);
-        $label->setLocation($data['location']);
-        $label->setUser($data['user']);
-        $label->setTitle($data['label']);
-
-        return $label;
-    }
-
-    public function getKey(): ?string
-    {
-        return $this->key;
-    }
-
-    public function setKey(string $key): void
-    {
-        $this->key = $key;
-    }
-
-    public function getUser(): ?string
-    {
-        return $this->user;
-    }
-
-    public function setUser($user): void
-    {
-        if ($user instanceof User) {
-            $this->user = $user->getId();
-        } else {
-            $this->user = $user;
-        }
-    }
-
-    public function getBoulder(): ?string
+    public function getBoulder(): ?Boulder
     {
         return $this->boulder;
     }
 
-    public function setBoulder($boulder): void
+    public function setBoulder(?Boulder $boulder): void
     {
-        if ($boulder instanceof Boulder) {
-            $this->boulder = $boulder->getId();
-        } else {
-            $this->boulder = $boulder;
-        }
+        $this->boulder = $boulder;
     }
 
-    public function getLocation(): ?string
+    public function getUser(): ?User
     {
-        return $this->location;
+        return $this->user;
     }
 
-    public function setLocation($location): void
+    public function setUser(?User $user): void
     {
-        if ($location instanceof Location) {
-            $this->location = $location->getId();
-        } else {
-            $this->location = $location;
-        }
+        $this->user = $user;
     }
 
-    public function getTitle(): ?string
+    public function getName(): ?string
     {
-        return $this->title;
+        return $this->name;
     }
 
-    public function setTitle(string $title): void
+    public function setName(?string $name): void
     {
-        $this->title = preg_replace("/[^a-z0-9.]+/i", "", $title);
+        $this->name = $name;
     }
+
 }

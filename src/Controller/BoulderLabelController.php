@@ -2,12 +2,10 @@
 
 namespace App\Controller;
 
-use App\Components\Controller\ApiControllerTrait;
-use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\BoulderLabel;
 use App\Factory\RedisConnectionFactory;
 use App\Form\BoulderLabelType;
-use BlocBeta\Service\ContextService;
+use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,12 +17,11 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class BoulderLabelController extends AbstractController
 {
-    use ApiControllerTrait;
-    use ContextualizedControllerTrait;
 
-    private $entityManager;
-    private $contextService;
-    private $redis;
+
+    private EntityManagerInterface$entityManager;
+    private ContextService $contextService;
+    private \Redis $redis;
 
     public function __construct(
         EntityManagerInterface $entityManager,

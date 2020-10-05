@@ -77,3 +77,23 @@ compare:
   resource: ../../src/Controller/CompareController.php
   type: annotation
   prefix: /api/{location}/
+
+schedule:
+  resource: ../../src/Controller/ScheduleController.php
+  type: annotation
+  prefix: /api/{location}/
+
+reservation:
+  resource: ../../src/Controller/ReservationController.php
+  type: annotation
+  prefix: /api/{location}/
+
+guest_reservation:
+  resource: ../../src/Controller/GuestReservationController.php
+  type: annotation
+  prefix: /api/{location}/
+
+room:
+  resource: ../../src/Controller/RoomController.php
+  type: annotation
+  prefix: /api/{location}/

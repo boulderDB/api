@@ -2,16 +2,11 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\TimestampableInterface;
-use App\Components\Entity\TimestampTrait;
-use App\Components\Entity\LocationResourceInterface;
-use App\Components\Entity\LocationTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  * @ORM\Table(name="boulder_doubt")
- * @ORM\HasLifecycleCallbacks()
  */
 class AscentDoubt implements LocationResourceInterface, TimestampableInterface
 {
@@ -28,130 +23,98 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
-     * @var User
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
      */
-    private $author;
+    private ?User $author = null;
 
     /**
-     * @var User
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(name="recipient_id", referencedColumnName="id")
      */
-    private $recipient;
+    private ?User $recipient = null;
 
     /**
-     * @var Boulder
-     * @ORM\ManyToOne(targetEntity="Boulder")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Boulder")
      * @ORM\JoinColumn(name="boulder_id", referencedColumnName="id")
      */
-    private $boulder;
+    private ?Boulder $boulder = null;
 
     /**
-     * @var string
      * @ORM\Column(type="text", nullable=true)
      */
-    private $description;
+    private ?string $description = null;
 
     /**
-     * @var int
      * @ORM\Column(type="integer")
      */
-    private $status;
+    private int $status = self::STATUS_UNREAD;
 
-    /**
-     * AscentDoubt constructor.
-     */
-    public function __construct()
+    public static function getStatues(): array
     {
-        $this->status = self::STATUS_UNREAD;
+        return [
+            "unread" => self::STATUS_UNREAD,
+            "read" => self::STATUS_READ,
+            "resolved" => self::STATUS_RESOLVED,
+            "unresolved" => self::STATUS_UNRESOLVED
+        ];
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId(int $id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return User
-     */
-    public function getAuthor()
+    public function getAuthor(): ?User
     {
         return $this->author;
     }
 
-    /**
-     * @param User $author
-     */
-    public function setAuthor(User $author)
+    public function setAuthor(?User $author): void
     {
         $this->author = $author;
     }
 
-    /**
-     * @return User
-     */
-    public function getRecipient()
+    public function getRecipient(): ?User
     {
         return $this->recipient;
     }
 
-    /**
-     * @param User $recipient
-     */
-    public function setRecipient(User $recipient)
+    public function setRecipient(?User $recipient): void
     {
         $this->recipient = $recipient;
     }
 
-    /**
-     * @return Boulder
-     */
-    public function getBoulder()
+    public function getBoulder(): ?Boulder
     {
         return $this->boulder;
     }
 
-    /**
-     * @param Boulder $boulder
-     */
-    public function setBoulder(Boulder $boulder)
+    public function setBoulder(?Boulder $boulder): void
     {
         $this->boulder = $boulder;
     }
 
-    public function getStatus()
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    public function getStatus(): int
     {
         return $this->status;
     }
 
-    public function setStatus(int $status = self::STATUS_UNREAD)
+    public function setStatus(int $status): void
     {
         $this->status = $status;
-    }
-
-    public function setMessage(string $message): void
-    {
-        $this->description = $message;
-    }
-
-    public function getMessage(): ?string
-    {
-        return $this->description;
     }
 }

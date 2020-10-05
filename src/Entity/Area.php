@@ -2,14 +2,11 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\LocationResourceInterface;
-use App\Components\Entity\LocationTrait;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
  */
 class Area implements LocationResourceInterface
 {
@@ -20,77 +17,41 @@ class Area implements LocationResourceInterface
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string")
      */
-    private $name;
+    private ?string $name = null;
 
     /**
-     * @var ArrayCollection
      * @ORM\ManyToMany(targetEntity="App\Entity\Wall", fetch="LAZY", inversedBy="areas")
      * @ORM\JoinTable(name="area_walls")
      */
-    private $walls;
+    private ?Collection $walls;
 
-    /**
-     * @var string
-     * @ORM\Column(type="text")
-     */
-    private $gradeDiversityTargetMap;
-
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName(string $name)
+    public function setName(?string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return ArrayCollection
-     */
-    public function getWalls()
+    public function getWalls(): ?Collection
     {
         return $this->walls;
     }
 
-    /**
-     * @param ArrayCollection $walls
-     */
-    public function setWalls(ArrayCollection $walls)
+    public function setWalls(?Collection $walls): void
     {
         $this->walls = $walls;
-    }
-
-    public function getGradeDiversityTargetMap()
-    {
-        return $this->gradeDiversityTargetMap;
-    }
-
-    /**
-     * @param string $gradeDiversityTargetMap
-     */
-    public function setGradeDiversityTargetMap(string $gradeDiversityTargetMap)
-    {
-        $this->gradeDiversityTargetMap = $gradeDiversityTargetMap;
     }
 }

@@ -2,11 +2,10 @@
 
 namespace App\Controller;
 
-use App\Components\Controller\ContextualizedControllerTrait;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
 use App\Factory\ResponseFactory;
-use BlocBeta\Service\ContextService;
+use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,9 +19,9 @@ class SetterController extends AbstractController
 {
     use ContextualizedControllerTrait;
 
-    private $entityManager;
-    private $contextService;
-    private $redis;
+    private EntityManagerInterface $entityManager;
+    private ContextService $contextService;
+    private \Redis $redis;
 
     public function __construct(
         EntityManagerInterface $entityManager,

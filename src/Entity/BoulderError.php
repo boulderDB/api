@@ -2,14 +2,10 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\TimestampTrait;
-use App\Components\Entity\LocationResourceInterface;
-use App\Components\Entity\LocationTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\BoulderErrorRepository")
- * @ORM\HasLifecycleCallbacks()
+ * @ORM\Entity()
  */
 class BoulderError implements LocationResourceInterface
 {
@@ -24,37 +20,33 @@ class BoulderError implements LocationResourceInterface
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
-     * @var User
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
      */
-    private $author;
+    private ?User $author = null;
 
     /**
-     * @var Boulder
      * @ORM\ManyToOne(targetEntity="Boulder", inversedBy="errors")
      * @ORM\JoinColumn(name="boulder_id", referencedColumnName="id")
      */
-    private $boulder;
+    private ?Boulder $boulder = null;
 
     /**
-     * @var string
      * @ORM\Column(type="text", nullable=true)
      */
-    private $description;
+    private ?string  $description = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string")
      */
-    private $status;
+    private ?string $status = self::STATUS_UNRESOLVED;
 
-    public function __construct()
+    public static function getStatuses(): array
     {
-        $this->status = self::STATUS_UNRESOLVED;
+        return [self::STATUS_RESOLVED, self::STATUS_UNRESOLVED];
     }
 
     public function getId(): ?int
@@ -67,7 +59,7 @@ class BoulderError implements LocationResourceInterface
         return $this->author;
     }
 
-    public function setAuthor(User $author): void
+    public function setAuthor(?User $author): void
     {
         $this->author = $author;
     }
@@ -77,27 +69,27 @@ class BoulderError implements LocationResourceInterface
         return $this->boulder;
     }
 
-    public function setBoulder(Boulder $boulder): void
+    public function setBoulder(?Boulder $boulder): void
     {
         $this->boulder = $boulder;
     }
 
-    public function getMessage(): ?string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setMessage(string $message): void
+    public function setDescription(?string $description): void
     {
-        $this->description = $message;
+        $this->description = $description;
     }
 
-    public function getStatus()
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    public function setStatus(string $status)
+    public function setStatus(?string $status): void
     {
         $this->status = $status;
     }

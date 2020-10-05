@@ -11,127 +11,108 @@ use Doctrine\ORM\Mapping as ORM;
 class Location
 {
     /**
-     * @var int
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string", unique=true)
      */
-    private $name;
+    private ?string $name = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string", unique=true)
      */
-    private $url;
+    private ?string $url = null;
 
     /**
-     * @var boolean
      * @ORM\Column(type="boolean")
      */
-    private $public;
+    private ?string $public = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string")
      */
-    private $city;
+    private ?string $city = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string")
      */
-    private $zip;
+    private ?string $zip = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string")
      */
-    private $addressLineOne;
+    private ?string $addressLineOne = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string")
      */
-    private $addressLineTwo;
+    private ?string $addressLineTwo = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string")
      */
-    private $countryCode;
+    private ?string $countryCode = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string")
      */
-    private $image;
+    private ?string $image = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string")
      */
-    private $website;
+    private ?string $website = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string")
      */
-    private $facebook;
+    private ?string $facebook = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string")
      */
-    private $instagram;
+    private ?string $instagram = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string")
      */
-    private $twitter;
+    private ?string $twitter = null;
 
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id)
-    {
-        $this->id = $id;
-    }
-
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(?string $name): void
     {
         $this->name = $name;
     }
 
-    public function getUrl()
+    public function getUrl(): ?string
     {
         return $this->url;
     }
 
-    public function setUrl(string $url)
+    public function setUrl(?string $url): void
     {
         $this->url = $url;
     }
 
-    public function isPublic()
+    public function getPublic(): ?string
     {
         return $this->public;
     }
 
-    public function setPublic(bool $public)
+    public function setPublic(?string $public): void
     {
         $this->public = $public;
     }
@@ -141,7 +122,7 @@ class Location
         return $this->city;
     }
 
-    public function setCity(string $city): void
+    public function setCity(?string $city): void
     {
         $this->city = $city;
     }
@@ -151,7 +132,7 @@ class Location
         return $this->zip;
     }
 
-    public function setZip(string $zip): void
+    public function setZip(?string $zip): void
     {
         $this->zip = $zip;
     }
@@ -161,7 +142,7 @@ class Location
         return $this->addressLineOne;
     }
 
-    public function setAddressLineOne(string $addressLineOne): void
+    public function setAddressLineOne(?string $addressLineOne): void
     {
         $this->addressLineOne = $addressLineOne;
     }
@@ -171,7 +152,7 @@ class Location
         return $this->addressLineTwo;
     }
 
-    public function setAddressLineTwo(string $addressLineTwo): void
+    public function setAddressLineTwo(?string $addressLineTwo): void
     {
         $this->addressLineTwo = $addressLineTwo;
     }
@@ -181,7 +162,7 @@ class Location
         return $this->countryCode;
     }
 
-    public function setCountryCode(string $countryCode): void
+    public function setCountryCode(?string $countryCode): void
     {
         $this->countryCode = $countryCode;
     }
@@ -191,7 +172,7 @@ class Location
         return $this->image;
     }
 
-    public function setImage(string $image): void
+    public function setImage(?string $image): void
     {
         $this->image = $image;
     }
@@ -201,7 +182,7 @@ class Location
         return $this->website;
     }
 
-    public function setWebsite(string $website): void
+    public function setWebsite(?string $website): void
     {
         $this->website = $website;
     }
@@ -211,7 +192,7 @@ class Location
         return $this->facebook;
     }
 
-    public function setFacebook(string $facebook): void
+    public function setFacebook(?string $facebook): void
     {
         $this->facebook = $facebook;
     }
@@ -221,7 +202,7 @@ class Location
         return $this->instagram;
     }
 
-    public function setInstagram(string $instagram): void
+    public function setInstagram(?string $instagram): void
     {
         $this->instagram = $instagram;
     }
@@ -231,7 +212,7 @@ class Location
         return $this->twitter;
     }
 
-    public function setTwitter(string $twitter): void
+    public function setTwitter(?string $twitter): void
     {
         $this->twitter = $twitter;
     }

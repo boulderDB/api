@@ -7,7 +7,6 @@
         "ext-iconv": "*",
         "ext-json": "*",
         "ext-redis": "*",
-        "blocbeta/api-core": "1.0.4",
         "lexik/jwt-authentication-bundle": "dev-master as 2.9",
         "sentry/sentry-symfony": "^3.5",
         "symfony/console": "^5.1",

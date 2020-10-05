@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\LocationResourceInterface;
-use App\Components\Entity\LocationTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -18,129 +16,86 @@ class Grade implements LocationResourceInterface
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
-     * @var string
      * @ORM\Column(name="name", type="string", nullable=false)
      */
-    private $name;
+    private ?string $name = null;
 
     /**
-     * @var int
      * @ORM\Column(type="integer", nullable=false)
      */
-    private $position;
+    private ?int  $position = null;
 
     /**
-     * @var boolean
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $public;
+    private bool $public = true;
 
     /**
-     * @var string
      * @ORM\Column(type="string", nullable=true)
      */
-    private $color;
+    private ?string $color = null;
 
     /**
-     * @var Grade
-     * @ORM\ManyToOne(targetEntity="Grade")
-     * @ORM\JoinColumn(name="external_grade", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Grade")
+     * @ORM\JoinColumn(name="internal_grade", referencedColumnName="id")
      */
-    private $externalGradeMapping;
+    private ?Grade $internalGrade;
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName(string $name)
+    public function setName(?string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return int
-     */
-    public function getPosition()
+    public function getPosition(): ?int
     {
         return $this->position;
     }
 
-    /**
-     * @param int $position
-     */
-    public function setPosition(int $position)
+    public function setPosition(?int $position): void
     {
         $this->position = $position;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPublic()
+    public function isPublic(): bool
     {
         return $this->public;
     }
 
-    /**
-     * @param bool $public
-     */
-    public function setPublic(bool $public)
+    public function setPublic(bool $public): void
     {
         $this->public = $public;
     }
 
-    /**
-     * @return string
-     */
-    public function getColor()
+    public function getColor(): ?string
     {
         return $this->color;
     }
 
-    /**
-     * @param string $color
-     */
-    public function setColor(string $color)
+    public function setColor(?string $color): void
     {
         $this->color = $color;
     }
 
-    public function getExternalGradeMapping()
+    public function getInternalGrade(): ?Grade
     {
-        return $this->externalGradeMapping;
+        return $this->internalGrade;
     }
 
-    /**
-     * @param Grade $externalGradeMapping
-     */
-    public function setExternalGradeMapping(Grade $externalGradeMapping)
+    public function setInternalGrade(?Grade $internalGrade): void
     {
-        $this->externalGradeMapping = $externalGradeMapping;
+        $this->internalGrade = $internalGrade;
     }
 }

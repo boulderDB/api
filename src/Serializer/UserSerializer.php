@@ -16,11 +16,6 @@ class UserSerializer
             "firstName" => $user->getFirstName(),
             "lastName" => $user->getLastName(),
             "email" => $user->getEmail(),
-            "armSpan" => $user->getArmSpan(),
-            "height" => $user->getHeight(),
-            "weight" => $user->getWeight(),
-            "apeIndex" => $user->getApeIndex(),
-            "gender" => $user->getGender(),
         ];
     }
 }

@@ -6,7 +6,7 @@ use App\Entity\Location;
 use App\Entity\User;
 use App\Repository\AscentDoubtRepository;
 use App\Repository\LocationRepository;
-use BlocBeta\Factory\RedisConnectionFactory;
+use App\Factory\RedisConnectionFactory;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;

@@ -2,10 +2,6 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\LocationResourceInterface;
-use App\Components\Entity\TimestampableInterface;
-use App\Components\Entity\TimestampTrait;
-use App\Components\Entity\LocationTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -23,310 +19,100 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
 
     const STATUS_ACTIVE = 'active';
     const STATUS_INACTIVE = 'inactive';
-    const NEW_BOULDERS_DATE_MODIFIER = '-14days';
 
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string")
      */
-    private $name;
+    private ?string $name = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="HoldStyle")
+     * @ORM\ManyToOne(targetEntity="App\Entity\HoldType")
      * @ORM\JoinColumn(name="color_id", referencedColumnName="id", nullable=true)
      */
-    private $color;
+    private ?HoldType $color = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Grade")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Grade")
      * @ORM\JoinColumn(name="grade_id", referencedColumnName="id")
      */
-    private $grade;
+    private ?Grade $grade = null;
 
     /**
-     * @var Grade
-     * @ORM\ManyToOne(targetEntity="Grade")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Grade")
      * @ORM\JoinColumn(name="internal_grade_id", referencedColumnName="id")
      */
-    private $internalGrade;
+    private ?Grade $internalGrade = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Wall", inversedBy="boulders")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Wall", inversedBy="boulders")
      * @ORM\JoinColumn(name="start_wall_id", referencedColumnName="id")
      */
-    private $startWall;
+    private ?Wall $startWall = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Wall")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Wall")
      * @ORM\JoinColumn(name="end_wall_id", referencedColumnName="id", nullable=true)
      */
-    private $endWall;
+    private ?Wall $endWall = null;
 
     /**
      * @ORM\Column(type="string")
      */
-    private $status;
+    private string $status = self::STATUS_ACTIVE;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private int $points = self::DEFAULT_SCORE;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $removedAt;
+    private ?\DateTime $removedAt = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="boulders", fetch="LAZY")
      * @ORM\JoinTable(name="boulder_setters")
      */
-    private $setters;
+    private ?Collection $setters = null;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\OneToMany(targetEntity="App\Entity\Ascent", mappedBy="boulder", fetch="LAZY", cascade={"remove"})
      */
-    private $points;
+    private ?Collection $ascents = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="Ascent", mappedBy="boulder", fetch="LAZY", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\BoulderError", mappedBy="boulder", fetch="LAZY")
      */
-    private $ascents;
+    private ?Collection $errors = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="BoulderError", mappedBy="boulder", fetch="LAZY")
-     */
-    private $errors;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="boulders", fetch="LAZY")
-     */
-    private $events;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Tag", fetch="LAZY")
+     * @ORM\ManyToMany(targetEntity="App\Entity\BoulderTag", fetch="LAZY")
      * @ORM\JoinTable(name="boulder_tags",
      *     joinColumns={
      *         @ORM\JoinColumn(name="boulder_id", referencedColumnName="id"),
      *         @ORM\JoinColumn(name="tag_id", referencedColumnName="id"),
      *      })
      */
-    private $tags;
-
-    /**
-     * @var int
-     */
-    private $currentScore;
-
-    /**
-     * @var int
-     */
-    private $ascentCount;
-
-    /**
-     * @var Ascent
-     */
-    private $userAscent;
+    private ?Collection $tags = null;
 
     public function __construct()
     {
         $this->setters = new ArrayCollection();
         $this->ascents = new ArrayCollection();
         $this->errors = new ArrayCollection();
-        $this->events = new ArrayCollection();
         $this->tags = new ArrayCollection();
-
-        $this->points = self::DEFAULT_SCORE;
     }
 
-    public function getId()
+    public static function getStatuses(): array
     {
-        return $this->id;
-    }
-
-    public function setId($id): void
-    {
-        $this->id = $id;
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    public function setName($name): void
-    {
-        $this->name = $name;
-    }
-
-    public function getHoldStyle(): ?HoldStyle
-    {
-        return $this->color;
-    }
-
-    public function setHoldStyle(HoldStyle $color): void
-    {
-        $this->color = $color;
-    }
-
-    public function getGrade(): ?Grade
-    {
-        return $this->grade;
-    }
-
-    public function setGrade(Grade $grade): void
-    {
-        $this->grade = $grade;
-    }
-
-    public function getInternalGrade(): ?Grade
-    {
-        return $this->internalGrade;
-    }
-
-    public function setInternalGrade(Grade $internalGrade): void
-    {
-        $this->internalGrade = $internalGrade;
-    }
-
-    public function getStartWall()
-    {
-        return $this->startWall;
-    }
-
-    public function setStartWall($startWall): void
-    {
-        $this->startWall = $startWall;
-    }
-
-    public function getEndWall()
-    {
-        return $this->endWall;
-    }
-
-    public function setEndWall($endWall): void
-    {
-        $this->endWall = $endWall;
-    }
-
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    public function isActive(): bool
-    {
-        return $this->status === self::STATUS_ACTIVE;
-    }
-
-    public function setStatus($status): void
-    {
-        $this->status = $status;
-    }
-
-    public function getRemovedAt()
-    {
-        return $this->removedAt;
-    }
-
-    public function setRemovedAt($removedAt): void
-    {
-        $this->removedAt = $removedAt;
-    }
-
-    public function getSetters()
-    {
-        return $this->setters;
-    }
-
-    public function setSetters($setters): void
-    {
-        $this->setters = $setters;
-    }
-
-    public function getPoints()
-    {
-        return $this->points;
-    }
-
-    public function setPoints($points): void
-    {
-        $this->points = $points;
-    }
-
-    public function getAscents(): Collection
-    {
-        return $this->ascents;
-    }
-
-    public function setAscents(Collection $ascents): void
-    {
-        $this->ascents = $ascents;
-    }
-
-    public function clearAscents(): void
-    {
-        $this->ascents->clear();
-    }
-
-    public function getErrors()
-    {
-        return $this->errors;
-    }
-
-    public function setErrors($errors): void
-    {
-        $this->errors = $errors;
-    }
-
-    public function getEvents()
-    {
-        return $this->events;
-    }
-
-    public function setEvents($events): void
-    {
-        $this->events = $events;
-    }
-
-    public function getTags()
-    {
-        return $this->tags;
-    }
-
-    public function setTags($tags): void
-    {
-        $this->tags = $tags;
-    }
-
-    public function getCurrentScore(): int
-    {
-        return $this->currentScore;
-    }
-
-    public function setCurrentScore(int $currentScore): void
-    {
-        $this->currentScore = $currentScore;
-    }
-
-    public function getAscentCount(): int
-    {
-        return $this->ascentCount;
-    }
-
-    public function setAscentCount(int $ascentCount): void
-    {
-        $this->ascentCount = $ascentCount;
-    }
-
-    public function getUserAscent(): Ascent
-    {
-        return $this->userAscent;
-    }
-
-    public function setUserAscent(Ascent $userAscent): void
-    {
-        $this->userAscent = $userAscent;
+        return [self::STATUS_ACTIVE, self::STATUS_INACTIVE];
     }
 }

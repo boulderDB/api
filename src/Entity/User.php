@@ -2,19 +2,16 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Table(name="users")
  * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
  */
-class User implements UserInterface, \Serializable, EquatableInterface
+class User implements UserInterface
 {
     public const USER = 'USER';
     public const SETTER = 'SETTER';
@@ -24,140 +21,17 @@ class User implements UserInterface, \Serializable, EquatableInterface
     public const ROLE_SETTER = 'ROLE_' . self::SETTER;
     public const ROLE_ADMIN = 'ROLE_' . self::ADMIN;
 
-    use TimestampTrait;
-
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string", length=64, unique=true)
      */
-    private $username;
-
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=64, unique=true)
-     */
-    private $email;
-
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=64)
-     */
-    private $password;
-
-    /**
-     * @var string
-     */
-    private $plainPassword;
-
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=64)
-     */
-    private $gender;
-
-    /**
-     * @var \DateTime
-     * @ORM\Column(type="date", nullable=true)
-     */
-    private $birthday;
-
-    /**
-     * @var \DateTime
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $lastLogin;
-
-    /**
-     * @var \DateTime
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $lastActivity;
-
-    /**
-     * @var string
-     * @ORM\Column(type="string", nullable=true)
-     */
-    private $signature;
-
-    /**
-     * @var int
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $armSpan;
-
-    /**
-     * @var int
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $height;
-
-    /**
-     * @var boolean
-     * @ORM\Column(type="boolean")
-     */
-    private $active;
-
-    /**
-     * @var array
-     * @ORM\Column(type="array")
-     */
-    private $roles;
-
-    /**
-     * @var boolean
-     * @ORM\Column(type="boolean",)
-     */
-    private $visible = true;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Ascent", mappedBy="user", fetch="LAZY")
-     */
-    private $ascents;
-
-    /**
-     * Set boulders
-     * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="App\Entity\Boulder", mappedBy="setters", fetch="LAZY")
-     */
-    private $boulders;
-
-    /**
-     * @var UploadedFile
-     * @ORM\Column(type="string", nullable=true)
-     */
-    private $media;
-
-    /**
-     * @var Event[]
-     * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="participants", fetch="LAZY")
-     */
-    private $events;
-
-    /**
-     * @var Location[]
-     * @ORM\ManyToMany(targetEntity="Location", fetch="LAZY")
-     * @ORM\JoinTable(name="user_tenants")
-     */
-    private $tenants;
-
-    /**
-     * @var int
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $lastVisitedLocation;
-
-    /**
-     * @var int
-     * @ORM\column(type="integer", nullable=true)
-     */
-    private $weight;
+    private ?string $username = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -168,6 +42,63 @@ class User implements UserInterface, \Serializable, EquatableInterface
      * @ORM\Column(type="string", nullable=true)
      */
     private ?string $lastName = null;
+
+    /**
+     * @ORM\Column(type="string", length=64, unique=true)
+     */
+    private ?string $email = null;
+
+    /**
+     * @ORM\Column(type="string", length=64)
+     */
+    private ?string $password = null;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private bool $active = true;
+
+    /**
+     * @ORM\Column(type="array")
+     */
+    private array $roles = [];
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private bool $visible = true;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private ?string $media = null;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private ?int $lastVisitedLocation = null;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?\DateTime $lastActivity = null;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Ascent", mappedBy="user", fetch="LAZY")
+     */
+    private ?Collection $ascents = null;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Boulder", mappedBy="setters", fetch="LAZY")
+     */
+    private ?Collection $boulders = null;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="participants", fetch="LAZY")
+     */
+    private ?Collection $events = null;
+
+    private ?string $plainPassword = null;
 
     public function __construct()
     {
@@ -180,289 +111,19 @@ class User implements UserInterface, \Serializable, EquatableInterface
         $this->roles = [self::ROLE_USER];
     }
 
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id)
-    {
-        $this->id = $id;
-    }
-
-    public function getUsername()
+    public function getUsername(): ?string
     {
         return $this->username;
     }
 
-    public function setUsername(string $username)
+    public function setUsername(?string $username): void
     {
         $this->username = $username;
-    }
-
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email)
-    {
-        $this->email = $email;
-    }
-
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password)
-    {
-        $this->password = $password;
-    }
-
-    public function getPlainPassword()
-    {
-        return $this->plainPassword;
-    }
-
-    public function setPlainPassword(string $plainPassword)
-    {
-        $this->plainPassword = $plainPassword;
-    }
-
-    public function getGender()
-    {
-        return $this->gender;
-    }
-
-    public function setGender(string $gender)
-    {
-        $this->gender = $gender;
-    }
-
-    public function getBirthday()
-    {
-        return $this->birthday;
-    }
-
-    public function setBirthday(\DateTime $birthday = null)
-    {
-        $this->birthday = $birthday;
-    }
-
-    public function getLastLogin()
-    {
-        return $this->lastLogin;
-    }
-
-    public function setLastLogin(\DateTime $lastLogin = null)
-    {
-        $this->lastLogin = $lastLogin;
-    }
-
-    public function getLastActivity()
-    {
-        return $this->lastActivity;
-    }
-
-    public function setLastActivity(\DateTime $lastActivity = null)
-    {
-        $this->lastActivity = $lastActivity;
-    }
-
-    public function getSignature()
-    {
-        return $this->signature;
-    }
-
-    public function setSignature(string $signature)
-    {
-        $this->signature = $signature;
-    }
-
-    public function getArmSpan()
-    {
-        return $this->armSpan;
-    }
-
-    public function setArmSpan(int $armSpan = null)
-    {
-        $this->armSpan = $armSpan;
-    }
-
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    public function setHeight(int $height = null)
-    {
-        $this->height = $height;
-    }
-
-    public function getApeIndex()
-    {
-        return $this->armSpan - $this->height;
-    }
-
-    public function isActive()
-    {
-        return $this->active;
-    }
-
-    public function setActive(bool $active)
-    {
-        $this->active = $active;
-    }
-
-    public function hasRole(string $role)
-    {
-        return in_array($role, $this->roles);
-    }
-
-    public function getRoles()
-    {
-        return $this->roles;
-    }
-
-    public function setRoles(array $roles)
-    {
-        $this->roles = $roles;
-    }
-
-    public function addRole(string $role)
-    {
-        $this->roles[] = $role;
-    }
-
-    public function removeRole(string $role)
-    {
-        return $this->roles = array_diff($this->roles, [$role]);
-    }
-
-    public function getSalt()
-    {
-        return null;
-    }
-
-    public function eraseCredentials()
-    {
-        $this->plainPassword = null;
-    }
-
-    public function serialize()
-    {
-        return serialize([
-            $this->id,
-            $this->username,
-        ]);
-    }
-
-    public function unserialize($serialized)
-    {
-        list (
-            $this->id,
-            $this->username,
-            ) = unserialize($serialized);
-    }
-
-    public function isAccountNonExpired()
-    {
-        return true;
-    }
-    
-    public function isAccountNonLocked()
-    {
-        return true;
-    }
-
-    public function isCredentialsNonExpired()
-    {
-        return true;
-    }
-
-    public function isEnabled()
-    {
-        return $this->active;
-    }
-
-    public function isVisible(): bool
-    {
-        return $this->visible;
-    }
-
-    public function setVisible(bool $visible)
-    {
-        $this->visible = $visible;
-    }
-
-    public function getAscents()
-    {
-        return $this->ascents;
-    }
-
-    public function setAscents($ascents)
-    {
-        $this->ascents = $ascents;
-    }
-
-    public function addBoulder(Boulder $boulder)
-    {
-        $this->boulders->add($boulder);
-    }
-
-    public function getBoulders()
-    {
-        return $this->boulders;
-    }
-
-    public function setBoulders(ArrayCollection $boulders)
-    {
-        $this->boulders = $boulders;
-    }
-
-    public function getMedia()
-    {
-        return $this->media;
-    }
-
-    public function setMedia($media)
-    {
-        $this->media = $media;
-    }
-
-    public function getEvents()
-    {
-        return $this->events;
-    }
-
-    public function setEvents(array $events)
-    {
-        $this->events = $events;
-    }
-
-    public function getLastVisitedLocation(): ?int
-    {
-        return $this->lastVisitedLocation;
-    }
-
-    public function setLastVisitedLocation(int $lastVisitedLocation): void
-    {
-        $this->lastVisitedLocation = $lastVisitedLocation;
-    }
-    public function isEqualTo(UserInterface $user)
-    {
-        return $this->getUsername() === $user->getUsername();
-    }
-
-    public function getWeight(): ?int
-    {
-        return $this->weight;
-    }
-
-    public function setWeight(int $weight): void
-    {
-        $this->weight = $weight;
     }
 
     public function getFirstName(): ?string
@@ -483,5 +144,135 @@ class User implements UserInterface, \Serializable, EquatableInterface
     public function setLastName(?string $lastName): void
     {
         $this->lastName = $lastName;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): void
+    {
+        $this->email = $email;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): void
+    {
+        $this->password = $password;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): void
+    {
+        $this->active = $active;
+    }
+
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(array $roles): void
+    {
+        $this->roles = $roles;
+    }
+
+    public function isVisible(): bool
+    {
+        return $this->visible;
+    }
+
+    public function setVisible(bool $visible): void
+    {
+        $this->visible = $visible;
+    }
+
+    public function getMedia(): ?string
+    {
+        return $this->media;
+    }
+
+    public function setMedia(?string $media): void
+    {
+        $this->media = $media;
+    }
+
+    public function getLastVisitedLocation(): ?int
+    {
+        return $this->lastVisitedLocation;
+    }
+
+    public function setLastVisitedLocation(?int $lastVisitedLocation): void
+    {
+        $this->lastVisitedLocation = $lastVisitedLocation;
+    }
+
+    public function getLastActivity(): ?\DateTime
+    {
+        return $this->lastActivity;
+    }
+
+    public function setLastActivity(?\DateTime $lastActivity): void
+    {
+        $this->lastActivity = $lastActivity;
+    }
+
+    public function getAscents()
+    {
+        return $this->ascents;
+    }
+
+    public function setAscents($ascents): void
+    {
+        $this->ascents = $ascents;
+    }
+
+    public function getBoulders()
+    {
+        return $this->boulders;
+    }
+
+    public function setBoulders($boulders): void
+    {
+        $this->boulders = $boulders;
+    }
+
+    public function getEvents()
+    {
+        return $this->events;
+    }
+
+    public function setEvents($events): void
+    {
+        $this->events = $events;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): void
+    {
+        $this->plainPassword = $plainPassword;
+    }
+
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function eraseCredentials()
+    {
+        $this->plainPassword = null;
     }
 }

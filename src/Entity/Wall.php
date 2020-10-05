@@ -2,11 +2,9 @@
 
 namespace App\Entity;
 
-use App\Components\Entity\LocationResourceInterface;
-use App\Components\Entity\LocationTrait;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @ORM\Entity()
@@ -20,35 +18,32 @@ class Wall implements LocationResourceInterface
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
-     * @var string
      * @ORM\Column(name="name", type="string", nullable=false)
      */
-    private $name;
+    private ?string $name = null;
 
     /**
-     * @var string
      * @ORM\Column(name="description", type="text")
      */
-    private $description;
+    private ?string $description = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Boulder", mappedBy="startWall", fetch="LAZY")
-     */
-    private $boulders;
-
-    /**
-     * @var UploadedFile
      * @ORM\Column(type="string", nullable=true)
      */
-    private $media;
+    private ?string $media = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Area", mappedBy="walls", fetch="LAZY")
      */
-    private $areas;
+    private ?Collection $areas = null;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Boulder", mappedBy="startWall", fetch="LAZY")
+     */
+    private ?Collection $boulders = null;
 
     public function __construct()
     {
@@ -56,102 +51,58 @@ class Wall implements LocationResourceInterface
         $this->areas = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId(int $id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName(string $name)
+    public function setName(?string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     */
-    public function setDescription(string $description)
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
     }
 
-    /**
-     * @return ArrayCollection
-     */
-    public function getBoulders()
-    {
-        return $this->boulders;
-    }
-
-    /**
-     * @param ArrayCollection $boulders
-     */
-    public function setBoulders(ArrayCollection $boulders)
-    {
-        $this->boulders = $boulders;
-    }
-
-    /**
-     * @param Boulder $boulder
-     */
-    public function addBoulder(Boulder $boulder)
-    {
-        $this->boulders->add($boulder);
-    }
-
-    /**
-     * @return UploadedFile
-     */
-    public function getMedia()
+    public function getMedia(): ?string
     {
         return $this->media;
     }
 
-    /**
-     * @param UploadedFile $media
-     */
-    public function setMedia($media)
+    public function setMedia(?string $media): void
     {
         $this->media = $media;
     }
 
-    public function getActiveBoulders()
+    public function getAreas(): ?Collection
     {
-        return $this->getBoulders()->filter(function (Boulder $boulder) {
+        return $this->areas;
+    }
 
-            /**
-             * @var Boulder
-             */
-            return $boulder->getStatus() === Boulder::STATUS_ACTIVE;
-        });
+    public function setAreas(Collection $areas): void
+    {
+        $this->areas = $areas;
+    }
+
+    public function getBoulders(): ?Collection
+    {
+        return $this->boulders;
+    }
+
+    public function setBoulders(Collection $boulders): void
+    {
+        $this->boulders = $boulders;
     }
 }

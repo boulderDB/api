@@ -3,12 +3,13 @@
 namespace App\Form;
 
 use App\Entity\Boulder;
+use App\Entity\BoulderTag;
 use App\Entity\Grade;
 use App\Entity\HoldStyle;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Entity\Wall;
-use BlocBeta\Service\ContextService;
+use App\Service\ContextService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -88,7 +89,7 @@ class BoulderType extends AbstractType
                 ]
             )
             ->add('tags', EntityType::class, [
-                'class' => Tag::class,
+                'class' => BoulderTag::class,
                 'multiple' => true,
                 'constraints' => [new NotNull()],
                 'query_builder' => $locationQuery

@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Components\Entity;
+namespace App\Entity;
+
 
 use App\Entity\User;
 

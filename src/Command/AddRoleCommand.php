@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Entity\User;
-use BlocBeta\Service\ContextService;
+use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Command\Command;

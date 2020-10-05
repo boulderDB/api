@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components\Scoring;
+namespace App\Scoring;
 
 use App\Entity\Ascent;
 use App\Struct\BoulderStruct;

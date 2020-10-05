@@ -2,7 +2,6 @@
 
 namespace App\Scoring;
 
-use App\Components\Scoring\ScoringInterface;
 use App\Entity\Ascent;
 use App\Struct\AscentStruct;
 use App\Struct\BoulderStruct;

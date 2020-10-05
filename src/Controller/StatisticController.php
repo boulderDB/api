@@ -2,9 +2,8 @@
 
 namespace App\Controller;
 
-use App\Components\Controller\ApiControllerTrait;
 use App\Entity\Boulder;
-use BlocBeta\Service\ContextService;
+use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,10 +13,9 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class StatisticController extends AbstractController
 {
-    use ApiControllerTrait;
 
-    private $entityManager;
-    private $contextService;
+    private EntityManagerInterface $entityManager;
+    private ContextService $contextService;
 
     public function __construct(
         EntityManagerInterface $entityManager,

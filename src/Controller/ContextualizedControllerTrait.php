@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Components\Controller;
+namespace App\Controller;
 
 use App\Entity\User;
-use BlocBeta\Service\ContextService;
+use App\Service\ContextService;
 
 /**
  * @property ContextService $contextService
  * @method denyAccessUnlessGranted($attributes, $subject = null, string $message = 'Access Denied.')
- *
  */
 trait ContextualizedControllerTrait
 {

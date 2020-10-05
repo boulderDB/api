@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Command\IndexCurrentCommand;
 use App\Factory\RedisConnectionFactory;
 use App\Repository\BoulderRepository;
-use BlocBeta\Service\ContextService;
+use App\Service\ContextService;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 

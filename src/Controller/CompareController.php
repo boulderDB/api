@@ -6,8 +6,7 @@ use App\Entity\Ascent;
 use App\Entity\Boulder;
 use App\Entity\User;
 use App\Factory\ResponseFactory;
-use App\Service\CompareService;
-use BlocBeta\Service\ContextService;
+use App\Service\ContextService;
 use App\Struct\ComparisonStruct;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NoResultException;
@@ -22,18 +21,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class CompareController extends AbstractController
 {
     private $entityManager;
-    private $compareService;
     private $contextService;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CompareService $compareService,
-        ContextService $contextService
+        EntityManagerInterface $entityManager
     )
     {
         $this->entityManager = $entityManager;
-        $this->compareService = $compareService;
-        $this->contextService = $contextService;
     }
 
     /**

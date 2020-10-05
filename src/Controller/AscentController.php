@@ -2,16 +2,14 @@
 
 namespace App\Controller;
 
-use App\Components\Controller\ApiControllerTrait;
 use App\Components\Scoring\ScoringInterface;
 use App\Entity\Ascent;
 use App\Entity\AscentDoubt;
 use App\Entity\Boulder;
-use App\Factory\ResponseFactory;
 use App\Form\AscentDoubtType;
 use App\Form\AscentType;
 use App\Serializer\AscentSerializer;
-use BlocBeta\Service\ContextService;
+use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,10 +22,11 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AscentController extends AbstractController
 {
-    use ApiControllerTrait;
+    use ResponseTrait;
+    use RequestTrait;
 
-    private $entityManager;
-    private $contextService;
+    private EntityManagerInterface $entityManager;
+    private ContextService $contextService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -49,10 +48,10 @@ class AscentController extends AbstractController
         $ascent->setLocation($this->contextService->getLocation());
 
         $form = $this->createForm(AscentType::class, $ascent);
-        $form->submit(json_decode($request->getContent(), true), false);
+        $form->submit(self::decodePayLoad($request));
 
         if (!$form->isValid()) {
-            return $this->badRequest($this->getFormErrors($form));
+            return $this->badFormRequestResponse($form);
         }
 
         if (!$ascent->getBoulder()->isActive()) {
@@ -76,7 +75,7 @@ class AscentController extends AbstractController
         $ascent = $this->entityManager->getRepository(Ascent::class)->find($id);
 
         if (!$ascent) {
-            return $this->notFound("Ascent", $id);
+            return $this->resourceNotFoundResponse("Ascent", $id);
         }
 
         $this->entityManager->remove($ascent);
@@ -154,7 +153,7 @@ class AscentController extends AbstractController
         $ascent = $this->entityManager->getRepository(Ascent::class)->find($id);
 
         if (!$ascent) {
-            return $this->notFound("Ascent", $id);
+            return $this->resourceNotFoundResponse("Ascent", $id);
         }
 
         $ascentDoubt->setBoulder($ascent->getBoulder());
@@ -163,7 +162,7 @@ class AscentController extends AbstractController
         $form->submit(json_decode($request->getContent(), true));
 
         if (!$form->isValid()) {
-            return $this->json($this->getFormErrors($form));
+            return $this->badFormRequestResponse($form);
         }
 
         $ascent->setDoubted();
