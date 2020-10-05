@@ -44,6 +44,11 @@ class User implements UserInterface
     private ?string $lastName = null;
 
     /**
+     * @ORM\Column(type="string")
+     */
+    private ?string $gender = null;
+
+    /**
      * @ORM\Column(type="string", length=64, unique=true)
      */
     private ?string $email = null;
@@ -144,6 +149,16 @@ class User implements UserInterface
     public function setLastName(?string $lastName): void
     {
         $this->lastName = $lastName;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?string $gender): void
+    {
+        $this->gender = $gender;
     }
 
     public function getEmail(): ?string
