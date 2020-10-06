@@ -53,7 +53,7 @@ class TimeSlot
     /**
      * @ORM\Column(type="integer")
      */
-    private int $allowQuantity = 1;
+    private ?int $allowQuantity = null;
 
     private ?Collection $reservations;
 
@@ -127,12 +127,12 @@ class TimeSlot
         $this->room = $room;
     }
 
-    public function getAllowQuantity(): int
+    public function getAllowQuantity(): ?int
     {
         return $this->allowQuantity;
     }
 
-    public function setAllowQuantity(int $allowQuantity): void
+    public function setAllowQuantity(?int $allowQuantity): void
     {
         $this->allowQuantity = $allowQuantity;
     }
