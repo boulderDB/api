@@ -85,7 +85,7 @@ class Reservation implements UserResourceInterface
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private int $quantity = 1;
+    private ?int $quantity = null;
 
     public function getId(): ?int
     {
@@ -228,12 +228,12 @@ class Reservation implements UserResourceInterface
         $this->username = $username;
     }
 
-    public function getQuantity(): int
+    public function getQuantity(): ?int
     {
         return $this->quantity;
     }
 
-    public function setQuantity(int $quantity): void
+    public function setQuantity(?int $quantity): void
     {
         $this->quantity = $quantity;
     }
