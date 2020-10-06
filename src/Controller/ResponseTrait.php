@@ -18,6 +18,10 @@ trait ResponseTrait
             $message = "{$name} '$id' not found'";
         }
 
+        if ($name && !$id) {
+            $message = "{$name} not found'";
+        }
+
         return $this->json([
             "type" => "notFound",
             "message" => $message,

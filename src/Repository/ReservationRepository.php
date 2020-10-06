@@ -29,21 +29,14 @@ class ReservationRepository extends ServiceEntityRepository
         return md5($dump);
     }
 
-    public function findReservations(string $hash): array
+    public function findReservations(string $hash, bool $fullResult = false): array
     {
-        $statement = "SELECT reservation.id, users.first_name, users.last_name, users.email, users.username, reservation.appeared FROM reservation INNER JOIN users ON reservation.user_id = users.id WHERE hash_id = :hash";
-        $query = $this->getEntityManager()->getConnection()->prepare($statement);
+        if ($fullResult) {
+            $statement = "SELECT reservation.id, users.first_name, users.last_name, users.email, users.username, reservation.appeared, reservation.quantity FROM reservation INNER JOIN users ON reservation.user_id = users.id WHERE hash_id = :hash";
+        } else {
+            $statement = "SELECT id, user_id, quantity FROM reservation WHERE hash_id = :hash";
+        }
 
-        $query->execute([
-            "hash" => $hash
-        ]);
-
-        return $query->fetchAll();
-    }
-
-    public function findHashes(string $hash): array
-    {
-        $statement = "SELECT user_id, id FROM reservation WHERE hash_id = :hash";
         $query = $this->getEntityManager()->getConnection()->prepare($statement);
 
         $query->execute([
@@ -123,5 +116,20 @@ class ReservationRepository extends ServiceEntityRepository
         ]);
 
         return $query->fetchAll();
+    }
+
+    public function findNoShows(): array
+    {
+        $current = new \DateTime();
+
+        return $this->createQueryBuilder("reservation")
+            ->where("reservation.date < :date")
+            ->andWhere("reservation.appeared != :appeared")
+            ->setParameters([
+                "date" => $current,
+                "appeared" => true
+            ])
+            ->getQuery()
+            ->getArrayResult();
     }
 }

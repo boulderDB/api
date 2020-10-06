@@ -21,41 +21,49 @@ class BuildScheduleCommand extends Command
                 "start" => "15:00",
                 "end" => "18:00",
                 "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "15:00",
                 "end" => "17:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "17:00",
                 "end" => "19:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "18:00",
                 "end" => "20:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "19:00",
                 "end" => "21:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "20:00",
                 "end" => "22:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "21:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "22:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
         ],
         "tuesday" => [
@@ -63,41 +71,49 @@ class BuildScheduleCommand extends Command
                 "start" => "15:00",
                 "end" => "18:00",
                 "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "15:00",
                 "end" => "17:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "17:00",
                 "end" => "19:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "18:00",
                 "end" => "20:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "19:00",
                 "end" => "21:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "20:00",
                 "end" => "22:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "21:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "22:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
         ],
         "wednesday" => [
@@ -105,41 +121,49 @@ class BuildScheduleCommand extends Command
                 "start" => "15:00",
                 "end" => "18:00",
                 "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "15:00",
                 "end" => "17:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "17:00",
                 "end" => "19:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "18:00",
                 "end" => "20:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "19:00",
                 "end" => "21:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "20:00",
                 "end" => "22:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "21:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "22:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
         ],
         "thursday" => [
@@ -147,41 +171,49 @@ class BuildScheduleCommand extends Command
                 "start" => "15:00",
                 "end" => "18:00",
                 "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "15:00",
                 "end" => "17:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "17:00",
                 "end" => "19:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "18:00",
                 "end" => "20:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "19:00",
                 "end" => "21:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "20:00",
                 "end" => "22:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "21:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "22:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
         ],
         "friday" => [
@@ -189,41 +221,49 @@ class BuildScheduleCommand extends Command
                 "start" => "15:00",
                 "end" => "18:00",
                 "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "15:00",
                 "end" => "17:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "17:00",
                 "end" => "19:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "18:00",
                 "end" => "20:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "19:00",
                 "end" => "21:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "20:00",
                 "end" => "22:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "21:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "22:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
         ],
         "saturday" => [
@@ -231,41 +271,49 @@ class BuildScheduleCommand extends Command
                 "start" => "15:00",
                 "end" => "18:00",
                 "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "15:00",
                 "end" => "17:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "17:00",
                 "end" => "19:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "18:00",
                 "end" => "20:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "19:00",
                 "end" => "21:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "20:00",
                 "end" => "22:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "21:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "22:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
         ],
         "sunday" => [
@@ -273,41 +321,49 @@ class BuildScheduleCommand extends Command
                 "start" => "15:00",
                 "end" => "18:00",
                 "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "15:00",
                 "end" => "17:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "17:00",
                 "end" => "19:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "18:00",
                 "end" => "20:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "19:00",
                 "end" => "21:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "20:00",
                 "end" => "22:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "21:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
             [
                 "start" => "22:00",
                 "end" => "24:00",
-                "capacity" => 10
+                "capacity" => 10,
+                "quantity" => 1
             ],
         ],
     ];

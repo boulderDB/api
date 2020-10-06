@@ -96,8 +96,9 @@ class BoulderController extends AbstractController
         $this->denyUnlessLocationAdmin();
 
         $boulder = new Boulder();
+
         $form = $this->createForm(BoulderType::class, $boulder);
-        $form->submit(json_decode($request->getContent(), true));
+        $form->submit(self::decodePayLoad($request));
 
         if (!$form->isValid()) {
             return $this->badFormRequestResponse($form);

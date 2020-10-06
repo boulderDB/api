@@ -23,6 +23,10 @@ class ExceptionListener implements EventSubscriberInterface
     {
         $debug = $_ENV["APP_DEBUG"] !== false;
 
+        if ($debug) {
+            throw $event->getThrowable();
+        }
+
         $exception = $event->getThrowable();
         $code = Response::HTTP_INTERNAL_SERVER_ERROR;
 

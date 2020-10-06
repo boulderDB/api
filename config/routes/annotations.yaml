@@ -97,3 +97,8 @@ room:
   resource: ../../src/Controller/RoomController.php
   type: annotation
   prefix: /api/{location}/
+
+time_slot_exclusion:
+  resource: ../../src/Controller/TimeSlotExclusionController.php
+  type: annotation
+  prefix: /api/{location}/

@@ -65,17 +65,27 @@ class Reservation implements UserResourceInterface
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $guestFirstName = null;
+    private ?string $firstName = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $guestLastName = null;
+    private ?string $lastName = null;
 
     /**
      * @ORM\Column(type="string", length=64, nullable=true)
      */
-    private ?string $guestEmail = null;
+    private ?string $email = null;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private ?string $username = null;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private int $quantity = 1;
 
     public function getId(): ?int
     {
@@ -133,6 +143,11 @@ class Reservation implements UserResourceInterface
         $this->date = $date;
     }
 
+    public function getDayName(): string
+    {
+        return strtolower($this->date->format("l"));
+    }
+
     public function getStartTime(): ?string
     {
         return $this->startTime;
@@ -173,33 +188,53 @@ class Reservation implements UserResourceInterface
         $this->guest = $guest;
     }
 
-    public function getGuestFirstName(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->guestFirstName;
+        return $this->firstName;
     }
 
-    public function setGuestFirstName(?string $guestFirstName): void
+    public function setFirstName(?string $firstName): void
     {
-        $this->guestFirstName = $guestFirstName;
+        $this->firstName = $firstName;
     }
 
-    public function getGuestLastName(): ?string
+    public function getLastName(): ?string
     {
-        return $this->guestLastName;
+        return $this->lastName;
     }
 
-    public function setGuestLastName(?string $guestLastName): void
+    public function setLastName(?string $lastName): void
     {
-        $this->guestLastName = $guestLastName;
+        $this->lastName = $lastName;
     }
 
-    public function getGuestEmail(): ?string
+    public function getEmail(): ?string
     {
-        return $this->guestEmail;
+        return $this->email;
     }
 
-    public function setGuestEmail(?string $guestEmail): void
+    public function setEmail(?string $email): void
     {
-        $this->guestEmail = $guestEmail;
+        $this->email = $email;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(?string $username): void
+    {
+        $this->username = $username;
+    }
+
+    public function getQuantity(): int
+    {
+        return $this->quantity;
+    }
+
+    public function setQuantity(int $quantity): void
+    {
+        $this->quantity = $quantity;
     }
 }

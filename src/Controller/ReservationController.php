@@ -3,18 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Reservation;
+use App\Entity\TimeSlot;
 use App\Form\ReservationType;
+use App\Helper\TimeSlotHelper;
 use App\Repository\ReservationRepository;
 use App\Repository\RoomRepository;
 use App\Repository\TimeSlotRepository;
-use App\Controller\FormErrorTrait;
-use App\Controller\RequestTrait;
-use App\Controller\ResponseTrait;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,6 +34,7 @@ class ReservationController extends AbstractController
     private TimeSlotRepository $timeSlotRepository;
     private ReservationRepository $reservationRepository;
     private RoomRepository $roomRepository;
+    private TimeSlotHelper $timeSlotHelper;
     private \Redis $redis;
 
     public function __construct(
@@ -43,7 +42,8 @@ class ReservationController extends AbstractController
         ContextService $contextService,
         TimeSlotRepository $timeSlotRepository,
         ReservationRepository $reservationRepository,
-        RoomRepository $roomRepository
+        RoomRepository $roomRepository,
+        TimeSlotHelper $timeSlotHelper
     )
     {
         $this->entityManager = $entityManager;
@@ -51,6 +51,7 @@ class ReservationController extends AbstractController
         $this->timeSlotRepository = $timeSlotRepository;
         $this->reservationRepository = $reservationRepository;
         $this->roomRepository = $roomRepository;
+        $this->timeSlotHelper = $timeSlotHelper;
 
         $this->redis = RedisConnectionFactory::create();
     }
@@ -79,39 +80,39 @@ class ReservationController extends AbstractController
             ], Response::HTTP_CONFLICT);
         }
 
-        // daily limiter?
         if ($this->reservationRepository->hasPendingReservationForDate($reservation->getDate(), $reservation->getUser()->getId())) {
-
             return $this->json([
                 "message" => "There already exists a pending reservation for this day.",
                 "code" => Response::HTTP_CONFLICT
             ], Response::HTTP_CONFLICT);
         }
 
-        try {
-            $capacity = $this->timeSlotRepository->getCapacity(
-                $this->contextService->getLocation()->getId(),
-                $reservation->getRoom()->getId(),
-                strtolower($reservation->getDate()->format("l")),
-                $reservation->getStartTime(),
-                $reservation->getEndTime()
-            );
+        /**
+         * @var TimeSlot $timeSlot
+         */
+        $timeSlot = $this->timeSlotRepository->findOneBy([
+            "room" => $reservation->getRoom()->getId(),
+            "startTime" => $reservation->getStartTime(),
+            "endTime" => $reservation->getEndTime(),
+            "dayName" => $reservation->getDayName()
+        ]);
 
-        } catch (EntityNotFoundException $e) {
-
-            return $this->json([
-                "message" => $e->getMessage(),
-                "code" => Response::HTTP_NOT_FOUND
-
-            ], Response::HTTP_NOT_FOUND);
+        if (!$timeSlot) {
+            return $this->resourceNotFoundResponse("TimeSlot");
         }
 
-        $blocked = $this->reservationRepository->countHashIds($reservation->getHashId());
+        $this->timeSlotHelper->appendData($timeSlot, $reservation->getDate()->format("Y-m-d"));
 
-        if ($capacity === $blocked) {
-
+        if ($timeSlot->getCapacity() === 0) {
             return $this->json([
                 "message" => "This time slot is full.",
+                "code" => Response::HTTP_CONFLICT
+            ], Response::HTTP_CONFLICT);
+        }
+
+        if ($reservation->getQuantity() !== $timeSlot->getAllowQuantity()) {
+            return $this->json([
+                "message" => "This time slot only allows a quantity of {$timeSlot->getAllowQuantity()} per reservation.",
                 "code" => Response::HTTP_CONFLICT
             ], Response::HTTP_CONFLICT);
         }
@@ -178,9 +179,9 @@ class ReservationController extends AbstractController
     }
 
     /**
-     * @Route("/rooms/{date}", methods={"get"})
+     * @Route("/overview/{date}", methods={"get"})
      */
-    public function rooms(string $date = null)
+    public function overview(string $date = null)
     {
         $this->denyAccessUnlessGranted($this->contextService->getLocationRole(User::ROLE_ADMIN));
 
@@ -192,13 +193,6 @@ class ReservationController extends AbstractController
         }
 
         $locationId = $this->contextService->getLocation()->getId();
-
-        // calculate hash and only re-fetch db if it changed
-        $checksum = $this->reservationRepository->getLocationChecksum($locationId);
-
-        if ($this->redis->get("rooms-checksum") === $checksum) {
-            return $this->okResponse(json_decode($this->redis->get("rooms"), true));
-        }
 
         $rooms = $this->roomRepository->all($locationId);
 
@@ -227,9 +221,6 @@ class ReservationController extends AbstractController
                 $timeSlot["hash"] = $hash;
             }
         }
-
-        $this->redis->set("rooms-checksum", $checksum);
-        $this->redis->set("rooms", json_encode($rooms));
 
         return $this->okResponse($rooms);
     }
@@ -267,6 +258,17 @@ class ReservationController extends AbstractController
         $this->entityManager->flush();
 
         return $this->noContentResponse();
+    }
+
+
+    /**
+     * @Route("/no-shows", methods={"get"})
+     */
+    public function listNoShows()
+    {
+        $this->denyAccessUnlessGranted($this->contextService->getLocationRole(User::ROLE_ADMIN));
+
+        return $this->json($this->reservationRepository->findNoShows());
     }
 
 }

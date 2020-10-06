@@ -14,9 +14,9 @@ class TimeSlotRepository extends ServiceEntityRepository
         parent::__construct($registry, TimeSlot::class);
     }
 
-    public function getCapacity(string $locationId, string $roomId, string $dayName, string $startTime, string $endTime)
+    public function findExact(string $locationId, string $roomId, string $dayName, string $startTime, string $endTime)
     {
-        $statement = "SELECT capacity FROM timeslot INNER JOIN room ON timeslot.room_id = room.id WHERE tenant_id = :locationId AND day_name = :dayName AND start_time = :startTime AND end_time = :endTime  AND room_id = :roomId";
+        $statement = "SELECT capacity, allow_quantity FROM timeslot INNER JOIN room ON timeslot.room_id = room.id WHERE tenant_id = :locationId AND day_name = :dayName AND start_time = :startTime AND end_time = :endTime  AND room_id = :roomId";
         $query = $this->getEntityManager()->getConnection()->prepare($statement);
 
         $query->execute([
@@ -33,7 +33,7 @@ class TimeSlotRepository extends ServiceEntityRepository
             throw new EntityNotFoundException("Slot for location '$locationId' on '$dayName' from '$startTime' to '$endTime' not found");
         }
 
-        return $result["capacity"];
+        return $result;
     }
 
     public function findByLocation(int $locationId, string $dayName): array
@@ -51,7 +51,7 @@ class TimeSlotRepository extends ServiceEntityRepository
 
     public function findByLocationAndRoom(int $locationId, int $roomId, string $dayName): array
     {
-        $statement = "SELECT day_name, start_time, end_time, capacity FROM timeslot INNER JOIN room ON timeslot.room_id = room.id WHERE tenant_id = :locationId AND day_name = :dayName AND room_id = :roomId";
+        $statement = "SELECT day_name, start_time, end_time, capacity, allow_quantity FROM timeslot INNER JOIN room ON timeslot.room_id = room.id WHERE tenant_id = :locationId AND day_name = :dayName AND room_id = :roomId";
         $query = $this->getEntityManager()->getConnection()->prepare($statement);
 
         $query->execute([
@@ -61,5 +61,19 @@ class TimeSlotRepository extends ServiceEntityRepository
         ]);
 
         return $result = $query->fetchAll();
+    }
+
+    public function getForRoomAndDayName(int $roomId, string $dayName)
+    {
+        return $this->createQueryBuilder("timeSlot")
+            ->innerJoin("timeSlot.room", "room")
+            ->where("timeSlot.dayName = :dayName")
+            ->andWhere("timeSlot.room = :roomId")
+            ->setParameters([
+                "dayName" => strtolower($dayName),
+                "roomId" => $roomId,
+            ])
+            ->getQuery()
+            ->getResult();
     }
 }

@@ -2,20 +2,20 @@
 
 namespace App\Form;
 
-use App\Entity\Reservation;
 use App\Entity\Room;
+use App\Entity\TimeSlotExclusion;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class ReservationType extends AbstractType
+class TimeSlotExclusionType extends AbstractType
 {
     private ContextService $contextService;
 
@@ -29,17 +29,17 @@ class ReservationType extends AbstractType
         $locationId = $this->contextService->getLocation()->getId();
 
         $builder
-            ->add("start_time", TextType::class, [
-                "constraints" => [new NotBlank()],
-            ])
-            ->add("end_time", TextType::class, [
-                "constraints" => [new NotBlank()],
-            ])
-            ->add("date", DateType::class, [
+            ->add("start_date", DateTimeType::class, [
                 "widget" => "single_text",
-                "input_format" => "Y-m-d",
+                "input_format" => "Y-m-d H:i:s",
                 "constraints" => [new NotBlank()],
             ])
+            ->add("end_date", DateTimeType::class, [
+                "widget" => "single_text",
+                "input_format" => "Y-m-d H:i:s",
+                "constraints" => [new NotBlank()],
+            ])
+            ->add("quantity", NumberType::class)
             ->add("room", EntityType::class, [
                 "class" => Room::class,
                 "query_builder" => function (EntityRepository $repository) use ($locationId) {
@@ -49,14 +49,14 @@ class ReservationType extends AbstractType
                 },
                 "constraints" => [new NotBlank()],
             ])
-            ->add("quantity", NumberType::class);
+            ->add("note", TextType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            "data_class" => Reservation::class,
-            "csrf_protection" => false,
+            'csrf_protection' => false,
+            'data_class' => TimeSlotExclusion::class
         ]);
     }
 }
