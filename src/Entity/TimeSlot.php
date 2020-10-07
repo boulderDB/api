@@ -53,7 +53,7 @@ class TimeSlot
     /**
      * @ORM\Column(type="integer")
      */
-    private ?int $allowQuantity = null;
+    private ?int $allowQuantity = 1;
 
     private ?Collection $reservations;
 

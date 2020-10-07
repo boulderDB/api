@@ -25,11 +25,11 @@ class ReservationListener implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
-            Events::prePersist
+            Events::postPersist
         ];
     }
 
-    public function prePersist(LifecycleEventArgs $args)
+    public function postPersist(LifecycleEventArgs $args)
     {
         $subject = $args->getObject();
 
@@ -41,15 +41,15 @@ class ReservationListener implements EventSubscriber
         $this->redis->set($checksum, $subject->getId());
 
         $locationName = $subject->getRoom()->getLocation()->getName();
-        $reservationDate = Carbon::instance($subject->getDate())->toDayDateTimeString();
+        $reservationDate = Carbon::instance($subject->getDate())->toDateString();
 
         $clientHostname = $_ENV['CLIENT_HOSTNAME'];
-        $cancellationLink = "{$clientHostname}/reservation/cancel/{$checksum}";
+        $cancellationLink = "{$clientHostname}/cancel-reservation/{$checksum}";
 
         $email = (new Email())
             ->from($_ENV["MAILER_FROM"])
             ->to($subject->getUser()->getEmail())
-            ->subject("Your Time Slot reservation @{$locationName} on {$reservationDate}")
+            ->subject("Your Time Slot reservation @{$locationName} on {$reservationDate} from {$subject->getStartTime()} to {$subject->getEndTime()}")
             ->html("<a href='{$cancellationLink}'>Cancel</a>");
 
         $this->mailer->send($email);
