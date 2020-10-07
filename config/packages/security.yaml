@@ -26,7 +26,7 @@ security:
         failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
     public:
-      pattern:  ^/api/(request-reset|reset|location|register|user/search)
+      pattern:  ^/api/(request-reset|reset|location|register|cancel-reservation)
       anonymous: true
 
     api:
@@ -42,6 +42,7 @@ security:
     - { path: ^/api/request-reset, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/reset, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/api/cancel-reservation, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/location, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api/search-user, roles: IS_AUTHENTICATED_ANONYMOUSLY }

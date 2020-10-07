@@ -214,7 +214,7 @@ class GlobalController extends AbstractController
         $this->redis->set($hash, $user->getId(), self::PASSWORD_RESET_EXPIRY);
 
         $email = (new Email())
-            ->from('info@blocbeta.com')
+            ->from($_ENV["MAILER_FROM"])
             ->to($user->getEmail())
             ->subject('Password reset')
             ->html("<p>Please use the following <a href='$clientHostname/password-reset/$hash'>link</a> to reset your password.</p>");
@@ -427,5 +427,31 @@ class GlobalController extends AbstractController
             ->getArrayResult();
 
         return $this->json($users);
+    }
+
+    /**
+     * @Route("/cancel-reservation/{hash}", methods={"get"})
+     */
+    public function cancel(Request $request, string $hash)
+    {
+        self::rateLimit($request, "cancel-reservation", 10, 60);
+
+        $id = $this->redis->get($hash);
+
+        if (!$id) {
+            return $this->resourceNotFoundResponse("Cancellation hash", $hash);
+        }
+
+        $statement = "DELETE FROM reservation WHERE id = :reservationId";
+        $query = $this->entityManager->getConnection()->prepare($statement);
+
+        $query->execute([
+            "reservationId" => $id,
+        ]);
+
+        $this->redis->del($hash);
+
+        return $this->noContentResponse();
+
     }
 }

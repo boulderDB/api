@@ -12,6 +12,7 @@ use App\Repository\TimeSlotRepository;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
 use App\Service\ContextService;
+use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -65,7 +66,7 @@ class ReservationController extends AbstractController
         $reservation->setUser($this->getUser());
 
         $form = $this->createForm(ReservationType::class, $reservation);
-        $form->submit(json_decode($request->getContent(), true));
+        $form->submit(self::decodePayLoad($request));
 
         if (!$form->isValid()) {
             return $this->badFormRequestResponse($form);
@@ -73,14 +74,14 @@ class ReservationController extends AbstractController
 
         $reservation->generateHashId();
 
-        if ($this->reservationRepository->findPendingTimeSlotReservationId($reservation->getHashId(), $this->getUser()->getId())) {
+        if ($this->reservationRepository->hasPendingReservationForTimeSlot($reservation)) {
             return $this->json([
                 "message" => "There already exists a pending reservation for this time slot.",
                 "code" => Response::HTTP_CONFLICT
             ], Response::HTTP_CONFLICT);
         }
 
-        if ($this->reservationRepository->hasPendingReservationForDate($reservation->getDate(), $reservation->getUser()->getId())) {
+        if ($this->reservationRepository->hasPendingReservationForDate($reservation)) {
             return $this->json([
                 "message" => "There already exists a pending reservation for this day.",
                 "code" => Response::HTTP_CONFLICT
@@ -103,6 +104,13 @@ class ReservationController extends AbstractController
 
         $this->timeSlotHelper->appendData($timeSlot, $reservation->getDate()->format("Y-m-d"));
 
+        if ($timeSlot->getEndDate() < Carbon::create()) {
+            return $this->json([
+                "message" => "This time slot is expired.",
+                "code" => Response::HTTP_CONFLICT
+            ], Response::HTTP_CONFLICT);
+        }
+
         if ($timeSlot->getCapacity() === 0) {
             return $this->json([
                 "message" => "This time slot is full.",
@@ -110,7 +118,7 @@ class ReservationController extends AbstractController
             ], Response::HTTP_CONFLICT);
         }
 
-        if ($reservation->getQuantity() !== $timeSlot->getAllowQuantity()) {
+        if ($reservation->getQuantity() > $timeSlot->getAllowQuantity()) {
             return $this->json([
                 "message" => "This time slot only allows a quantity of {$timeSlot->getAllowQuantity()} per reservation.",
                 "code" => Response::HTTP_CONFLICT

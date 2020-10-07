@@ -88,11 +88,6 @@ reservation:
   type: annotation
   prefix: /api/{location}/
 
-guest_reservation:
-  resource: ../../src/Controller/GuestReservationController.php
-  type: annotation
-  prefix: /api/{location}/
-
 room:
   resource: ../../src/Controller/RoomController.php
   type: annotation

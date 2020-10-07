@@ -47,19 +47,6 @@ class UserType extends AbstractType
                 'constraints' => [
                     new NotBlank()
                 ]
-            ])
-            ->add('media', TextType::class, [])
-            ->add('armSpan', NumberType::class, [
-                'constraints' => [
-                    new GreaterThanOrEqual(120),
-                    new LessThanOrEqual(220)
-                ]
-            ])
-            ->add('height', NumberType::class, [
-                'constraints' => [
-                    new GreaterThanOrEqual(120),
-                    new LessThanOrEqual(220)
-                ]
             ]);
     }
 

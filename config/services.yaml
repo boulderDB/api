@@ -54,3 +54,7 @@ services:
   App\EventListener\AscentListener:
     tags:
       - { name: 'doctrine.event_subscriber' }
+
+  App\EventListener\ReservationListener:
+    tags:
+      - { name: 'doctrine.event_subscriber' }

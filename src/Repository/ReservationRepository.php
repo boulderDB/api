@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Reservation;
+use App\Helper\TimeHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -58,27 +59,28 @@ class ReservationRepository extends ServiceEntityRepository
         return $query->fetch()["count"];
     }
 
-    public function hasPendingReservationForDate(\DateTimeInterface $dateTime, int $userId)
+    public function hasPendingReservationForDate(Reservation $reservation)
     {
-        $statement = "SELECT count(id) FROM reservation WHERE date = :dateTime AND user_id = :userId";
+        $statement = "SELECT count(id) FROM reservation WHERE date = :dateTime AND user_id = :userId AND room_id = :roomId";
         $query = $this->getEntityManager()->getConnection()->prepare($statement);
 
         $query->execute([
-            "dateTime" => $dateTime->format('Y-m-d H:i:s'),
-            "userId" => $userId,
+            "dateTime" => $reservation->getDate()->format(TimeHelper::DATE_FORMAT_DATETIME),
+            "userId" => $reservation->getUser()->getId(),
+            "roomId" => $reservation->getRoom()->getId()
         ]);
 
         return $query->fetch()["count"];
     }
 
-    public function findPendingTimeSlotReservationId(string $hashId, string $userId): ?string
+    public function hasPendingReservationForTimeSlot(Reservation $reservation): ?string
     {
         $statement = "SELECT id FROM reservation WHERE hash_id = :hashId AND user_id = :userId";
         $query = $this->getEntityManager()->getConnection()->prepare($statement);
 
         $query->execute([
-            "hashId" => $hashId,
-            "userId" => $userId,
+            "hashId" => $reservation->getHashId(),
+            "userId" => $reservation->getUser()->getId(),
         ]);
 
         $result = $query->fetch();
