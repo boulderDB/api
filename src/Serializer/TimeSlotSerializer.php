@@ -23,7 +23,9 @@ class TimeSlotSerializer
             }, $timeSlot->getReservations()->toArray());
 
         } else {
-            $data["reservation"] = $timeSlot->getUserReservation($userId)->getId();
+            $userReservation = $timeSlot->getUserReservation($userId);
+
+            $data["reservation"] = $userReservation ? $userReservation->getId() : null;
         }
 
         return $data;
