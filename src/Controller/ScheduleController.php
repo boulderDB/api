@@ -2,21 +2,15 @@
 
 namespace App\Controller;
 
-use App\Entity\Reservation;
 use App\Entity\TimeSlot;
-use App\Entity\TimeSlotExclusion;
+use App\Helper\ScheduleHelper;
 use App\Helper\TimeHelper;
-use App\Helper\TimeSlotHelper;
-use App\Repository\ReservationRepository;
 use App\Repository\RoomRepository;
-use App\Repository\TimeSlotExclusionRepository;
-use App\Repository\TimeSlotRepository;
+use App\Serializer\TimeSlotSerializer;
 use App\Service\ContextService;
 use Carbon\Carbon;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -25,32 +19,21 @@ use Symfony\Component\Routing\Annotation\Route;
 class ScheduleController extends AbstractController
 {
     use ResponseTrait;
+    use ContextualizedControllerTrait;
 
-    private ContextService $contextService;
-    private EntityManagerInterface $entityManager;
-    private ReservationRepository $reservationRepository;
     private RoomRepository $roomRepository;
-    private TimeSlotRepository $timeSlotRepository;
-    private TimeSlotExclusionRepository $timeSlotExclusionRepository;
-    private TimeSlotHelper $timeSlotHelper;
+    private ScheduleHelper $scheduleHelper;
+    private ContextService $contextService;
 
     public function __construct(
-        ContextService $contextService,
-        EntityManagerInterface $entityManager,
-        ReservationRepository $reservationRepository,
         RoomRepository $roomRepository,
-        TimeSlotRepository $timeSlotRepository,
-        TimeSlotExclusionRepository $timeSlotExclusionRepository,
-        TimeSlotHelper $timeSlotHelper
+        ScheduleHelper $scheduleHelper,
+        ContextService $contextService
     )
     {
-        $this->contextService = $contextService;
-        $this->entityManager = $entityManager;
-        $this->reservationRepository = $reservationRepository;
         $this->roomRepository = $roomRepository;
-        $this->timeSlotRepository = $timeSlotRepository;
-        $this->timeSlotExclusionRepository = $timeSlotExclusionRepository;
-        $this->timeSlotHelper = $timeSlotHelper;
+        $this->scheduleHelper = $scheduleHelper;
+        $this->contextService = $contextService;
     }
 
     /**
@@ -64,60 +47,27 @@ class ScheduleController extends AbstractController
             return $this->resourceNotFoundResponse("Room", $roomId);
         }
 
-        $scheduleDate = $ymd ? Carbon::createFromFormat(TimeHelper::DATE_FORMAT_DATE, $ymd)->startOfDay() : Carbon::create()->startOfDay();
+        $scheduleDate = $ymd ? Carbon::createFromFormat(TimeHelper::DATE_FORMAT_DATE, $ymd)->startOfDay() : Carbon::now()->startOfDay();
 
-        if ($scheduleDate->isBefore(Carbon::create())) {
+        if ($scheduleDate->isBefore(Carbon::yesterday())) {
             return $this->resourceNotFoundResponse("Schedule");
         }
 
         if (!$scheduleDate) {
-            return $this->json([
-                "message" => "Failed to parse date string '${$ymd}'",
-                "code" => Response::HTTP_BAD_REQUEST
-            ], Response::HTTP_BAD_REQUEST);
+            return $this->badRequestResponse("Failed to parse date string '${$ymd}'");
         }
 
-        $timeSlots = $this->timeSlotRepository->getForRoomAndDayName($roomId, $scheduleDate->format("l"));
+        $schedule = $this->scheduleHelper->room($roomId, $scheduleDate);
+        $adminView = $this->isLocationAdmin() && $request->query->get("admin");
 
-        /**
-         * @var TimeSlot[] $timeSlots
-         */
-        foreach ($timeSlots as $timeSlot) {
-            $this->timeSlotHelper->appendData($timeSlot, $ymd);
-        }
+        return $this->okResponse(array_map(function ($timeSlot) use ($userId, $adminView) {
 
-        $exclusions = $this->timeSlotExclusionRepository->getPendingForRoomAndDate($roomId, $scheduleDate->toDateTime());
-
-        foreach ($timeSlots as $timeSlot) {
-            TimeSlotHelper::calculateAvailable($timeSlot, $exclusions);
-        }
-
-        $data = array_map(function ($timeSlot) use ($userId) {
-
-            /**
-             * @var Reservation $reservation
-             * @var Reservation $userReservation
-             * @var TimeSlot $timeSlot
-             */
-            $userReservation = $timeSlot->getReservations()->filter(function ($reservation) use ($userId) {
                 /**
-                 * @var Reservation $reservation
+                 * @var TimeSlot $timeSlot
                  */
-                return $reservation->getUser()->getId() === $userId;
+                return TimeSlotSerializer::serialize($timeSlot, $userId, $adminView);
 
-            })->first();
-
-            return [
-                "hash" => $timeSlot->getHashId(),
-                "available" => $timeSlot->getAvailable(),
-                "capacity" => $timeSlot->getCapacity(),
-                "start_time" => $timeSlot->getStartTime(),
-                "end_time" => $timeSlot->getEndTime(),
-                "reservation" => $userReservation ? $userReservation->getId() : null,
-            ];
-
-        }, $timeSlots);
-
-        return $this->okResponse($data);
+            }, $schedule)
+        );
     }
 }

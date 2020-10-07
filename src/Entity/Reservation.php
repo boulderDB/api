@@ -120,7 +120,15 @@ class Reservation implements UserResourceInterface
 
     public function setUser(?UserInterface $user): void
     {
+        /**
+         * @var User $user
+         */
         $this->user = $user;
+
+        $this->firstName = $user->getFirstName();
+        $this->lastName = $user->getLastName();
+        $this->username = $user->getUsername();
+        $this->email = $user->getEmail();
     }
 
     public function getAppeared(): ?bool

@@ -152,6 +152,23 @@ class TimeSlot
         $this->reservations = $reservations;
     }
 
+    public function getUserReservation(int $userId): ?Reservation
+    {
+        $reservation = $this->getReservations()->filter(function ($reservation) use ($userId) {
+            /**
+             * @var Reservation $reservation
+             */
+            return $reservation->getUser()->getId() === $userId;
+
+        })->first();
+
+        if (!$reservation) {
+            return null;
+        }
+
+        return $reservation;
+    }
+
     public function buildReservationHash(Carbon $scheduleDate): string
     {
         return Reservation::buildHash(

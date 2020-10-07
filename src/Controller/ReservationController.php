@@ -5,12 +5,16 @@ namespace App\Controller;
 use App\Entity\Reservation;
 use App\Entity\TimeSlot;
 use App\Form\ReservationType;
+use App\Helper\ScheduleHelper;
+use App\Helper\TimeHelper;
 use App\Helper\TimeSlotHelper;
 use App\Repository\ReservationRepository;
 use App\Repository\RoomRepository;
+use App\Repository\TimeSlotExclusionRepository;
 use App\Repository\TimeSlotRepository;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
+use App\Serializer\TimeSlotSerializer;
 use App\Service\ContextService;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,6 +40,8 @@ class ReservationController extends AbstractController
     private ReservationRepository $reservationRepository;
     private RoomRepository $roomRepository;
     private TimeSlotHelper $timeSlotHelper;
+    private TimeSlotExclusionRepository $timeSlotExclusionRepository;
+    private ScheduleHelper $scheduleHelper;
     private \Redis $redis;
 
     public function __construct(
@@ -44,7 +50,9 @@ class ReservationController extends AbstractController
         TimeSlotRepository $timeSlotRepository,
         ReservationRepository $reservationRepository,
         RoomRepository $roomRepository,
-        TimeSlotHelper $timeSlotHelper
+        TimeSlotHelper $timeSlotHelper,
+        TimeSlotExclusionRepository $timeSlotExclusionRepository,
+        ScheduleHelper $scheduleHelper
     )
     {
         $this->entityManager = $entityManager;
@@ -55,6 +63,8 @@ class ReservationController extends AbstractController
         $this->timeSlotHelper = $timeSlotHelper;
 
         $this->redis = RedisConnectionFactory::create();
+        $this->timeSlotExclusionRepository = $timeSlotExclusionRepository;
+        $this->scheduleHelper = $scheduleHelper;
     }
 
     /**
@@ -104,7 +114,7 @@ class ReservationController extends AbstractController
 
         $this->timeSlotHelper->appendData($timeSlot, $reservation->getDate()->format("Y-m-d"));
 
-        if ($timeSlot->getEndDate() < Carbon::create()) {
+        if ($timeSlot->getEndDate() < Carbon::now()) {
             return $this->json([
                 "message" => "This time slot is expired.",
                 "code" => Response::HTTP_CONFLICT
@@ -184,53 +194,6 @@ class ReservationController extends AbstractController
         $this->entityManager->flush();
 
         return $this->noContentResponse();
-    }
-
-    /**
-     * @Route("/overview/{date}", methods={"get"})
-     */
-    public function overview(string $date = null)
-    {
-        $this->denyAccessUnlessGranted($this->contextService->getLocationRole(User::ROLE_ADMIN));
-
-        $current = new \DateTimeImmutable();
-        $scheduleDay = $date ? \DateTime::createFromFormat("Y-m-d", $date) : $current;
-
-        if (!$scheduleDay) {
-            return $this->badRequestResponse("Failed to parse date string '${date}'");
-        }
-
-        $locationId = $this->contextService->getLocation()->getId();
-
-        $rooms = $this->roomRepository->all($locationId);
-
-        foreach ($rooms as &$room) {
-            $roomId = $room["id"];
-
-            $room["schedule"] = $this->timeSlotRepository->findByLocationAndRoom(
-                $locationId,
-                $roomId,
-                strtolower($scheduleDay->format("l"))
-            );
-
-            foreach ($room["schedule"] as &$timeSlot) {
-
-                $hash = Reservation::buildHash(
-                    $roomId,
-                    $locationId,
-                    $timeSlot["start_time"],
-                    $timeSlot["end_time"],
-                    $scheduleDay->format('Y-m-d')
-                );
-
-                $timeSlot["reservations"] = $this->reservationRepository->findReservations($hash);
-
-                $timeSlot["available"] = $timeSlot["capacity"] - count($timeSlot["reservations"]);
-                $timeSlot["hash"] = $hash;
-            }
-        }
-
-        return $this->okResponse($rooms);
     }
 
     /**
