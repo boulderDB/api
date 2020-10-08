@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Room;
 use App\Entity\TimeSlot;
 use App\Helper\ScheduleHelper;
 use App\Helper\TimeHelper;
@@ -37,7 +38,7 @@ class ScheduleController extends AbstractController
     }
 
     /**
-     * @Route("/{roomId}/{ymd}", methods={"get"})
+     * @Route("/{roomId}/{ymd}", methods={"get"}, requirements={"roomId": "\d+"})
      */
     public function day(Request $request, string $roomId, string $ymd = null)
     {
@@ -69,5 +70,45 @@ class ScheduleController extends AbstractController
 
             }, $schedule)
         );
+    }
+
+    /**
+     * @Route("/rooms/{ymd}", methods={"get"})
+     */
+    public function rooms(Request $request, string $ymd = null)
+    {
+        $this->denyUnlessLocationAdmin();
+
+        $scheduleDate = $ymd ? Carbon::createFromFormat(TimeHelper::DATE_FORMAT_DATE, $ymd)->startOfDay() : Carbon::now()->startOfDay();
+
+        if (!$scheduleDate) {
+            return $this->badRequestResponse("Failed to parse date string '${$ymd}'");
+        }
+
+        $rooms = $this->roomRepository->findBy([
+            "location" => $this->contextService->getLocation()->getId()
+        ]);
+
+        return $this->json(array_map(function ($room) use ($scheduleDate) {
+
+            /**
+             * @var Room $room
+             */
+            $roomData = [
+                "id" => $room->getId(),
+                "name" => $room->getName()
+            ];
+
+            $roomData["schedule"] = array_map(function ($timeSlot) {
+
+                /**
+                 * @var TimeSlot $timeSlot
+                 */
+                return TimeSlotSerializer::serialize($timeSlot, null, true);
+
+            }, $this->scheduleHelper->room($room->getId(), $scheduleDate));
+
+            return $roomData;
+        }, $rooms));
     }
 }

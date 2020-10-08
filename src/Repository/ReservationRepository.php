@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Reservation;
 use App\Helper\TimeHelper;
+use Carbon\Carbon;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -90,7 +91,7 @@ class ReservationRepository extends ServiceEntityRepository
 
     public function countPendingByUser(string $userId, string $locationId)
     {
-        $current = new \DateTimeImmutable();
+        $current = Carbon::now();
 
         $statement = "SELECT count(reservation.id) FROM reservation INNER JOIN room ON reservation.room_id = room.id WHERE user_id = :userId AND room.tenant_id = :locationId AND reservation.date >= :date";
         $query = $this->getEntityManager()->getConnection()->prepare($statement);
@@ -98,7 +99,7 @@ class ReservationRepository extends ServiceEntityRepository
         $query->execute([
             "userId" => $userId,
             "locationId" => $locationId,
-            "date" => $current->format("Y-m-d H:i:s")
+            "date" => $current->startOfDay()->format(TimeHelper::DATE_FORMAT_DATETIME)
         ]);
 
         return $query->fetch()["count"];
@@ -106,7 +107,7 @@ class ReservationRepository extends ServiceEntityRepository
 
     public function findPendingByUser(string $userId, string $locationId)
     {
-        $current = new \DateTimeImmutable();
+        $current = Carbon::now();
 
         $statement = "SELECT reservation.id, reservation.date, reservation.start_time, reservation.end_time, reservation.room_id FROM reservation INNER JOIN room ON reservation.room_id = room.id WHERE user_id = :userId AND room.tenant_id = :locationId AND reservation.date >= :date";
         $query = $this->getEntityManager()->getConnection()->prepare($statement);
@@ -114,7 +115,7 @@ class ReservationRepository extends ServiceEntityRepository
         $query->execute([
             "userId" => $userId,
             "locationId" => $locationId,
-            "date" => $current->format("Y-m-d H:i:s")
+            "date" =>  $current->startOfDay()->format(TimeHelper::DATE_FORMAT_DATETIME)
         ]);
 
         return $query->fetchAll();

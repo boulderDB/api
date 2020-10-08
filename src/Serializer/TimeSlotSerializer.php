@@ -6,7 +6,7 @@ use App\Entity\TimeSlot;
 
 class TimeSlotSerializer
 {
-    public static function serialize(TimeSlot $timeSlot, int $userId, bool $adminView = false)
+    public static function serialize(TimeSlot $timeSlot, int $userId = null, bool $adminView = false)
     {
         $data = [
             "hash" => $timeSlot->getHashId(),
@@ -22,9 +22,10 @@ class TimeSlotSerializer
 
             }, $timeSlot->getReservations()->toArray());
 
-        } else {
-            $userReservation = $timeSlot->getUserReservation($userId);
+        }
 
+        if ($userId) {
+            $userReservation = $timeSlot->getUserReservation($userId);
             $data["reservation"] = $userReservation ? $userReservation->getId() : null;
         }
 

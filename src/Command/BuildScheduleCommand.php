@@ -383,7 +383,8 @@ class BuildScheduleCommand extends Command
     {
         $this
             ->setDescription("Build default schedule.")
-            ->addArgument("locationId", InputArgument::REQUIRED);
+            ->addArgument("locationId", InputArgument::REQUIRED)
+            ->addArgument("roomName", InputArgument::REQUIRED);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -391,7 +392,11 @@ class BuildScheduleCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $roomRepository = $this->entityManager->getRepository(Room::class);
-        $room = $roomRepository->findOneBy(["name" => "default", "location" => $input->getArgument("locationId")]);
+
+        $room = $roomRepository->findOneBy([
+            "name" => $input->getArgument("roomName"),
+            "location" => $input->getArgument("locationId")
+        ]);
 
         foreach (self::$schedule as $day => $defaultSlots) {
 

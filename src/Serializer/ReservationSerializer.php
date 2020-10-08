@@ -14,7 +14,8 @@ class ReservationSerializer
             "last_name" => $reservation->getLastName(),
             "username" => $reservation->getUsername(),
             "email" => $reservation->getEmail(),
-            "appeared" => $reservation->getAppeared()
+            "appeared" => $reservation->getAppeared(),
+            "quantity" => $reservation->getQuantity()
         ];
     }
 }
