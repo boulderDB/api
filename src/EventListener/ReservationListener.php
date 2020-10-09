@@ -41,7 +41,7 @@ class ReservationListener implements EventSubscriber
         }
 
         if (!$subject->getUser()->getFirstName() || !$subject->getUser()->getLastName() || !$subject->getUser()->getEmail()) {
-           throw new HttpException(Response::HTTP_NOT_ACCEPTABLE, "Incomplete user registration.");
+            throw new HttpException(Response::HTTP_NOT_ACCEPTABLE, "Incomplete user registration.");
         }
     }
 
@@ -70,7 +70,19 @@ class ReservationListener implements EventSubscriber
             ->from($_ENV["MAILER_FROM"])
             ->to($subject->getUser()->getEmail())
             ->subject("Your Time Slot reservation @{$locationName} on {$reservationDate} from {$subject->getStartTime()} to {$subject->getEndTime()}")
-            ->html("<a href='{$cancellationLink}'>Cancel</a>");
+            ->html("
+                <h1>BlocBeta</h1>
+                <p>
+                    Your Time Slot reservation @$locationName on $reservationDate from {$subject->getStartTime()} to {$subject->getEndTime()}
+                </p>
+
+                <br/>
+                <br/>
+                
+                <p>
+                    If you cannot attend to your slot, please <a href='{$cancellationLink}'>cancel it!</a>
+                </p>
+            ");
 
         $this->mailer->send($email);
 
