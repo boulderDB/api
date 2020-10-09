@@ -15,7 +15,6 @@ class UserSerializer
             "username" => $user->getUsername(),
             "firstName" => $user->getFirstName(),
             "lastName" => $user->getLastName(),
-            "email" => $user->getEmail(),
         ];
     }
 }
