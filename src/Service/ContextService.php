@@ -18,9 +18,13 @@ class ContextService
         $this->location = $location;
     }
 
-    public static function getLocationRoleName(string $role, int $locationId): string
+    public static function getLocationRoleName(string $role, int $locationId, bool $prefix = false): string
     {
-        return "ROLE_{$role}@{$locationId}";
+        if ($prefix) {
+            return "ROLE_{$role}@{$locationId}";
+        }
+
+        return "{$role}@{$locationId}";
     }
 
     public function getLocationRole(string $role): ?string

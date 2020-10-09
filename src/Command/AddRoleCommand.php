@@ -64,7 +64,7 @@ class AddRoleCommand extends Command
             ->getQuery()
             ->getSingleResult();
 
-        $locationRole = ContextService::getLocationRoleName($role, $locationId);
+        $locationRole = ContextService::getLocationRoleName($role, $locationId, true);
 
         $user->addRole($locationRole);
 
