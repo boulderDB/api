@@ -201,6 +201,11 @@ class User implements UserInterface
         $this->roles = $roles;
     }
 
+    public function addRole(string $role): void
+    {
+        $this->roles[] = $role;
+    }
+
     public function isVisible(): bool
     {
         return $this->visible;

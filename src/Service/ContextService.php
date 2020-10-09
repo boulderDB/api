@@ -20,7 +20,7 @@ class ContextService
 
     public static function getLocationRoleName(string $role, int $locationId): string
     {
-        return "{$role}@{$locationId}";
+        return "ROLE_{$role}@{$locationId}";
     }
 
     public function getLocationRole(string $role): ?string

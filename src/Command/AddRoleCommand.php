@@ -41,11 +41,11 @@ class AddRoleCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $role = $input->getArgument('role');
+        $role = strtoupper($input->getArgument('role'));
         $locationId = $input->getArgument('locationId');
 
         if (!in_array($role, [User::SETTER, User::ADMIN])) {
-            $io->error("Role {$role}");
+            $io->error("Role {$role} does not exist");
 
             return 1;
         }
