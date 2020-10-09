@@ -48,6 +48,8 @@ class AuthenticationSuccessSubscriber implements EventSubscriberInterface
             "user" => [
                 "id" => $user->getId(),
                 "username" => $user->getUsername(),
+                "first_name" => $user->getFirstName(),
+                "last_name" => $user->getLastName(),
                 "roles" => $user->getRoles(),
                 "visible" => $user->isVisible(),
             ]
