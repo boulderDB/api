@@ -12,6 +12,7 @@ class TimeSlotSerializer
             "hash" => $timeSlot->getHashId(),
             "available" => $timeSlot->getAvailable(),
             "capacity" => $timeSlot->getCapacity(),
+            "allow_quantity" => $timeSlot->getAllowQuantity(),
             "start_time" => $timeSlot->getStartTime(),
             "end_time" => $timeSlot->getEndTime(),
         ];
