@@ -7,6 +7,7 @@ use App\Entity\TimeSlot;
 use App\Helper\ScheduleHelper;
 use App\Helper\TimeHelper;
 use App\Repository\RoomRepository;
+use App\Serializer\TimeSlotSerializer;
 use App\Service\ContextService;
 use App\Service\Serializer;
 use App\Service\SerializerInterface;
@@ -69,7 +70,10 @@ class ScheduleController extends AbstractController
                  */
                 return Serializer::serialize(
                     $timeSlot,
-                    [$isAdmin ? SerializerInterface::GROUP_COMPUTED : SerializerInterface::GROUP_INDEX],
+                    [
+                        TimeSlotSerializer::GROUP_COMPUTED,
+                        $isAdmin ? SerializerInterface::GROUP_INDEX : null
+                    ],
                     [
                         "userId" => $userId
                     ]
@@ -111,7 +115,13 @@ class ScheduleController extends AbstractController
                 /**
                  * @var TimeSlot $timeSlot
                  */
-                return Serializer::serialize($timeSlot, [SerializerInterface::GROUP_DETAIL]);
+                return Serializer::serialize(
+                    $timeSlot,
+                    [
+                        SerializerInterface::GROUP_DETAIL,
+                        TimeSlotSerializer::GROUP_COMPUTED
+                    ]
+                );
 
             }, $this->scheduleHelper->room($room->getId(), $scheduleDate));
 
