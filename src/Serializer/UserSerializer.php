@@ -3,18 +3,22 @@
 namespace App\Serializer;
 
 use App\Entity\User;
+use App\Service\SerializerInterface;
 
-class UserSerializer
+class UserSerializer implements SerializerInterface
 {
-    public static function serialize(User $user)
+    public function serialize($class, array $groups = [], array $arguments = []): array
     {
+        /**
+         * @var User $class
+         */
         return [
-            "id" => $user->getId(),
-            "media" => $user->getMedia(),
-            "visible" => $user->isVisible(),
-            "username" => $user->getUsername(),
-            "firstName" => $user->getFirstName(),
-            "lastName" => $user->getLastName(),
+            "id" => $class->getId(),
+            "media" => $class->getMedia(),
+            "visible" => $class->isVisible(),
+            "username" => $class->getUsername(),
+            "firstName" => $class->getFirstName(),
+            "lastName" => $class->getLastName(),
         ];
     }
 }

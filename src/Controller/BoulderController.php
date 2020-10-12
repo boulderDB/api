@@ -107,7 +107,7 @@ class BoulderController extends AbstractController
         $this->entityManager->persist($boulder);
         $this->entityManager->flush();
 
-        return $this->createdResponse($boulder->getId());
+        return $this->createdResponse($boulder);
     }
 
     /**

@@ -6,7 +6,6 @@ use App\Entity\Reservation;
 use App\Entity\TimeSlot;
 use App\Form\ReservationType;
 use App\Helper\ScheduleHelper;
-use App\Helper\TimeHelper;
 use App\Helper\TimeSlotHelper;
 use App\Repository\ReservationRepository;
 use App\Repository\RoomRepository;
@@ -14,7 +13,6 @@ use App\Repository\TimeSlotExclusionRepository;
 use App\Repository\TimeSlotRepository;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
-use App\Serializer\TimeSlotSerializer;
 use App\Service\ContextService;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
@@ -138,7 +136,7 @@ class ReservationController extends AbstractController
         $this->entityManager->persist($reservation);
         $this->entityManager->flush();
 
-        return $this->createdResponse(["id" => $reservation->getId()]);
+        return $this->createdResponse($reservation);
     }
 
     /**

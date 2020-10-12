@@ -70,7 +70,7 @@ class TimeSlotExclusionController extends AbstractController
         $this->entityManager->persist($timeSlotExclusion);
         $this->entityManager->flush();
 
-        return $this->createdResponse($timeSlotExclusion->getId());
+        return $this->createdResponse($timeSlotExclusion);
     }
 
     /**
@@ -80,7 +80,25 @@ class TimeSlotExclusionController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        // todo
+        $timeSlotExclusion = $this->timeSlotExclusionRepository->find($id);
+
+        if (!$timeSlotExclusion) {
+            return $this->resourceNotFoundResponse("TimeSlotExclusion", $id);
+        }
+
+        $form = $this->createForm(TimeSlotExclusionType::class, $timeSlotExclusion);
+        $form->submit(self::decodePayLoad($request));
+
+        if (!$form->isValid()) {
+            return $this->badFormRequestResponse($form);
+        }
+
+        $timeSlotExclusion->generateHashId();
+
+        $this->entityManager->persist($timeSlotExclusion);
+        $this->entityManager->flush();
+
+        return $this->noContentResponse();
     }
 
     /**

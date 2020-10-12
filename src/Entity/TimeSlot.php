@@ -65,7 +65,7 @@ class TimeSlot
 
     private ?Carbon $endDate;
 
-    private ?string $hashId;
+    private ?string $hashId = null;
 
     public function __construct()
     {

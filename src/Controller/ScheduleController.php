@@ -7,8 +7,9 @@ use App\Entity\TimeSlot;
 use App\Helper\ScheduleHelper;
 use App\Helper\TimeHelper;
 use App\Repository\RoomRepository;
-use App\Serializer\TimeSlotSerializer;
 use App\Service\ContextService;
+use App\Service\Serializer;
+use App\Service\SerializerInterface;
 use Carbon\Carbon;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,14 +60,20 @@ class ScheduleController extends AbstractController
         }
 
         $schedule = $this->scheduleHelper->room($roomId, $scheduleDate);
-        $adminView = $this->isLocationAdmin() && $request->query->get("admin");
+        $isAdmin = $this->isLocationAdmin() && $request->query->get("admin");
 
-        return $this->okResponse(array_map(function ($timeSlot) use ($userId, $adminView) {
+        return $this->okResponse(array_map(function ($timeSlot) use ($userId, $isAdmin) {
 
                 /**
                  * @var TimeSlot $timeSlot
                  */
-                return TimeSlotSerializer::serialize($timeSlot, $userId, $adminView);
+                return Serializer::serialize(
+                    $timeSlot,
+                    [$isAdmin ? SerializerInterface::GROUP_COMPUTED : SerializerInterface::GROUP_INDEX],
+                    [
+                        "userId" => $userId
+                    ]
+                );
 
             }, $schedule)
         );
@@ -104,7 +111,7 @@ class ScheduleController extends AbstractController
                 /**
                  * @var TimeSlot $timeSlot
                  */
-                return TimeSlotSerializer::serialize($timeSlot, null, true);
+                return Serializer::serialize($timeSlot, [SerializerInterface::GROUP_DETAIL]);
 
             }, $this->scheduleHelper->room($room->getId(), $scheduleDate));
 

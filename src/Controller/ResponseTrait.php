@@ -35,9 +35,14 @@ trait ResponseTrait
     }
 
 
-    protected function createdResponse($data)
+    protected function createdResponse(object $class)
     {
-        return $this->json($data, Response::HTTP_CREATED);
+        return $this->json(
+            [
+                "id" => $class->getId(),
+            ],
+            Response::HTTP_CREATED
+        );
     }
 
     protected function internalErrorResponse()

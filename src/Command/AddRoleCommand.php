@@ -14,9 +14,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class AddRoleCommand extends Command
 {
-    protected static $defaultName = 'blocbeta:user:add-role';
+    protected static $defaultName = "blocbeta:user:add-role";
 
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -30,10 +30,10 @@ class AddRoleCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Command to add a role to a user')
-            ->addArgument('username', InputArgument::REQUIRED)
-            ->addArgument('role', InputArgument::REQUIRED)
-            ->addArgument('locationId', InputArgument::REQUIRED);
+            ->setDescription("Command to add a role to a user")
+            ->addArgument("username", InputArgument::REQUIRED)
+            ->addArgument("role", InputArgument::REQUIRED)
+            ->addArgument("locationId", InputArgument::REQUIRED);
 
     }
 
@@ -41,8 +41,8 @@ class AddRoleCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $role = strtoupper($input->getArgument('role'));
-        $locationId = $input->getArgument('locationId');
+        $role = strtoupper($input->getArgument("role"));
+        $locationId = $input->getArgument("locationId");
 
         if (!in_array($role, [User::SETTER, User::ADMIN])) {
             $io->error("Role {$role} does not exist");
@@ -58,9 +58,9 @@ class AddRoleCommand extends Command
         /**
          * @var User $user
          */
-        $user = $userRepository->createQueryBuilder('user')
-            ->where('user.username = :username')
-            ->setParameter('username', $input->getArgument('username'))
+        $user = $userRepository->createQueryBuilder("user")
+            ->where("user.username = :username")
+            ->setParameter("username", $input->getArgument("username"))
             ->getQuery()
             ->getSingleResult();
 

@@ -14,11 +14,8 @@ use App\Repository\LocationRepository;
 use App\Repository\UserRepository;
 use App\Serializer\LocationSerializer;
 use App\Serializer\UserSerializer;
-use App\Controller\FormErrorTrait;
-use App\Controller\RateLimiterTrait;
-use App\Controller\RequestTrait;
-use App\Controller\ResponseTrait;
 use App\Service\ContextService;
+use App\Service\Serializer;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
 use Namshi\JOSE\JWS;
@@ -125,7 +122,7 @@ class GlobalController extends AbstractController
          */
         $user = $this->getUser();
 
-        return $this->okResponse(UserSerializer::serialize($user));
+        return $this->okResponse(Serializer::serialize($user));
     }
 
     /**
@@ -309,7 +306,7 @@ class GlobalController extends AbstractController
         if ($form->isSubmitted()) {
             // check bot traps and return fake id response if filled
             if (isset($form->getExtraData()['phone']) || isset($form->getExtraData()['fax'])) {
-                return $this->createdResponse(null);
+                return $this->noContentResponse();
             }
 
             if ($this->userRepository->userExists('email', $form->getData()->getEmail())) {
@@ -335,7 +332,7 @@ class GlobalController extends AbstractController
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        return $this->createdResponse(["id" => $user->getId()]);
+        return $this->createdResponse($user);
     }
 
     /**

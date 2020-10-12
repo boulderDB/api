@@ -3,30 +3,41 @@
 namespace App\Serializer;
 
 use App\Entity\TimeSlot;
+use App\Service\SerializerInterface;
 
-class TimeSlotSerializer
+class TimeSlotSerializer implements SerializerInterface
 {
-    public static function serialize(TimeSlot $timeSlot, int $userId = null, bool $adminView = false)
+    public const GROUP_COMPUTED = "computed";
+
+    public function serialize($class, array $groups = [], array $arguments = []): array
     {
+        /**
+         * @var TimeSlot $class
+         */
         $data = [
-            "hash" => $timeSlot->getHashId(),
-            "available" => $timeSlot->getAvailable(),
-            "capacity" => $timeSlot->getCapacity(),
-            "allow_quantity" => $timeSlot->getAllowQuantity(),
-            "start_time" => $timeSlot->getStartTime(),
-            "end_time" => $timeSlot->getEndTime(),
+            "id" => $class->getId(),
+            "capacity" => $class->getCapacity(),
+            "allow_quantity" => $class->getAllowQuantity(),
+            "day_name" => $class->getDayName(),
+            "start_time" => $class->getStartTime(),
+            "end_time" => $class->getEndTime(),
         ];
 
-        if ($adminView) {
+        if (in_array(self::GROUP_DETAIL, $groups)) {
             $data["reservations"] = array_map(function ($reservation) {
                 return ReservationSerializer::serialize($reservation);
 
-            }, $timeSlot->getReservations()->toArray());
-
+            }, $class->getReservations()->toArray());
         }
 
-        if ($userId) {
-            $userReservation = $timeSlot->getUserReservation($userId);
+        if (in_array(self::GROUP_COMPUTED, $groups)) {
+            $data["hash"] = $class->getHashId();
+            $data["available"] = $class->getAvailable();
+        }
+
+        if (isset($arguments["userId"])) {
+            $userReservation = $class->getUserReservation($arguments["userId"]);
+
             $data["reservation"] = $userReservation ? $userReservation->getId() : null;
         }
 
