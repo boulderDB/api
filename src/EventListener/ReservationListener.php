@@ -84,7 +84,10 @@ class ReservationListener implements EventSubscriber
                 </p>
             ");
 
-        $this->mailer->send($email);
+        try {
+            $this->mailer->send($email);
+        } catch (\Exception $exception) {
 
+        }
     }
 }
