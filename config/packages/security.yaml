@@ -9,7 +9,6 @@ security:
     users:
       entity:
         class: 'App\Entity\User'
-        property: 'username'
 
   firewalls:
     dev:
