@@ -41,7 +41,7 @@ class ShowUserCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $username = $input->getArgument("username");
-        $user = $this->userRepository->findUserByUsername($input->getArgument("username"));
+        $user = $this->userRepository->loadUserByUsername($input->getArgument("username"));
 
         if (!$user) {
             $io->error("User: $username not found");
