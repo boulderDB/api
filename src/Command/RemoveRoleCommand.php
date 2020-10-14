@@ -64,7 +64,9 @@ class RemoveRoleCommand extends Command
             $role = "ROLE_${$role}";
         }
 
-        $user->addRole($role);
+        $user->setRoles(array_filter($user->getRoles(), function ($currentRole) use ($role) {
+            return $currentRole !== $role;
+        }));
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
