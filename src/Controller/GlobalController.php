@@ -16,6 +16,7 @@ use App\Serializer\LocationSerializer;
 use App\Serializer\UserSerializer;
 use App\Service\ContextService;
 use App\Service\Serializer;
+use App\Service\SerializerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
 use Namshi\JOSE\JWS;
@@ -338,39 +339,25 @@ class GlobalController extends AbstractController
     /**
      * @Route("/location", methods={"GET"})
      */
-    public function location()
+    public function locations()
     {
-        $fields = [
-            'id',
-            'name',
-            'url',
-            'public',
-            'city',
-            'zip',
-            'address_line_one',
-            'address_line_two',
-            'country_code',
-            'image',
-            'website',
-            'facebook',
-            'instagram',
-            'twitter',
-        ];
+        $locations = $this->locationRepository->findAll();
 
-        $fields = implode(', ', $fields);
+        return $this->okResponse(Serializer::serialize($locations));
+    }
 
-        $connection = $this->entityManager->getConnection();
-        $statement = "select {$fields} from tenant where public = true";
-        $query = $connection->prepare($statement);
+    /**
+     * @Route("/location/{id}", methods={"GET"})
+     */
+    public function location(string $id)
+    {
+        $location = $this->locationRepository->find($id);
 
-        $query->execute();
-        $results = $query->fetchAll();
+        if (!$location) {
+            return $this->resourceNotFoundResponse("Location", $id);
+        }
 
-        return $this->json(
-            array_map(function ($result) {
-                return LocationSerializer::serializeArray($result);
-            }, $results)
-        );
+        return $this->okResponse(Serializer::serialize($location, [SerializerInterface::GROUP_DETAIL]));
     }
 
     /**

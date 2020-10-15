@@ -2,8 +2,10 @@
 
 namespace App\Service;
 
+use App\Entity\Location;
 use App\Entity\TimeSlot;
 use App\Entity\User;
+use App\Serializer\LocationSerializer;
 use App\Serializer\TimeSlotSerializer;
 use App\Serializer\UserSerializer;
 
@@ -11,7 +13,8 @@ class Serializer
 {
     private static array $serializers = [
         TimeSlot::class => TimeSlotSerializer::class,
-        User::class => UserSerializer::class
+        User::class => UserSerializer::class,
+        Location::class => LocationSerializer::class
     ];
 
     public static function serialize($any, array $groups = [SerializerInterface::GROUP_INDEX], array $arguments = []): array

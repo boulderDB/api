@@ -2,14 +2,39 @@
 
 namespace App\Serializer;
 
-class LocationSerializer
-{
-    public static function serializeArray(array $location)
-    {
-        $location['addressLineOne'] = $location['address_line_one'];
-        $location['addressLineTwo'] = $location['address_line_two'];
-        $location['countryCode'] = $location['country_code'];
+use App\Entity\Location;
+use App\Service\SerializerInterface;
 
-        return $location;
+class LocationSerializer implements SerializerInterface
+{
+    public function serialize($class, array $groups = [], array $arguments = []): array
+    {
+        /**
+         * @var Location $class
+         */
+        $data = [
+            "id" => $class->getId(),
+            "name" => $class->getName(),
+            "url" => $class->getUrl(),
+            "public" => $class->getPublic()
+        ];
+
+        if (in_array(self::GROUP_DETAIL, $groups)) {
+
+            $data = array_merge($data, [
+                "city" => $class->getCity(),
+                "zip" => $class->getZip(),
+                "address_line_one" => $class->getAddressLineOne(),
+                "address_line_two" => $class->getAddressLineTwo(),
+                "country_code" => $class->getCountryCode(),
+                "image" => $class->getImage(),
+                "website" => $class->getWebsite(),
+                "facebook" => $class->getFacebook(),
+                "instagram" => $class->getInstagram(),
+                "twitter" => $class->getTwitter(),
+            ]);
+        }
+
+        return $data;
     }
 }

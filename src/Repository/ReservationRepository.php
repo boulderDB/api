@@ -109,7 +109,7 @@ class ReservationRepository extends ServiceEntityRepository
     {
         $current = Carbon::now();
 
-        $statement = "SELECT reservation.id, reservation.date, reservation.start_time, reservation.end_time, reservation.room_id FROM reservation INNER JOIN room ON reservation.room_id = room.id WHERE user_id = :userId AND room.tenant_id = :locationId AND reservation.date >= :date";
+        $statement = "SELECT reservation.id, reservation.date, reservation.start_time, reservation.end_time, reservation.room_id, reservation.quantity FROM reservation INNER JOIN room ON reservation.room_id = room.id WHERE user_id = :userId AND room.tenant_id = :locationId AND reservation.date >= :date";
         $query = $this->getEntityManager()->getConnection()->prepare($statement);
 
         $query->execute([
