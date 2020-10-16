@@ -30,7 +30,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $query = $connection->prepare($statement);
 
         $query->execute([
-            'property' => strtolower($value)
+            "property" => strtolower($value)
         ]);
 
         $result = $query->fetch();
@@ -40,9 +40,10 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
     public function loadUserByUsername(string $username)
     {
-        return $this->createQueryBuilder('user')
-            ->where('lower(user.username) = lower(:username)')
-            ->setParameter('username', $username)
+        return $this->createQueryBuilder("user")
+            ->where("lower(user.username) = lower(:username)")
+            ->orWhere("lower(user.email) = lower(:username)")
+            ->setParameter("username", $username)
             ->getQuery()
             ->getOneOrNullResult();
     }
