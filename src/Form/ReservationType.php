@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -50,6 +51,38 @@ class ReservationType extends AbstractType
                 "constraints" => [new NotBlank()],
             ])
             ->add("quantity", NumberType::class);
+    }
+
+    public static function getEmailField(): array
+    {
+        return [
+            "email",
+            EmailType::class,
+            [
+                "constraints" => [new NotBlank()]
+            ]
+        ];
+    }
+
+    public static function getFirstNameField(): array
+    {
+        return [
+            "first_name",
+            TextType::class, [
+                "constraints" => [new NotBlank()]
+            ]
+        ];
+    }
+
+    public static function getLastNameField(): array
+    {
+        return [
+            "last_name",
+            TextType::class,
+            [
+                "constraints" => [new NotBlank()]
+            ]
+        ];
     }
 
     public function configureOptions(OptionsResolver $resolver)

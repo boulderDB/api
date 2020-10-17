@@ -31,6 +31,7 @@ class ReservationController extends AbstractController
     use FormErrorTrait;
     use RequestTrait;
     use ResponseTrait;
+    use ContextualizedControllerTrait;
 
     private EntityManagerInterface $entityManager;
     private ContextService $contextService;
@@ -63,6 +64,72 @@ class ReservationController extends AbstractController
         $this->redis = RedisConnectionFactory::create();
         $this->timeSlotExclusionRepository = $timeSlotExclusionRepository;
         $this->scheduleHelper = $scheduleHelper;
+    }
+
+    /**
+     * @Route("/guest", methods={"post"})
+     */
+    public function guest(Request $request)
+    {
+        $this->denyUnlessLocationAdmin();
+
+        $reservation = new Reservation();
+
+        $form = $this->createForm(ReservationType::class, $reservation);
+        $form
+            ->add(...ReservationType::getEmailField())
+            ->add(...ReservationType::getFirstNameField())
+            ->add(...ReservationType::getLastNameField());
+
+        $form->submit(self::decodePayLoad($request));
+
+        if (!$form->isValid()) {
+            return $this->badFormRequestResponse($form);
+        }
+
+        $reservation->generateHashId();
+
+        /**
+         * @var TimeSlot $timeSlot
+         */
+        $timeSlot = $this->timeSlotRepository->findOneBy([
+            "room" => $reservation->getRoom()->getId(),
+            "startTime" => $reservation->getStartTime(),
+            "endTime" => $reservation->getEndTime(),
+            "dayName" => $reservation->getDayName()
+        ]);
+
+        if (!$timeSlot) {
+            return $this->resourceNotFoundResponse("TimeSlot");
+        }
+
+        $this->timeSlotHelper->appendData($timeSlot, $reservation->getDate()->format("Y-m-d"));
+
+        if ($timeSlot->getEndDate() < Carbon::now()) {
+            return $this->json([
+                "message" => "This time slot is expired.",
+                "code" => Response::HTTP_CONFLICT
+            ], Response::HTTP_CONFLICT);
+        }
+
+        if ($timeSlot->getCapacity() === 0) {
+            return $this->json([
+                "message" => "This time slot is full.",
+                "code" => Response::HTTP_CONFLICT
+            ], Response::HTTP_CONFLICT);
+        }
+
+        if ($reservation->getQuantity() > $timeSlot->getAllowQuantity()) {
+            return $this->json([
+                "message" => "This time slot only allows a quantity of {$timeSlot->getAllowQuantity()} per reservation.",
+                "code" => Response::HTTP_CONFLICT
+            ], Response::HTTP_CONFLICT);
+        }
+
+        $this->entityManager->persist($reservation);
+        $this->entityManager->flush();
+
+        return $this->createdResponse($reservation);
     }
 
     /**

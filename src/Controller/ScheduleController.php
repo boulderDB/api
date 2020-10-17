@@ -128,4 +128,12 @@ class ScheduleController extends AbstractController
             return $roomData;
         }, $rooms));
     }
+
+    /**
+     * @Route("/rooms/{ymd}/allocation", methods={"get"})
+     */
+    public function currentAllocation()
+    {
+
+    }
 }

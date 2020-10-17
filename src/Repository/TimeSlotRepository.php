@@ -69,6 +69,7 @@ class TimeSlotRepository extends ServiceEntityRepository
             ->innerJoin("timeSlot.room", "room")
             ->where("timeSlot.dayName = :dayName")
             ->andWhere("timeSlot.room = :roomId")
+            ->orderBy("timeSlot.startTime, timeSlot.endTime", "ASC")
             ->setParameters([
                 "dayName" => strtolower($dayName),
                 "roomId" => $roomId,

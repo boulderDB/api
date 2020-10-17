@@ -155,9 +155,14 @@ class TimeSlot
     public function getUserReservation(int $userId): ?Reservation
     {
         $reservation = $this->getReservations()->filter(function ($reservation) use ($userId) {
+
             /**
              * @var Reservation $reservation
              */
+            if (!$reservation->getUser()) {
+                return null;
+            }
+
             return $reservation->getUser()->getId() === $userId;
 
         })->first();

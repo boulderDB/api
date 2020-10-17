@@ -22,15 +22,21 @@ class UserResourceListener implements EventSubscriber
         $subject = $args->getObject();
 
         if ($subject instanceof UserResourceInterface) {
-            $user = $subject->getUser();
-
-            /**
-             * @var User $user
-             */
-            $user->setLastActivity(new \DateTime());
-
-            $args->getObjectManager()->persist($user);
-            $args->getObjectManager()->flush();
+            return;
         }
+
+        $user = $subject->getUser();
+
+        if (!$user) {
+            return;
+        }
+
+        /**
+         * @var User $user
+         */
+        $user->setLastActivity(new \DateTime());
+
+        $args->getObjectManager()->persist($user);
+        $args->getObjectManager()->flush();
     }
 }

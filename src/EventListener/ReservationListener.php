@@ -40,7 +40,7 @@ class ReservationListener implements EventSubscriber
             return;
         }
 
-        if (!$subject->getUser()->getFirstName() || !$subject->getUser()->getLastName() || !$subject->getUser()->getEmail()) {
+        if (!$subject->getFirstName() || !$subject->getLastName() || !$subject->getEmail()) {
             throw new HttpException(Response::HTTP_NOT_ACCEPTABLE, "Incomplete user registration.");
         }
     }
@@ -53,7 +53,7 @@ class ReservationListener implements EventSubscriber
             return;
         }
 
-        $checksum = md5($subject->getHashId() . $subject->getUser()->getId());
+        $checksum = md5($subject->getHashId() . $subject->getId());
         $this->redis->set($checksum, $subject->getId());
 
         $locationName = $subject->getRoom()->getLocation()->getName();
@@ -68,7 +68,7 @@ class ReservationListener implements EventSubscriber
 
         $email = (new Email())
             ->from($_ENV["MAILER_FROM"])
-            ->to($subject->getUser()->getEmail())
+            ->to($subject->getEmail())
             ->subject("Your Time Slot reservation @{$locationName} on {$reservationDate} from {$subject->getStartTime()} to {$subject->getEndTime()}")
             ->html("
                 <h1>BlocBeta</h1>
