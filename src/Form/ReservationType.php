@@ -57,10 +57,7 @@ class ReservationType extends AbstractType
     {
         return [
             "email",
-            EmailType::class,
-            [
-                "constraints" => [new NotBlank()]
-            ]
+            EmailType::class
         ];
     }
 

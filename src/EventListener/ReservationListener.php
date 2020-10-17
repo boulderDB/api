@@ -40,7 +40,7 @@ class ReservationListener implements EventSubscriber
             return;
         }
 
-        if (!$subject->getFirstName() || !$subject->getLastName() || !$subject->getEmail()) {
+        if (!$subject->getFirstName() || !$subject->getLastName()) {
             throw new HttpException(Response::HTTP_NOT_ACCEPTABLE, "Incomplete user registration.");
         }
     }
@@ -50,6 +50,10 @@ class ReservationListener implements EventSubscriber
         $subject = $args->getObject();
 
         if (!$subject instanceof Reservation) {
+            return;
+        }
+
+        if (!$subject->getEmail()) {
             return;
         }
 
