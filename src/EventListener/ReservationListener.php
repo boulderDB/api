@@ -57,7 +57,7 @@ class ReservationListener implements EventSubscriber
             return;
         }
 
-        $checksum = md5($subject->getHashId() . $subject->getId());
+        $checksum = md5($subject->getHashId() . $subject->getId(). $_ENV["APP_SECRET"]);
         $this->redis->set($checksum, $subject->getId());
 
         $locationName = $subject->getRoom()->getLocation()->getName();
