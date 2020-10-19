@@ -4,6 +4,7 @@ namespace App\EventListener;
 
 use App\Entity\Reservation;
 use App\Factory\RedisConnectionFactory;
+use App\Mails;
 use Carbon\Carbon;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Exception\RfcComplianceException;
 
 class ReservationListener implements EventSubscriber
 {
@@ -57,7 +59,7 @@ class ReservationListener implements EventSubscriber
             return;
         }
 
-        $checksum = md5($subject->getHashId() . $subject->getId(). $_ENV["APP_SECRET"]);
+        $checksum = md5($subject->getHashId() . $subject->getId() . $_ENV["APP_SECRET"]);
         $this->redis->set($checksum, $subject->getId());
 
         $locationName = $subject->getRoom()->getLocation()->getName();
@@ -70,28 +72,26 @@ class ReservationListener implements EventSubscriber
             return;
         }
 
-        $email = (new Email())
-            ->from($_ENV["MAILER_FROM"])
-            ->to($subject->getEmail())
-            ->subject("Your Time Slot reservation @{$locationName} on {$reservationDate} from {$subject->getStartTime()} to {$subject->getEndTime()}")
-            ->html("
-                <h1>BlocBeta</h1>
-                <p>
-                    Your Time Slot reservation @$locationName on $reservationDate from {$subject->getStartTime()} to {$subject->getEndTime()}
-                </p>
-
-                <br/>
-                <br/>
-                
-                <p>
-                    If you cannot attend to your slot, please <a href='{$cancellationLink}'>cancel it!</a>
-                </p>
-            ");
+        try {
+            $email = (new Email())
+                ->from($_ENV["MAILER_FROM"])
+                ->to($subject->getEmail())
+                ->subject("Your Time Slot reservation @{$locationName} on {$reservationDate} from {$subject->getStartTime()} to {$subject->getEndTime()}")
+                ->html(Mails::renderReservationConfirmation([
+                    "locationName" => $locationName,
+                    "reservationDate" => $reservationDate,
+                    "startTime" => $subject->getStartTime(),
+                    "endTime" => $subject->getEndTime(),
+                    "cancellationLink" => $cancellationLink
+                ]));
+        } catch (RfcComplianceException $exception) {
+            throw new HttpException(Response::HTTP_BAD_REQUEST, "Invalid email provided");
+        }
 
         try {
             $this->mailer->send($email);
         } catch (\Exception $exception) {
-
+            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, "Failed to send reservation confirmation mail");
         }
     }
 }
