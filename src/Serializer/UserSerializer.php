@@ -12,7 +12,7 @@ class UserSerializer implements SerializerInterface
         /**
          * @var User $class
          */
-        return [
+        $data = [
             "id" => $class->getId(),
             "media" => $class->getMedia(),
             "visible" => $class->isVisible(),
@@ -20,5 +20,11 @@ class UserSerializer implements SerializerInterface
             "firstName" => $class->getFirstName(),
             "lastName" => $class->getLastName(),
         ];
+
+        if (in_array(self::GROUP_DETAIL, $groups)) {
+            $data["email"] = $class->getEmail();
+        }
+
+        return $data;
     }
 }

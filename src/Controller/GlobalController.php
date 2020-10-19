@@ -123,7 +123,7 @@ class GlobalController extends AbstractController
          */
         $user = $this->getUser();
 
-        return $this->okResponse(Serializer::serialize($user));
+        return $this->okResponse(Serializer::serialize($user, [SerializerInterface::GROUP_DETAIL]));
     }
 
     /**
