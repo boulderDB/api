@@ -43,7 +43,7 @@ class ReservationListener implements EventSubscriber
         }
 
         if (!$subject->getFirstName() || !$subject->getLastName()) {
-            throw new HttpException(Response::HTTP_NOT_ACCEPTABLE, "Incomplete user registration.");
+            throw new HttpException(Response::HTTP_NOT_ACCEPTABLE, "Incomplete user registration. Please complete your registration details in the account page.");
         }
     }
 

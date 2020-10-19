@@ -8,24 +8,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 class ExceptionListener implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
         return [
-            'kernel.exception' => 'onKernelException'
+            KernelEvents::EXCEPTION => [
+                ['onKernelException', 10]
+            ],
         ];
     }
 
     public function onKernelException(ExceptionEvent $event)
     {
         $debug = $_ENV["APP_DEBUG"] !== false;
-
-        if ($debug) {
-            throw $event->getThrowable();
-        }
 
         $exception = $event->getThrowable();
         $code = Response::HTTP_INTERNAL_SERVER_ERROR;
@@ -42,7 +40,7 @@ class ExceptionListener implements EventSubscriberInterface
         } else if ($exception instanceof HttpExceptionInterface) {
 
             $response = new JsonResponse([
-                "message" => "Resource not found",
+                "message" => $exception->getMessage(),
                 "code" => $exception->getStatusCode()
             ]);
 
