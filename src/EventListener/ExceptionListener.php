@@ -16,7 +16,7 @@ class ExceptionListener implements EventSubscriberInterface
     {
         return [
             KernelEvents::EXCEPTION => [
-                ['onKernelException', 10]
+                ['onKernelException', 60]
             ],
         ];
     }
@@ -32,7 +32,6 @@ class ExceptionListener implements EventSubscriberInterface
             "message" => $debug ? $exception->getMessage() : "Internal trouble. Someone got work to do.",
             "code" => $code
         ]);
-
 
         if ($exception instanceof AccessDeniedHttpException) {
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
