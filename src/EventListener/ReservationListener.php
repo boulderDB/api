@@ -30,7 +30,8 @@ class ReservationListener implements EventSubscriber
     {
         return [
             Events::postPersist,
-            Events::prePersist
+            Events::prePersist,
+            Events::postRemove
         ];
     }
 
@@ -93,5 +94,17 @@ class ReservationListener implements EventSubscriber
         } catch (\Exception $exception) {
             throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, "Failed to send reservation confirmation mail");
         }
+    }
+
+    public function postRemove(LifecycleEventArgs $args)
+    {
+        $subject = $args->getObject();
+
+        if (!$subject instanceof Reservation) {
+            return;
+        }
+
+        $checksum = md5($subject->getHashId() . $subject->getId() . $_ENV["APP_SECRET"]);
+        $this->redis->del($checksum);
     }
 }

@@ -9,6 +9,7 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class ExceptionListener implements EventSubscriberInterface
 {
@@ -23,30 +24,27 @@ class ExceptionListener implements EventSubscriberInterface
 
     public function onKernelException(ExceptionEvent $event)
     {
-        $debug = $_ENV["APP_DEBUG"] !== false;
-
         $exception = $event->getThrowable();
-        $code = Response::HTTP_INTERNAL_SERVER_ERROR;
 
         $response = new JsonResponse([
-            "message" => $debug ? $exception->getMessage() : "Internal trouble. Someone got work to do.",
-            "code" => $code
+            "message" => "Internal trouble. Someone got work to do.",
+            "code" => $exception->getCode() ? $exception->getCode() : Response::HTTP_INTERNAL_SERVER_ERROR
         ]);
 
-        if ($exception instanceof AccessDeniedHttpException) {
-            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+        if ($exception instanceof AuthenticationException) {
 
-        } else if ($exception instanceof HttpExceptionInterface) {
+            $response = new JsonResponse([
+                "message" => "Unauthorized",
+                "code" => Response::HTTP_UNAUTHORIZED
+            ]);
+        }
+
+        if ($exception instanceof HttpExceptionInterface) {
 
             $response = new JsonResponse([
                 "message" => $exception->getMessage(),
                 "code" => $exception->getStatusCode()
             ]);
-
-            $response->headers->replace($exception->getHeaders());
-
-        } else {
-            $response->setStatusCode($exception->getCode() ? $exception->getCode() : Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $event->setResponse($response);

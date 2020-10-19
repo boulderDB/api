@@ -130,10 +130,54 @@ class ScheduleController extends AbstractController
     }
 
     /**
-     * @Route("/rooms/{ymd}/allocation", methods={"get"})
+     * @Route("/allocation/{ymd}", methods={"get"})
      */
-    public function currentAllocation()
+    public function currentAllocation(string $ymd = null)
     {
+        $scheduleDate = $ymd ? Carbon::createFromFormat(TimeHelper::DATE_FORMAT_DATE, $ymd)->startOfDay() : Carbon::now()->startOfDay();
 
+        if (!$scheduleDate) {
+            return $this->badRequestResponse("Failed to parse date string '${$ymd}'");
+        }
+
+        $rooms = $this->roomRepository->findBy([
+            "location" => $this->contextService->getLocation()->getId()
+        ]);
+
+        return $this->json(array_map(function ($room) use ($scheduleDate) {
+
+            /**
+             * @var Room $room
+             */
+            $roomData = [
+                "name" => $room->getName(),
+                "totalCapacity" => 0,
+                "totalAvailable" => 0,
+            ];
+
+            $roomData["schedule"] = array_map(function ($timeSlot) {
+
+                /**
+                 * @var TimeSlot $timeSlot
+                 */
+                $data = Serializer::serialize($timeSlot, [
+                    TimeSlotSerializer::GROUP_COMPUTED
+                ]);
+
+                unset($data["hash"]);
+                unset($data["id"]);
+                unset($data["allow_quantity"]);
+
+                return $data;
+
+            }, $this->scheduleHelper->room($room->getId(), $scheduleDate));
+
+            foreach ($roomData["schedule"] as $timeSlot) {
+                $roomData["totalCapacity"] += $timeSlot["capacity"];
+                $roomData["totalAvailable"] += $timeSlot["available"];
+            }
+
+            return $roomData;
+        }, $rooms));
     }
 }
