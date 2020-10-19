@@ -17,6 +17,7 @@ use App\Serializer\UserSerializer;
 use App\Service\ContextService;
 use App\Service\Serializer;
 use App\Service\SerializerInterface;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
 use Namshi\JOSE\JWS;
@@ -311,13 +312,13 @@ class GlobalController extends AbstractController
             }
 
             if ($this->userRepository->userExists('email', $form->getData()->getEmail())) {
-                $form->get('email')->addError(
+                $form->get("email")->addError(
                     new FormError('This email is already taken')
                 );
             }
 
             if ($this->userRepository->userExists('username', $form->getData()->getUsername())) {
-                $form->get('username')->addError(
+                $form->get("username")->addError(
                     new FormError('This username is already taken')
                 );
             }
@@ -331,7 +332,12 @@ class GlobalController extends AbstractController
         $user->setPassword($password);
 
         $this->entityManager->persist($user);
-        $this->entityManager->flush();
+
+        try {
+            $this->entityManager->flush();
+        } catch (UniqueConstraintViolationException $exception) {
+            return $this->badRequestResponse("Username or email already taken");
+        }
 
         return $this->createdResponse($user);
     }
