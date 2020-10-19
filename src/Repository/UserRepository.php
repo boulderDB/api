@@ -26,7 +26,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
 
         $connection = $this->getEntityManager()->getConnection();
-        $statement = "select id from users where {$property} = lower(:property)";
+        $statement = "select id from users where lower({$property}) = lower(:property)";
         $query = $connection->prepare($statement);
 
         $query->execute([
