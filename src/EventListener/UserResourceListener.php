@@ -21,7 +21,7 @@ class UserResourceListener implements EventSubscriber
     {
         $subject = $args->getObject();
 
-        if ($subject instanceof UserResourceInterface) {
+        if (!$subject instanceof UserResourceInterface) {
             return;
         }
 
