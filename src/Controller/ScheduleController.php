@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Reservation;
 use App\Entity\Room;
 use App\Entity\TimeSlot;
 use App\Helper\ScheduleHelper;
@@ -144,40 +145,54 @@ class ScheduleController extends AbstractController
             "location" => $this->contextService->getLocation()->getId()
         ]);
 
-        return $this->json(array_map(function ($room) use ($scheduleDate) {
+        $current = Carbon::now();
+        $current->modify("+2hours");
+
+        return $this->json(array_map(function ($room) use ($scheduleDate, $current) {
 
             /**
              * @var Room $room
              */
-            $roomData = [
+            $data = [
                 "name" => $room->getName(),
-                "totalCapacity" => 0,
-                "totalAvailable" => 0,
+                "capacity" => 0,
+                "available" => 0,
+                "appeared" => 0,
+                "matched_time_slots" => [],
             ];
 
-            $roomData["schedule"] = array_map(function ($timeSlot) {
+            $schedule = $this->scheduleHelper->room($room->getId(), $scheduleDate);
+
+            foreach ($schedule as $timeSlot) {
 
                 /**
                  * @var TimeSlot $timeSlot
                  */
-                $data = Serializer::serialize($timeSlot, [
-                    TimeSlotSerializer::GROUP_COMPUTED
-                ]);
+                if ($timeSlot->getStartDate() < $current && $timeSlot->getEndDate() > $current) {
+                    $data["capacity"] += $timeSlot->getCapacity();
+                    $data["available"] += $timeSlot->getAvailable();
 
-                unset($data["hash"]);
-                unset($data["id"]);
-                unset($data["allow_quantity"]);
+                    $data["appeared"] += $timeSlot
+                        ->getReservations()
+                        ->filter(function ($reservation) {
+                            /**
+                             * @var Reservation $reservation
+                             */
+                            return $reservation->getAppeared();
+                        })->count();
 
-                return $data;
+                    $timeSlotData = Serializer::serialize($timeSlot, [
+                        TimeSlotSerializer::GROUP_COMPUTED,
+                    ]);
 
-            }, $this->scheduleHelper->room($room->getId(), $scheduleDate));
+                    unset($timeSlotData["id"]);
 
-            foreach ($roomData["schedule"] as $timeSlot) {
-                $roomData["totalCapacity"] += $timeSlot["capacity"];
-                $roomData["totalAvailable"] += $timeSlot["available"];
+                    $data["matched_time_slots"][] = $timeSlotData;
+                }
             }
 
-            return $roomData;
+            return $data;
+
         }, $rooms));
     }
 }
