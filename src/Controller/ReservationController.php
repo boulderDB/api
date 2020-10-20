@@ -255,7 +255,7 @@ class ReservationController extends AbstractController
             return $this->unauthorizedResponse();
         }
 
-        if ($reservation->getUser() && $reservation->getUser()->getId() !== $this->getUser() && !$this->isLocationAdmin()) {
+        if ($reservation->getUser() && $reservation->getUser()->getId() !== $this->getUser()->getId() && !$this->isLocationAdmin()) {
             return $this->unauthorizedResponse();
         }
 
