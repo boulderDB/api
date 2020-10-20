@@ -149,8 +149,14 @@ class BoulderController extends AbstractController
             ->getQuery()
             ->getArrayResult();
 
-        $results = array_map(function ($boulder) {
+        $isAdmin = $this->isLocationAdmin();
+
+        $results = array_map(function ($boulder) use ($isAdmin) {
             $boulder['labels'] = $this->getLabels($boulder['id']);
+
+            if (!$isAdmin) {
+                unset($boulder["internal_grade"]);
+            }
 
             return self::replaceLegacyNames($boulder);
         }, $results);
@@ -238,18 +244,18 @@ class BoulderController extends AbstractController
 
     private function getLabels(string $id)
     {
-        $key = BoulderLabel::createKey(
-            $this->contextService->getLocation()->getId(),
-            $this->getUser()->getId(),
-            $id,
-            "*"
-        );
-
-        return array_map(function ($key) {
-            $label = BoulderLabel::fromKey($key);
-
-            return $label->getTitle();
-        }, $this->redis->keys($key));
+        //$key = BoulderLabel::createKey(
+        //    $this->contextService->getLocation()->getId(),
+        //    $this->getUser()->getId(),
+        //    $id,
+        //    "*"
+        //);
+        //
+        //return array_map(function ($key) {
+        //    $label = BoulderLabel::fromKey($key);
+        //
+        //    return $label->getTitle();
+        //}, $this->redis->keys($key));
     }
 
     private static function replaceLegacyNames(array $boulder)
