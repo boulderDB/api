@@ -133,11 +133,13 @@ class GlobalController extends AbstractController
     public function updateMe(Request $request)
     {
         $user = $this->getUser();
+        $currentMail = $user->getEmail();
+
         $form = $this->createForm(UserType::class, $user);
 
         $form->submit(json_decode($request->getContent(), true), false);
 
-        if ($this->userRepository->userExists('email', $form->getData()->getEmail()) && $user->getEmail() !== $form->getData()->getEmail()) {
+        if ($this->userRepository->userExists("email", $form->getData()->getEmail()) && $currentMail !== $form->getData()->getEmail()) {
             $form->get("email")->addError(
                 new FormError('This email is already taken')
             );
