@@ -137,6 +137,12 @@ class GlobalController extends AbstractController
 
         $form->submit(json_decode($request->getContent(), true), false);
 
+        if ($this->userRepository->userExists('email', $form->getData()->getEmail()) && $user->getEmail() !== $form->getData()->getEmail()) {
+            $form->get("email")->addError(
+                new FormError('This email is already taken')
+            );
+        }
+
         if (!$form->isValid()) {
             return $this->badFormRequestResponse($form);
         }
