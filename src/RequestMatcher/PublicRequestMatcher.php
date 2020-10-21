@@ -25,6 +25,14 @@ class PublicRequestMatcher implements RequestMatcherInterface
             $path = str_replace("/{$location}", "", $path);
         }
 
-        return in_array(strtolower($path), self::PATHS);
+        $match = false;
+
+        foreach (self::PATHS as $rule) {
+            if (strpos($path, $rule) !== false) {
+                $match = true;
+            }
+        }
+
+        return $match;
     }
 }
