@@ -186,7 +186,7 @@ class ReservationController extends AbstractController
             ], Response::HTTP_CONFLICT);
         }
 
-        if ($timeSlot->getCapacity() === 0) {
+        if ($timeSlot->getCapacity() <= 0) {
             return $this->json([
                 "message" => "This time slot is full.",
                 "code" => Response::HTTP_CONFLICT
