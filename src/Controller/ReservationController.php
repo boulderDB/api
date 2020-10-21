@@ -193,6 +193,13 @@ class ReservationController extends AbstractController
             ], Response::HTTP_CONFLICT);
         }
 
+        if ($timeSlot->getCapacity() < $reservation->getQuantity()) {
+            return $this->json([
+                "message" => "Your quantity exceeds the timeslot capacity",
+                "code" => Response::HTTP_CONFLICT
+            ], Response::HTTP_CONFLICT);
+        }
+
         if ($reservation->getQuantity() > $timeSlot->getAllowQuantity()) {
             return $this->json([
                 "message" => "This time slot only allows a quantity of {$timeSlot->getAllowQuantity()} per reservation.",
