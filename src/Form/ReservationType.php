@@ -50,7 +50,10 @@ class ReservationType extends AbstractType
                 },
                 "constraints" => [new NotBlank()],
             ])
-            ->add("quantity", NumberType::class);
+            ->add("quantity", NumberType::class, [
+                "min" => 1,
+                "max" => 200
+            ]);
     }
 
     public static function getEmailField(): array
