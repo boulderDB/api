@@ -26,17 +26,21 @@ class ExceptionListener implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
 
+        if ($_ENV["APP_DEBUG"]) {
+            throw $exception;
+        }
+
         $response = new JsonResponse([
             "message" => "Internal trouble. Someone got work to do.",
             "code" => $exception->getCode() ? $exception->getCode() : Response::HTTP_INTERNAL_SERVER_ERROR
-        ]);
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
 
         if ($exception instanceof AuthenticationException) {
 
             $response = new JsonResponse([
                 "message" => "Unauthorized",
                 "code" => Response::HTTP_UNAUTHORIZED
-            ]);
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
         if ($exception instanceof HttpExceptionInterface) {
@@ -44,7 +48,7 @@ class ExceptionListener implements EventSubscriberInterface
             $response = new JsonResponse([
                 "message" => $exception->getMessage(),
                 "code" => $exception->getStatusCode()
-            ]);
+            ], $exception->getStatusCode());
         }
 
         $event->setResponse($response);
