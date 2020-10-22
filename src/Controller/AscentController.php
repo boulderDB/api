@@ -2,12 +2,12 @@
 
 namespace App\Controller;
 
-use App\Components\Scoring\ScoringInterface;
 use App\Entity\Ascent;
 use App\Entity\AscentDoubt;
 use App\Entity\Boulder;
 use App\Form\AscentDoubtType;
 use App\Form\AscentType;
+use App\Scoring\ScoringInterface;
 use App\Serializer\AscentSerializer;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;

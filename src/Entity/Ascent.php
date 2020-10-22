@@ -52,6 +52,11 @@ class Ascent implements LocationResourceInterface, TimestampableInterface, UserR
      */
     private ?string $checksum = null;
 
+    /**
+     * @ORM\Column(name="user_id", type="integer")
+     */
+    private ?int $userId = null;
+
     public function getId(): ?int
     {
         return $this->id;
