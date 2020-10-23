@@ -43,7 +43,10 @@ class TimeSlotType extends AbstractType
             ->add("capacity", NumberType::class, [
                 "constraints" => [new NotBlank()],
             ])
-            ->add("allow_quantity", NumberType::class, [
+            ->add("min_quantity", NumberType::class, [
+                "constraints" => [new NotBlank()],
+            ])
+            ->add("max_quantity", NumberType::class, [
                 "constraints" => [new NotBlank()],
             ])
             ->add("room", EntityType::class, [

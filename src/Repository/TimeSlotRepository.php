@@ -16,7 +16,7 @@ class TimeSlotRepository extends ServiceEntityRepository
 
     public function findExact(string $locationId, string $roomId, string $dayName, string $startTime, string $endTime)
     {
-        $statement = "SELECT capacity, allow_quantity FROM timeslot INNER JOIN room ON timeslot.room_id = room.id WHERE tenant_id = :locationId AND day_name = :dayName AND start_time = :startTime AND end_time = :endTime  AND room_id = :roomId";
+        $statement = "SELECT capacity, max_quantity FROM timeslot INNER JOIN room ON timeslot.room_id = room.id WHERE tenant_id = :locationId AND day_name = :dayName AND start_time = :startTime AND end_time = :endTime  AND room_id = :roomId";
         $query = $this->getEntityManager()->getConnection()->prepare($statement);
 
         $query->execute([
@@ -51,7 +51,7 @@ class TimeSlotRepository extends ServiceEntityRepository
 
     public function findByLocationAndRoom(int $locationId, int $roomId, string $dayName): array
     {
-        $statement = "SELECT day_name, start_time, end_time, capacity, allow_quantity FROM timeslot INNER JOIN room ON timeslot.room_id = room.id WHERE tenant_id = :locationId AND day_name = :dayName AND room_id = :roomId";
+        $statement = "SELECT day_name, start_time, end_time, capacity, max_quantity FROM timeslot INNER JOIN room ON timeslot.room_id = room.id WHERE tenant_id = :locationId AND day_name = :dayName AND room_id = :roomId";
         $query = $this->getEntityManager()->getConnection()->prepare($statement);
 
         $query->execute([

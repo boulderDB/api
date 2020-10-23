@@ -51,9 +51,14 @@ class TimeSlot
     private ?Room $room = null;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", options={"default": 1})
      */
-    private ?int $allowQuantity = 1;
+    private ?int $maxQuantity = 1;
+
+    /**
+     * @ORM\Column(type="integer", options={"default": 1})
+     */
+    private ?int $minQuantity = 1;
 
     private ?Collection $reservations;
 
@@ -127,14 +132,24 @@ class TimeSlot
         $this->room = $room;
     }
 
-    public function getAllowQuantity(): ?int
+    public function getMaxQuantity(): ?int
     {
-        return $this->allowQuantity;
+        return $this->maxQuantity;
     }
 
-    public function setAllowQuantity(?int $allowQuantity): void
+    public function setMaxQuantity(?int $maxQuantity): void
     {
-        $this->allowQuantity = $allowQuantity;
+        $this->maxQuantity = $maxQuantity;
+    }
+
+    public function getMinQuantity(): ?int
+    {
+        return $this->minQuantity;
+    }
+
+    public function setMinQuantity(?int $minQuantity): void
+    {
+        $this->minQuantity = $minQuantity;
     }
 
     public function getReservations(): ?Collection
@@ -183,6 +198,12 @@ class TimeSlot
             $this->endTime,
             $scheduleDate->format(TimeHelper::DATE_FORMAT_DATE)
         );
+    }
+
+
+    public function generateHashId(Carbon $scheduleDate): void
+    {
+        $this->hashId = $this->buildReservationHash($scheduleDate);
     }
 
     public function getAvailable(): ?int

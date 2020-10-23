@@ -17,7 +17,8 @@ class TimeSlotSerializer implements SerializerInterface
         $data = [
             "id" => $class->getId(),
             "capacity" => $class->getCapacity(),
-            "allow_quantity" => $class->getAllowQuantity(),
+            "min_quantity" => $class->getMinQuantity(),
+            "max_quantity" => $class->getMaxQuantity(),
             "day_name" => $class->getDayName(),
             "start_time" => $class->getStartTime(),
             "end_time" => $class->getEndTime(),

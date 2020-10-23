@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\User;
 use App\Entity\UserResourceInterface;
+use App\Helper\TimeHelper;
+use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -58,6 +60,11 @@ class Reservation implements UserResourceInterface
     private ?bool $appeared = false;
 
     /**
+     * @ORM\Column(type="boolean", options={"default": false}, nullable=true)
+     */
+    private ?bool $checkedIn = false;
+
+    /**
      * @ORM\Column(type="boolean", options={"default": false})
      */
     private ?bool $guest = false;
@@ -86,6 +93,10 @@ class Reservation implements UserResourceInterface
      * @ORM\Column(type="integer", nullable=true)
      */
     private ?int $quantity = 1;
+
+    private ?Carbon $startDate;
+
+    private ?Carbon $endDate;
 
     public function getId(): ?int
     {
@@ -139,6 +150,20 @@ class Reservation implements UserResourceInterface
     public function setAppeared(?bool $appeared): void
     {
         $this->appeared = $appeared;
+    }
+
+    public function getCheckedIn(): ?bool
+    {
+        return $this->checkedIn;
+    }
+
+    public function setCheckedIn(?bool $checkedIn): void
+    {
+        $this->checkedIn = $checkedIn;
+
+        if ($checkedIn === true) {
+            $this->setAppeared(true);
+        }
     }
 
     public function getDate(): ?\DateTimeInterface
@@ -246,5 +271,25 @@ class Reservation implements UserResourceInterface
         if ($quantity) {
             $this->quantity = $quantity;
         }
+    }
+
+    public function getStartDate(): ?Carbon
+    {
+        return $this->startDate;
+    }
+
+    public function buildStartDate(string $ymd): void
+    {
+        $this->startDate = TimeHelper::convertToCarbonDate($ymd, $this->startTime);
+    }
+
+    public function getEndDate(): ?Carbon
+    {
+        return $this->endDate;
+    }
+
+    public function buildEndDate(string $ymd): void
+    {
+        $this->endDate = TimeHelper::convertToCarbonDate($ymd, $this->endTime);
     }
 }

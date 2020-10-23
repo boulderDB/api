@@ -289,7 +289,7 @@ class ReservationController extends AbstractController
         }
 
         $form = $this->createFormBuilder($reservation, ["csrf_protection" => false])
-            ->add("appeared", CheckboxType::class, [
+            ->add("checkedIn", CheckboxType::class, [
                 "constraints" => [new NotNull()]
             ])
             ->getForm();
