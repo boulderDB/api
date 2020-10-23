@@ -14,6 +14,7 @@ class ReservationSerializer
             "last_name" => $reservation->getLastName(),
             "username" => $reservation->getUsername(),
             "appeared" => $reservation->getAppeared(),
+            "checked_in" => $reservation->getCheckedIn(),
             "quantity" => $reservation->getQuantity()
         ];
     }

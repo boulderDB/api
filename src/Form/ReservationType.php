@@ -14,6 +14,8 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ReservationType extends AbstractType
@@ -51,8 +53,9 @@ class ReservationType extends AbstractType
                 "constraints" => [new NotBlank()],
             ])
             ->add("quantity", NumberType::class, [
-                "min" => 1,
-                "max" => 200
+                "constraints" => [
+                    new GreaterThanOrEqual(1)
+                ]
             ]);
     }
 
@@ -91,5 +94,7 @@ class ReservationType extends AbstractType
             "data_class" => Reservation::class,
             "csrf_protection" => false,
         ]);
+
     }
+
 }

@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Room;
 use App\Entity\TimeSlot;
+use App\Helper\TimeHelper;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -19,13 +20,13 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class TimeSlotType extends AbstractType
 {
     private const DAY_NAME_CHOICES = [
-        "Monday" => "monday",
-        "Tuesday" => "tuesday",
-        "Wednesday" => "wednesday",
-        "Thursday" => "thursday",
-        "Friday" => "friday",
-        "Saturday" => "saturday",
-        "Sunday" => "sunday"
+        "Monday" => TimeHelper::DAYS[1],
+        "Tuesday" => TimeHelper::DAYS[2],
+        "Wednesday" => TimeHelper::DAYS[3],
+        "Thursday" => TimeHelper::DAYS[4],
+        "Friday" => TimeHelper::DAYS[5],
+        "Saturday" => TimeHelper::DAYS[6],
+        "Sunday" => TimeHelper::DAYS[7]
     ];
 
     private ContextService $contextService;

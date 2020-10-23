@@ -119,9 +119,9 @@ class ReservationController extends AbstractController
             ], Response::HTTP_CONFLICT);
         }
 
-        if ($reservation->getQuantity() > $timeSlot->getAllowQuantity()) {
+        if ($reservation->getQuantity() > $timeSlot->getMaxQuantity()) {
             return $this->json([
-                "message" => "This time slot only allows a quantity of {$timeSlot->getAllowQuantity()} per reservation.",
+                "message" => "This time slot only allows a quantity of {$timeSlot->getMaxQuantity()} per reservation.",
                 "code" => Response::HTTP_CONFLICT
             ], Response::HTTP_CONFLICT);
         }
@@ -158,7 +158,7 @@ class ReservationController extends AbstractController
 
         if ($this->reservationRepository->hasPendingReservationForDate($reservation)) {
             return $this->json([
-                "message" => "There already exists a pending reservation for this day.",
+                "message" => "You already have a reservation for this day.",
                 "code" => Response::HTTP_CONFLICT
             ], Response::HTTP_CONFLICT);
         }
@@ -200,9 +200,9 @@ class ReservationController extends AbstractController
             ], Response::HTTP_CONFLICT);
         }
 
-        if ($reservation->getQuantity() > $timeSlot->getAllowQuantity()) {
+        if ($reservation->getQuantity() > $timeSlot->getMaxQuantity()) {
             return $this->json([
-                "message" => "This time slot only allows a quantity of {$timeSlot->getAllowQuantity()} per reservation.",
+                "message" => "This time slot only allows a quantity of {$timeSlot->getMaxQuantity()} per reservation.",
                 "code" => Response::HTTP_CONFLICT
             ], Response::HTTP_CONFLICT);
         }

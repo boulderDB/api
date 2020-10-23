@@ -2,11 +2,15 @@
 
 namespace App\Controller;
 
+use App\Collection\TimeSlotCollection;
 use App\Entity\TimeSlot;
 use App\Form\TimeSlotType;
+use App\Helper\TimeHelper;
 use App\Repository\TimeSlotRepository;
 use App\Service\ContextService;
 use App\Service\Serializer;
+use Carbon\Carbon;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,12 +55,12 @@ class TimeSlotController extends AbstractController
             ->setParameter("locationId", $this->contextService->getLocation()->getId());
 
         if ($roomId) {
-            $builder
-                ->andWhere("room.id = :roomId")
-                ->setParameter("roomId", $roomId);
+            $builder->andWhere("room.id = :roomId")->setParameter("roomId", $roomId);
         }
 
-        $timeSlots = $builder->getQuery()->getResult();
+        $timeSlots = TimeSlotCollection::orderByDayAndTime(
+            $builder->getQuery()->getResult()
+        );
 
         return $this->okResponse(Serializer::serialize($timeSlots));
     }
@@ -112,7 +116,7 @@ class TimeSlotController extends AbstractController
     /**
      * @Route("/{id}", methods={"GET"})
      */
-    public function show( string $id)
+    public function show(string $id)
     {
         $this->denyUnlessLocationAdmin();
 
