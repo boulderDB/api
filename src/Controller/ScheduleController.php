@@ -5,9 +5,10 @@ namespace App\Controller;
 use App\Entity\Reservation;
 use App\Entity\Room;
 use App\Entity\TimeSlot;
-use App\Helper\ScheduleHelper;
+use App\Helper\timeSlotHelper;
 use App\Helper\TimeHelper;
 use App\Repository\RoomRepository;
+use App\Repository\TimeSlotExclusionRepository;
 use App\Serializer\TimeSlotSerializer;
 use App\Service\ContextService;
 use App\Service\Serializer;
@@ -26,18 +27,21 @@ class ScheduleController extends AbstractController
     use ContextualizedControllerTrait;
 
     private RoomRepository $roomRepository;
-    private ScheduleHelper $scheduleHelper;
+    private TimeSlotHelper $timeSlotHelper;
     private ContextService $contextService;
+    private TimeSlotExclusionRepository $timeSlotExclusionRepository;
 
     public function __construct(
         RoomRepository $roomRepository,
-        ScheduleHelper $scheduleHelper,
-        ContextService $contextService
+        TimeSlotHelper $timeSlotHelper,
+        ContextService $contextService,
+        TimeSlotExclusionRepository $timeSlotExclusionRepository
     )
     {
         $this->roomRepository = $roomRepository;
-        $this->scheduleHelper = $scheduleHelper;
+        $this->timeSlotHelper = $timeSlotHelper;
         $this->contextService = $contextService;
+        $this->timeSlotExclusionRepository = $timeSlotExclusionRepository;
     }
 
     /**
@@ -61,7 +65,12 @@ class ScheduleController extends AbstractController
             return $this->badRequestResponse("Failed to parse date string '${$ymd}'");
         }
 
-        $schedule = $this->scheduleHelper->room($roomId, $scheduleDate);
+        $exclusions = $this->timeSlotExclusionRepository->getPendingForRoomAndDate(
+            $roomId,
+            $scheduleDate->toDateTime()
+        );
+
+        $schedule = $this->timeSlotHelper->room($roomId, $scheduleDate, $exclusions);
         $isAdmin = $this->isLocationAdmin() && $request->query->get("admin");
 
         return $this->okResponse(array_map(function ($timeSlot) use ($userId, $isAdmin) {
@@ -124,7 +133,7 @@ class ScheduleController extends AbstractController
                     ]
                 );
 
-            }, $this->scheduleHelper->room($room->getId(), $scheduleDate));
+            }, $this->timeSlotHelper->room($room->getId(), $scheduleDate));
 
             return $roomData;
         }, $rooms));
@@ -161,7 +170,7 @@ class ScheduleController extends AbstractController
                 "matched_time_slots" => [],
             ];
 
-            $schedule = $this->scheduleHelper->room($room->getId(), $scheduleDate);
+            $schedule = $this->timeSlotHelper->room($room->getId(), $scheduleDate);
 
             foreach ($schedule as $timeSlot) {
 
