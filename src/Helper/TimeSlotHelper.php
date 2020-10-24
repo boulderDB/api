@@ -4,17 +4,22 @@ namespace App\Helper;
 
 use App\Entity\Reservation;
 use App\Entity\TimeSlot;
-use App\Entity\TimeSlotExclusion;
 use App\Repository\ReservationRepository;
+use App\Repository\TimeSlotExclusionRepository;
 use Carbon\Carbon;
 
 class TimeSlotHelper
 {
     private ReservationRepository $reservationRepository;
+    private TimeSlotExclusionRepository $timeSlotExclusionRepository;
 
-    public function __construct(ReservationRepository $reservationRepository)
+    public function __construct(
+        ReservationRepository $reservationRepository,
+        TimeSlotExclusionRepository $timeSlotExclusionRepository
+    )
     {
         $this->reservationRepository = $reservationRepository;
+        $this->timeSlotExclusionRepository = $timeSlotExclusionRepository;
     }
 
     public function appendData(TimeSlot $timeSlot, string $ymd): void
@@ -32,29 +37,13 @@ class TimeSlotHelper
         $timeSlot->setHashId($hash);
     }
 
-    public static function calculateAvailable(TimeSlot $timeSlot, array $exclusions): void
+    public function calculateAvailable(TimeSlot $timeSlot, Reservation $reservation): void
     {
-        $blocked = 0;
+        $exclusions = $this->timeSlotExclusionRepository->getPendingForRoomAndDate(
+            $reservation->getRoom()->getId(),
+            $reservation->getDate()
+        );
 
-        /**
-         * @var Reservation $reservation
-         */
-        foreach ($timeSlot->getReservations() as $reservation) {
-            $blocked += $reservation->getQuantity();
-        }
-
-        /**
-         * @var TimeSlotExclusion[] $exclusions
-         */
-        foreach ($exclusions as $exclusion) {
-            if (!$exclusion->intersectsTimeSlot($timeSlot)) {
-                continue;
-            }
-
-            $blocked += $exclusion->getQuantity() ? $exclusion->getQuantity() : $timeSlot->getCapacity();
-        }
-
-        $timeSlot->setBlocked($blocked);
-        $timeSlot->setAvailable($timeSlot->getCapacity() - $blocked);
+        ScheduleHelper::calculateAvailable($timeSlot, $exclusions);
     }
 }
