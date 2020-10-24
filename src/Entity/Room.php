@@ -26,6 +26,11 @@ class Room implements LocationResourceInterface
      */
     private ?string $name = null;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private ?string $instructions = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -39,5 +44,15 @@ class Room implements LocationResourceInterface
     public function setName(?string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getInstructions(): ?string
+    {
+        return $this->instructions;
+    }
+
+    public function setInstructions(?string $instructions): void
+    {
+        $this->instructions = $instructions;
     }
 }

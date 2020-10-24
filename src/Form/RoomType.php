@@ -16,6 +16,9 @@ class RoomType extends AbstractType
         $builder
             ->add("name", TextType::class, [
                 "constraints" => [new NotBlank()],
+            ])
+            ->add("instructions", TextType::class, [
+                "constraints" => [],
             ]);
     }
 

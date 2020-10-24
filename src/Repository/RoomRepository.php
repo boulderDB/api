@@ -15,7 +15,7 @@ class RoomRepository extends ServiceEntityRepository
 
     public function all(int $locationId): array
     {
-        $query = $this->getEntityManager()->getConnection()->prepare("SELECT id, name FROM room WHERE tenant_id = :locationId");
+        $query = $this->getEntityManager()->getConnection()->prepare("SELECT id, name, instructions FROM room WHERE tenant_id = :locationId");
         $query->execute([
             "locationId" => $locationId
         ]);
