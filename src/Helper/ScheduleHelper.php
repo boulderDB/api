@@ -62,7 +62,7 @@ class ScheduleHelper
         $timeSlot->setHashId($hash);
     }
 
-    private static function calculateAvailable(TimeSlot $timeSlot, array $exclusions): void
+    public static function calculateAvailable(TimeSlot $timeSlot, array $exclusions): void
     {
         $blocked = 0;
 

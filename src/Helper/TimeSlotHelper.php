@@ -31,30 +31,4 @@ class TimeSlotHelper
         $timeSlot->buildEndDate($ymd);
         $timeSlot->setHashId($hash);
     }
-
-    public static function calculateAvailable(TimeSlot $timeSlot, array $exclusions): void
-    {
-        $blocked = 0;
-
-        /**
-         * @var Reservation $reservation
-         */
-        foreach ($timeSlot->getReservations() as $reservation) {
-            $blocked += $reservation->getQuantity();
-        }
-
-        /**
-         * @var TimeSlotExclusion[] $exclusions
-         */
-        foreach ($exclusions as $exclusion) {
-            if (!$exclusion->intersectsTimeSlot($timeSlot)) {
-                continue;
-            }
-
-            $blocked += $exclusion->getQuantity() ? $exclusion->getQuantity() : $timeSlot->getCapacity();
-        }
-
-        $timeSlot->setBlocked($blocked);
-        $timeSlot->setAvailable($timeSlot->getCapacity() - $blocked);
-    }
 }

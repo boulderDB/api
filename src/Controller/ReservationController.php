@@ -179,6 +179,13 @@ class ReservationController extends AbstractController
 
         $this->timeSlotHelper->appendData($timeSlot, $reservation->getDate()->format("Y-m-d"));
 
+        $exclusions = $this->timeSlotExclusionRepository->getPendingForRoomAndDate(
+            $reservation->getRoom()->getId(),
+            $reservation->getDate()
+        );
+
+        ScheduleHelper::calculateAvailable($timeSlot, $exclusions);
+
         if ($timeSlot->getEndDate() < Carbon::now()) {
             return $this->json([
                 "message" => "This time slot is expired.",
@@ -186,14 +193,14 @@ class ReservationController extends AbstractController
             ], Response::HTTP_CONFLICT);
         }
 
-        if ($timeSlot->getCapacity() <= 0) {
+        if ($timeSlot->getAvailable() <= 0) {
             return $this->json([
                 "message" => "This time slot is full.",
                 "code" => Response::HTTP_CONFLICT
             ], Response::HTTP_CONFLICT);
         }
 
-        if ($timeSlot->getCapacity() < $reservation->getQuantity()) {
+        if ($timeSlot->getAvailable() < $reservation->getQuantity()) {
             return $this->json([
                 "message" => "Your quantity exceeds the timeslot capacity",
                 "code" => Response::HTTP_CONFLICT
@@ -203,6 +210,13 @@ class ReservationController extends AbstractController
         if ($reservation->getQuantity() > $timeSlot->getMaxQuantity()) {
             return $this->json([
                 "message" => "This time slot only allows a quantity of {$timeSlot->getMaxQuantity()} per reservation.",
+                "code" => Response::HTTP_CONFLICT
+            ], Response::HTTP_CONFLICT);
+        }
+
+        if ($reservation->getQuantity() < $timeSlot->getMinQuantity()) {
+            return $this->json([
+                "message" => "This time slot only requires a quantity of {$timeSlot->getMaxQuantity()} per reservation.",
                 "code" => Response::HTTP_CONFLICT
             ], Response::HTTP_CONFLICT);
         }
