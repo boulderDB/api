@@ -111,10 +111,7 @@ class RoomController extends AbstractController
         try {
             $this->entityManager->flush();
         } catch (ForeignKeyConstraintViolationException $exception) {
-            return $this->json([
-                "message" => "This room is referenced and cannot be deleted.",
-                "code" => Response::HTTP_CONFLICT
-            ], Response::HTTP_CONFLICT);
+            return $this->conflictResponse("This room is referenced and cannot be deleted.");
         }
 
         return $this->noContentResponse();

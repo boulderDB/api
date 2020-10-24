@@ -156,7 +156,7 @@ class ReservationController extends AbstractController
 
         if ($this->reservationRepository->hasPendingReservationForTimeSlot($reservation)) {
             return $this->json([
-                "message" => "There already exists a pending reservation for this time slot.",
+                "message" => "You already have a pending reservation for this time slot.",
                 "code" => Response::HTTP_CONFLICT
             ], Response::HTTP_CONFLICT);
         }

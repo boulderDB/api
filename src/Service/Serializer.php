@@ -4,10 +4,12 @@ namespace App\Service;
 
 use App\Entity\Location;
 use App\Entity\Room;
+use App\Entity\Setter;
 use App\Entity\TimeSlot;
 use App\Entity\User;
 use App\Serializer\LocationSerializer;
 use App\Serializer\RoomSerializer;
+use App\Serializer\SetterSerializer;
 use App\Serializer\TimeSlotSerializer;
 use App\Serializer\UserSerializer;
 
@@ -17,7 +19,8 @@ class Serializer
         TimeSlot::class => TimeSlotSerializer::class,
         User::class => UserSerializer::class,
         Location::class => LocationSerializer::class,
-        Room::class => RoomSerializer::class
+        Room::class => RoomSerializer::class,
+        Setter::class => SetterSerializer::class
     ];
 
     public static function serialize($any, array $groups = [SerializerInterface::GROUP_INDEX], array $arguments = []): array

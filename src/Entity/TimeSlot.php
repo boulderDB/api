@@ -256,13 +256,14 @@ class TimeSlot
         $this->hashId = $hashId;
     }
 
-    public function generateDates(string $ymd = null): void
+    public function isPending(string $ymd): bool
     {
-        if (!$ymd) {
-            $ymd = Carbon::now()->format(TimeHelper::DATE_FORMAT_DATE);
-        }
+        $current = TimeHelper::convertToCarbonDate($ymd);
+        $current->modify(TimeHelper::SERVER_TIME_OFFSET);
 
-        $this->buildStartDate($ymd);
-        $this->buildEndDate($ymd);
+        $this->buildStartDate($current->format(TimeHelper::DATE_FORMAT_DATE));
+        $this->buildEndDate($current->format(TimeHelper::DATE_FORMAT_DATE));
+
+        return $this->getStartDate() < $current && $this->getEndDate() > $current;
     }
 }

@@ -2,14 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Factory\RedisConnectionFactory;
-use App\Factory\ResponseFactory;
+use App\Entity\Setter;
+use App\Form\SetterType;
+use App\Repository\SetterRepository;
 use App\Service\ContextService;
+use App\Service\Serializer;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -18,107 +20,116 @@ use Symfony\Component\Routing\Annotation\Route;
 class SetterController extends AbstractController
 {
     use ContextualizedControllerTrait;
+    use ResponseTrait;
+    use RequestTrait;
 
     private EntityManagerInterface $entityManager;
     private ContextService $contextService;
-    private \Redis $redis;
+    private SetterRepository $setterRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        ContextService $contextService
+        ContextService $contextService,
+        SetterRepository $setterRepository
     )
     {
         $this->entityManager = $entityManager;
         $this->contextService = $contextService;
-        $this->redis = RedisConnectionFactory::create();
+        $this->setterRepository = $setterRepository;
     }
 
     /**
      * @Route("", methods={"GET"})
      */
-    public function index(Request $request)
+    public function index()
     {
-        $connection = $this->entityManager->getConnection();
-        $parameters = [
-            'role' => '%"' . addcslashes($this->contextService->getLocationRole(User::ROLE_SETTER), '%_') . '"%'
-        ];
+        $setters = $this->setterRepository->findAll();
 
-        $statement = 'select id, username from users where roles like :role';
-
-        if ($request->query->has('withActiveBoulders')) {
-            $parameters['status'] = 'active';
-            $parameters['locationId'] = 28;
-
-            $statement = "SELECT users.id, users.username, count(boulder.id) AS boulders FROM users INNER JOIN boulder_setters ON users.id = boulder_setters.user_id INNER JOIN boulder ON boulder_setters.boulder_id = boulder.id WHERE boulder.status = :status AND boulder.tenant_id = :locationId AND roles like :role GROUP BY users.id";
-        }
-
-        $query = $connection->prepare($statement);
-        $query->execute($parameters);
-
-        $results = $query->fetchAll();
-
-        return $this->json($results);
+        return $this->json(Serializer::serialize($setters));
     }
 
     /**
-     * @Route("/{userId}/invite", methods={"POST"})
+     * @Route("", methods={"POST"})
      */
-    public function invite(string $userId)
+    public function create(Request $request)
     {
         $this->denyUnlessLocationAdmin();
 
-        $this->redis->set("setter_role_invite", hash('sha256', "setter_role_invite_$userId"), 3600);
+        $setter = new Setter();
 
-        return $this->json(null, Response::HTTP_CREATED);
-    }
+        $form = $this->createForm(SetterType::class, $setter);
+        $form->submit(self::decodePayLoad($request));
 
-    /**
-     * @Route("/{userId}/revoke", methods={"PUT"})
-     */
-    public function revoke(string $userId)
-    {
-        $this->denyUnlessLocationAdmin();
-
-        $userRepository = $this->entityManager->getRepository(User::class);
-
-        /**
-         * @var User $user
-         */
-        $user = $userRepository->find($userId);
-
-        if (!$user) {
-            return $this->json(
-                ResponseFactory::createError("User ${userId} not found", Response::HTTP_NOT_FOUND),
-                Response::HTTP_NOT_FOUND
+        if ($this->setterRepository->exists("username", $form->getData()->getUsername())) {
+            $form->get("username")->addError(
+                new FormError('This username is already taken')
             );
         }
 
-        $user->removeRole($this->contextService->getLocationRole(User::ROLE_SETTER));
+        if (!$form->isValid()) {
+            return $this->badFormRequestResponse($form);
+        }
 
-        $this->entityManager->persist($user);
+        $this->entityManager->persist($setter);
         $this->entityManager->flush();
 
-        return $this->json(null, Response::HTTP_OK);
+        return $this->createdResponse($setter);
     }
 
     /**
-     * @Route("/admins", methods={"GET"})
+     * @Route("/{id}", methods={"PUT"})
      */
-    public function admins()
+    public function update(Request $request, string $id)
     {
         $this->denyUnlessLocationAdmin();
 
-        $connection = $this->entityManager->getConnection();
-        $parameters = [
-            'role' => '%"' . addcslashes($this->contextService->getLocationRole(User::ROLE_ADMIN), '%_') . '"%'
-        ];
+        $setter = $this->setterRepository->find($id);
+        $currentUsername = $setter->getUsername();
 
-        $statement = 'select id, username from users where roles like :role';
+        if (!$setter) {
+            return $this->resourceNotFoundResponse("Setter", $id);
+        }
 
-        $query = $connection->prepare($statement);
-        $query->execute($parameters);
-        $users = $query->fetchAll();
+        $form = $this->createForm(SetterType::class, $setter);
+        $form->submit(self::decodePayLoad($request));
 
-        return $this->json($users);
+        if ($this->setterRepository->exists("username", $form->getData()->getUsername()) && $currentUsername !== $form->getData()->getUsername()) {
+            $form->get("username")->addError(
+                new FormError('This username is already taken')
+            );
+        }
+
+        if (!$form->isValid()) {
+            return $this->badFormRequestResponse($form);
+        }
+
+        $this->entityManager->persist($setter);
+        $this->entityManager->flush();
+
+        return $this->noContentResponse();
+    }
+
+    /**
+     * @Route("/{id}", methods={"DELETE"})
+     */
+    public function delete(string $id)
+    {
+        $this->denyUnlessLocationAdmin();
+
+        $setter = $this->setterRepository->find($id);
+
+        if (!$setter) {
+            return $this->resourceNotFoundResponse("Setter", $id);
+        }
+
+        $this->entityManager->remove($setter);
+
+        try {
+            $this->entityManager->flush();
+        } catch (ForeignKeyConstraintViolationException $exception) {
+            return $this->conflictResponse("This setter is referenced and cannot be deleted.");
+        }
+
+        return $this->noContentResponse();
     }
 }
