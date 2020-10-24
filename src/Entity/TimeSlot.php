@@ -255,4 +255,14 @@ class TimeSlot
     {
         $this->hashId = $hashId;
     }
+
+    public function generateDates(string $ymd = null): void
+    {
+        if (!$ymd) {
+            $ymd = Carbon::now()->format(TimeHelper::DATE_FORMAT_DATE);
+        }
+
+        $this->buildStartDate($ymd);
+        $this->buildEndDate($ymd);
+    }
 }
