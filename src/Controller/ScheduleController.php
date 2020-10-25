@@ -176,15 +176,11 @@ class ScheduleController extends AbstractController
     }
 
     /**
-     * @Route("/allocation/{ymd}", methods={"get"})
+     * @Route("/allocation", methods={"get"})
      */
-    public function currentAllocation(string $ymd = null)
+    public function currentAllocation()
     {
-        $scheduleDate = $ymd ? Carbon::createFromFormat(TimeHelper::DATE_FORMAT_DATE, $ymd)->startOfDay() : Carbon::now()->startOfDay();
-
-        if (!$scheduleDate) {
-            return $this->badRequestResponse("Failed to parse date string '${$ymd}'");
-        }
+        $scheduleDate = Carbon::now()->startOfDay();
 
         $rooms = $this->roomRepository->findBy([
             "location" => $this->contextService->getLocation()->getId()
@@ -205,6 +201,8 @@ class ScheduleController extends AbstractController
             $roomData = [
                 "name" => $room->getName(),
                 "pending_check_ins" => 0,
+                "pending_capacity" => 0,
+                "pending_reservations" => 0,
                 "pending_time_slots" => [],
             ];
 
@@ -215,6 +213,7 @@ class ScheduleController extends AbstractController
             );
 
             foreach ($timeSlots as $timeSlot) {
+
                 /**
                  * @var TimeSlot $timeSlot
                  */
@@ -224,21 +223,19 @@ class ScheduleController extends AbstractController
                         $timeSlot
                     );
 
+                    $roomData["pending_capacity"] += $timeSlot->getCapacity();
+
                     foreach ($timeSlot->getReservations() as $reservation) {
                         /**
                          * @var Reservation $reservation
                          */
-                        $roomData["pending_check_ins"] += $reservation->getQuantity();
+                        $roomData["pending_reservations"] += $reservation->getQuantity();
+
+                        if ($reservation->getCheckedIn()) {
+                            $roomData["pending_check_ins"] += $reservation->getQuantity();
+                        }
                     }
                 }
-
-                $roomData["schedule"][] = Serializer::serialize(
-                    $timeSlot,
-                    [
-                        SerializerInterface::GROUP_DETAIL,
-                        TimeSlotSerializer::GROUP_COMPUTED
-                    ]
-                );
             }
 
             $data[] = $roomData;
