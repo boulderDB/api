@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -78,7 +79,7 @@ class RequestListener implements EventSubscriberInterface
             ->getOneOrNullResult();
 
         if (!$location) {
-            throw new \InvalidArgumentException("Location '$slug' does not exist", Response::HTTP_NOT_FOUND);
+            throw new HttpException(Response::HTTP_BAD_REQUEST, "Location '$slug' does not exist");
         }
 
         $this->contextService->setLocation($location);
