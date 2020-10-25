@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\User;
-use App\Entity\UserResourceInterface;
 use App\Helper\TimeHelper;
 use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;

@@ -95,4 +95,12 @@ trait ResponseTrait
     {
         return $this->json(null, Response::HTTP_NO_CONTENT);
     }
+
+    protected function conflictResponse(string $message)
+    {
+        return $this->json([
+            "message" => $message,
+            "code" => Response::HTTP_CONFLICT
+        ], Response::HTTP_CONFLICT);
+    }
 }

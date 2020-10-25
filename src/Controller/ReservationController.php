@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Reservation;
 use App\Entity\TimeSlot;
 use App\Form\ReservationType;
-use App\Helper\ScheduleHelper;
 use App\Helper\TimeSlotHelper;
 use App\Repository\ReservationRepository;
 use App\Repository\RoomRepository;
@@ -40,7 +39,6 @@ class ReservationController extends AbstractController
     private RoomRepository $roomRepository;
     private TimeSlotHelper $timeSlotHelper;
     private TimeSlotExclusionRepository $timeSlotExclusionRepository;
-    private ScheduleHelper $scheduleHelper;
     private \Redis $redis;
 
     public function __construct(
@@ -50,8 +48,7 @@ class ReservationController extends AbstractController
         ReservationRepository $reservationRepository,
         RoomRepository $roomRepository,
         TimeSlotHelper $timeSlotHelper,
-        TimeSlotExclusionRepository $timeSlotExclusionRepository,
-        ScheduleHelper $scheduleHelper
+        TimeSlotExclusionRepository $timeSlotExclusionRepository
     )
     {
         $this->entityManager = $entityManager;
@@ -60,10 +57,9 @@ class ReservationController extends AbstractController
         $this->reservationRepository = $reservationRepository;
         $this->roomRepository = $roomRepository;
         $this->timeSlotHelper = $timeSlotHelper;
+        $this->timeSlotExclusionRepository = $timeSlotExclusionRepository;
 
         $this->redis = RedisConnectionFactory::create();
-        $this->timeSlotExclusionRepository = $timeSlotExclusionRepository;
-        $this->scheduleHelper = $scheduleHelper;
     }
 
     /**
@@ -103,7 +99,16 @@ class ReservationController extends AbstractController
             return $this->resourceNotFoundResponse("TimeSlot");
         }
 
-        $this->timeSlotHelper->appendData($timeSlot, $reservation->getDate()->format("Y-m-d"));
+        $exclusions = $this->timeSlotExclusionRepository->getPendingForRoomAndDate(
+            $reservation->getRoom()->getId(),
+            $reservation->getDate()
+        );
+
+        $this->timeSlotHelper->appendData(
+            $timeSlot,
+            $reservation->getDate()->format("Y-m-d"),
+            $exclusions
+        );
 
         if ($timeSlot->getEndDate() < Carbon::now()) {
             return $this->json([
@@ -151,7 +156,7 @@ class ReservationController extends AbstractController
 
         if ($this->reservationRepository->hasPendingReservationForTimeSlot($reservation)) {
             return $this->json([
-                "message" => "There already exists a pending reservation for this time slot.",
+                "message" => "You already have a pending reservation for this time slot.",
                 "code" => Response::HTTP_CONFLICT
             ], Response::HTTP_CONFLICT);
         }
@@ -177,7 +182,16 @@ class ReservationController extends AbstractController
             return $this->resourceNotFoundResponse("TimeSlot");
         }
 
-        $this->timeSlotHelper->appendData($timeSlot, $reservation->getDate()->format("Y-m-d"));
+        $exclusions = $this->timeSlotExclusionRepository->getPendingForRoomAndDate(
+            $reservation->getRoom()->getId(),
+            $reservation->getDate()
+        );
+
+        $this->timeSlotHelper->appendData(
+            $timeSlot,
+            $reservation->getDate()->format("Y-m-d"),
+            $exclusions
+        );
 
         $exclusions = $this->timeSlotExclusionRepository->getPendingForRoomAndDate(
             $reservation->getRoom()->getId(),

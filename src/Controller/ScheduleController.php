@@ -5,9 +5,10 @@ namespace App\Controller;
 use App\Entity\Reservation;
 use App\Entity\Room;
 use App\Entity\TimeSlot;
-use App\Helper\ScheduleHelper;
+use App\Helper\TimeSlotHelper;
 use App\Helper\TimeHelper;
 use App\Repository\RoomRepository;
+use App\Repository\TimeSlotExclusionRepository;
 use App\Serializer\TimeSlotSerializer;
 use App\Service\ContextService;
 use App\Service\Serializer;
@@ -26,18 +27,21 @@ class ScheduleController extends AbstractController
     use ContextualizedControllerTrait;
 
     private RoomRepository $roomRepository;
-    private ScheduleHelper $scheduleHelper;
+    private TimeSlotHelper $timeSlotHelper;
     private ContextService $contextService;
+    private TimeSlotExclusionRepository $timeSlotExclusionRepository;
 
     public function __construct(
         RoomRepository $roomRepository,
-        ScheduleHelper $scheduleHelper,
-        ContextService $contextService
+        TimeSlotHelper $timeSlotHelper,
+        ContextService $contextService,
+        TimeSlotExclusionRepository $timeSlotExclusionRepository
     )
     {
         $this->roomRepository = $roomRepository;
-        $this->scheduleHelper = $scheduleHelper;
+        $this->timeSlotHelper = $timeSlotHelper;
         $this->contextService = $contextService;
+        $this->timeSlotExclusionRepository = $timeSlotExclusionRepository;
     }
 
     /**
@@ -61,7 +65,12 @@ class ScheduleController extends AbstractController
             return $this->badRequestResponse("Failed to parse date string '${$ymd}'");
         }
 
-        $schedule = $this->scheduleHelper->room($roomId, $scheduleDate);
+        $exclusions = $this->timeSlotExclusionRepository->getPendingForRoomAndDate(
+            $roomId,
+            $scheduleDate->toDateTime()
+        );
+
+        $schedule = $this->timeSlotHelper->room($roomId, $scheduleDate, $exclusions);
         $isAdmin = $this->isLocationAdmin() && $request->query->get("admin");
 
         return $this->okResponse(array_map(function ($timeSlot) use ($userId, $isAdmin) {
@@ -101,98 +110,137 @@ class ScheduleController extends AbstractController
             "location" => $this->contextService->getLocation()->getId()
         ]);
 
-        return $this->json(array_map(function ($room) use ($scheduleDate) {
+        $data = [];
+
+        /**
+         * @var Room $room
+         */
+        foreach ($rooms as $room) {
+
+            $roomData = [
+                "id" => $room->getId(),
+                "name" => $room->getName(),
+                "schedule" => [],
+                "pending_check_ins" => 0,
+                "pending_time_slots" => []
+            ];
 
             /**
              * @var Room $room
              */
-            $roomData = [
-                "id" => $room->getId(),
-                "name" => $room->getName()
-            ];
+            $exclusions = $this->timeSlotExclusionRepository->getPendingForRoomAndDate(
+                $room->getId(),
+                $scheduleDate->toDateTime()
+            );
 
-            $roomData["schedule"] = array_map(function ($timeSlot) {
+            /**
+             * @var TimeSlot[] $timeSlots
+             */
+            $timeSlots = $this->timeSlotHelper->room(
+                $room->getId(),
+                $scheduleDate,
+                $exclusions
+            );
 
+            foreach ($timeSlots as $timeSlot) {
                 /**
                  * @var TimeSlot $timeSlot
                  */
-                return Serializer::serialize(
+                if ($timeSlot->isPending($ymd)) {
+
+                    $roomData["pending_time_slots"][] = Serializer::serialize(
+                        $timeSlot
+                    );
+
+                    foreach ($timeSlot->getReservations() as $reservation) {
+                        /**
+                         * @var Reservation $reservation
+                         */
+                        $roomData["pending_check_ins"] += $reservation->getQuantity();
+                    }
+                }
+
+                $roomData["schedule"][] = Serializer::serialize(
                     $timeSlot,
                     [
                         SerializerInterface::GROUP_DETAIL,
                         TimeSlotSerializer::GROUP_COMPUTED
                     ]
                 );
+            }
 
-            }, $this->scheduleHelper->room($room->getId(), $scheduleDate));
+            $data[] = $roomData;
+        }
 
-            return $roomData;
-        }, $rooms));
+        return $this->json($data);
     }
 
     /**
-     * @Route("/allocation/{ymd}", methods={"get"})
+     * @Route("/allocation", methods={"get"})
      */
-    public function currentAllocation(string $ymd = null)
+    public function currentAllocation()
     {
-        $scheduleDate = $ymd ? Carbon::createFromFormat(TimeHelper::DATE_FORMAT_DATE, $ymd)->startOfDay() : Carbon::now()->startOfDay();
-
-        if (!$scheduleDate) {
-            return $this->badRequestResponse("Failed to parse date string '${$ymd}'");
-        }
+        $scheduleDate = Carbon::now()->startOfDay();
 
         $rooms = $this->roomRepository->findBy([
             "location" => $this->contextService->getLocation()->getId()
         ]);
 
-        $current = Carbon::now();
-        $current->modify("+2hours");
+        $data = [];
 
-        return $this->json(array_map(function ($room) use ($scheduleDate, $current) {
+        foreach ($rooms as $room) {
 
             /**
              * @var Room $room
              */
-            $data = [
+            $exclusions = $this->timeSlotExclusionRepository->getPendingForRoomAndDate(
+                $room->getId(),
+                $scheduleDate->toDateTime()
+            );
+
+            $roomData = [
                 "name" => $room->getName(),
-                "capacity" => 0,
-                "available" => 0,
-                "appeared" => 0,
-                "matched_time_slots" => [],
+                "pending_check_ins" => 0,
+                "pending_capacity" => 0,
+                "pending_reservations" => 0,
+                "pending_time_slots" => [],
             ];
 
-            $schedule = $this->scheduleHelper->room($room->getId(), $scheduleDate);
+            $timeSlots = $this->timeSlotHelper->room(
+                $room->getId(),
+                $scheduleDate,
+                $exclusions
+            );
 
-            foreach ($schedule as $timeSlot) {
+            foreach ($timeSlots as $timeSlot) {
 
                 /**
                  * @var TimeSlot $timeSlot
                  */
-                if ($timeSlot->getStartDate() < $current && $timeSlot->getEndDate() > $current) {
-                    $data["capacity"] += $timeSlot->getCapacity();
-                    $data["available"] += $timeSlot->getAvailable();
+                if ($timeSlot->isPending($scheduleDate->format(TimeHelper::DATE_FORMAT_DATE))) {
 
-                    $data["appeared"] += $timeSlot
-                        ->getReservations()
-                        ->filter(function ($reservation) {
-                            /**
-                             * @var Reservation $reservation
-                             */
-                            return $reservation->getAppeared();
-                        })->count();
+                    $roomData["pending_time_slots"][] = Serializer::serialize(
+                        $timeSlot
+                    );
 
-                    $timeSlotData = Serializer::serialize($timeSlot, [
-                        TimeSlotSerializer::GROUP_COMPUTED,
-                    ]);
+                    $roomData["pending_capacity"] += $timeSlot->getCapacity();
 
-                    unset($timeSlotData["id"]);
+                    foreach ($timeSlot->getReservations() as $reservation) {
+                        /**
+                         * @var Reservation $reservation
+                         */
+                        $roomData["pending_reservations"] += $reservation->getQuantity();
 
-                    $data["matched_time_slots"][] = $timeSlotData;
+                        if ($reservation->getCheckedIn()) {
+                            $roomData["pending_check_ins"] += $reservation->getQuantity();
+                        }
+                    }
                 }
             }
 
-            return $data;
+            $data[] = $roomData;
+        }
 
-        }, $rooms));
+        return $this->json($data);
     }
 }
