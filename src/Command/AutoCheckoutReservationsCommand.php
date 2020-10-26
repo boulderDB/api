@@ -38,7 +38,7 @@ class AutoCheckoutReservationsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $current = Carbon::now()->modify(TimeHelper::SERVER_TIME_OFFSET);
+        $current = Carbon::now()->modify($_ENV["SERVER_TIME_OFFSET"]);
 
         /**
          * @var Reservation[] $reservations

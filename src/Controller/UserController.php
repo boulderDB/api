@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Factory\ResponseFactory;
-use Symfony\Component\HttpFoundation\Response;
+use App\Entity\User;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,39 +13,43 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class UserController extends AbstractController
 {
-    private $entityManager;
+    use RequestTrait;
+    use ResponseTrait;
 
-    public function __construct(
-        EntityManagerInterface $entityManager
-    )
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
     /**
-     * @Route("/{id}", methods={"GET"})
+     * @Route("/search", methods={"GET"})
      */
-    public function show(string $id)
+    public function search(Request $request)
     {
-        $connection = $this->entityManager->getConnection();
-        $parameters = [
-            'id' => $id,
-            'visible' => true
-        ];
+        $this->denyAccessUnlessGranted(User::ROLE_ADMIN);
 
-        $statement = 'select id, username from users where id = :id and visible = :visible';
+        $term = $request->query->get("username");
 
-        $query = $connection->prepare($statement);
-        $query->execute($parameters);
-        $result = $query->fetch();
+        if (!$term) {
+            return $this->badRequestResponse("No term provided");
+        }
 
-        if (!$result) {
-            return $this->json(
-                ResponseFactory::createError("User '{$id}' not found", Response::HTTP_NOT_FOUND),
-                Response::HTTP_NOT_FOUND
-            );
-        };
+        $builder = $this->entityManager->createQueryBuilder();
 
-        return $this->json($result);
+        $users = $builder
+            ->from(User::class, "user")
+            ->distinct()
+            ->select("user.id, user.username")
+            ->where("user.visible = true")
+            ->andWhere($builder->expr()->like("lower(user.username)", ":term"))
+            ->setParameter("term", "%" . addcslashes(strtolower($term), "%") . "%")
+            ->orderBy("user.username")
+            ->setMaxResults(20)
+            ->getQuery()
+            ->getSingleResult();
+
+        return $this->okResponse($users);
     }
 }

@@ -25,8 +25,6 @@ class TimeHelper
     public const DATE_FORMAT_DATETIME = "Y-m-d H:i:s";
     public const DATE_FORM_TIME = "H:i";
 
-    public const SERVER_TIME_OFFSET = "+1 hours";
-
     public static function convertToCarbonDate(string $ymd, string $time = null, int $day = null): Carbon
     {
         if (!$time) {

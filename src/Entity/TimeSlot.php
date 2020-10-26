@@ -259,7 +259,7 @@ class TimeSlot
     public function isPending(string $ymd): bool
     {
         $current = Carbon::createFromFormat(TimeHelper::DATE_FORMAT_DATE, $ymd);
-        $current->modify(TimeHelper::SERVER_TIME_OFFSET);
+        $current->modify($_ENV["SERVER_TIME_OFFSET"]);
 
         $this->buildStartDate($current->format(TimeHelper::DATE_FORMAT_DATE));
         $this->buildEndDate($current->format(TimeHelper::DATE_FORMAT_DATE));

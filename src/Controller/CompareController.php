@@ -5,12 +5,10 @@ namespace App\Controller;
 use App\Entity\Ascent;
 use App\Entity\Boulder;
 use App\Entity\User;
-use App\Factory\ResponseFactory;
 use App\Service\ContextService;
 use App\Struct\ComparisonStruct;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NoResultException;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,8 +18,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class CompareController extends AbstractController
 {
-    private $entityManager;
-    private $contextService;
+    use ResponseTrait;
+
+    private EntityManagerInterface $entityManager;
+    private ContextService $contextService;
 
     public function __construct(
         EntityManagerInterface $entityManager
@@ -31,24 +31,24 @@ class CompareController extends AbstractController
     }
 
     /**
-     * @Route("/{userA}/to/{userB}/at/current", methods={"GET"})
+     * @Route("/{userIdA}/to/{userIdB}/at/current", methods={"GET"})
      */
-    public function compareCurrent(int $userA, int $userB)
+    public function compareCurrent(int $userIdA, int $userIdB)
     {
-        if (!$this->checkUserComparable($userA)) {
-            return $this->json(ResponseFactory::createError("User {$userA} is not comparable", Response::HTTP_BAD_REQUEST));
+        if (!$this->checkUserComparable($userIdA)) {
+            return $this->badRequestResponse("User {$userIdA} is not comparable");
         }
 
-        if (!$this->checkUserComparable($userB)) {
-            return $this->json(ResponseFactory::createError("User {$userB} is not comparable", Response::HTTP_BAD_REQUEST));
+        if (!$this->checkUserComparable($userIdB)) {
+            return $this->badRequestResponse("User {$userIdB} is not comparable");
         }
 
         $boulders = $this->getActiveBoulders();
-        $ascentsA = $this->getAscents($userA);
-        $ascentsB = $this->getAscents($userB);
+        $ascentsA = $this->getAscents($userIdA);
+        $ascentsB = $this->getAscents($userIdB);
 
         if (!$boulders) {
-            return $this->json(null, Response::HTTP_NO_CONTENT);
+            return $this->noContentResponse();
         }
 
         /**
@@ -95,7 +95,7 @@ class CompareController extends AbstractController
             ];
         }, $comparisons);
 
-        return $this->json($data);
+        return $this->okResponse($data);
     }
 
     private function checkUserComparable(int $userId)
