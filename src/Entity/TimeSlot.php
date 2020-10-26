@@ -60,6 +60,21 @@ class TimeSlot
      */
     private ?int $minQuantity = 1;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default": true})
+     */
+    private bool $enabled = true;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private ?\DateTimeInterface $enableAfter = null;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private ?\DateTimeInterface $disableAfter = null;
+
     private ?Collection $reservations;
 
     private ?int $available = null;
@@ -265,5 +280,35 @@ class TimeSlot
         $this->buildEndDate($current->format(TimeHelper::DATE_FORMAT_DATE));
 
         return $this->getStartDate() < $current && $this->getEndDate() > $current;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(bool $enabled): void
+    {
+        $this->enabled = $enabled;
+    }
+
+    public function getEnableAfter(): ?\DateTimeInterface
+    {
+        return $this->enableAfter;
+    }
+
+    public function setEnableAfter(?\DateTimeInterface $enableAfter): void
+    {
+        $this->enableAfter = $enableAfter;
+    }
+
+    public function getDisableAfter(): ?\DateTimeInterface
+    {
+        return $this->disableAfter;
+    }
+
+    public function setDisableAfter(?\DateTimeInterface $disableAfter): void
+    {
+        $this->disableAfter = $disableAfter;
     }
 }
