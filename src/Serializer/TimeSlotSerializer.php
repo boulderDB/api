@@ -22,6 +22,10 @@ class TimeSlotSerializer implements SerializerInterface
             "day_name" => $class->getDayName(),
             "start_time" => $class->getStartTime(),
             "end_time" => $class->getEndTime(),
+            "enabled" => $class->isEnabled(),
+            "auto_destroy" => $class->isAutoDestroy(),
+            "enable_after" => $class->getEnableAfter(),
+            "disable_after" => $class->getDisableAfter()
         ];
 
         if (in_array(self::GROUP_DETAIL, $groups)) {

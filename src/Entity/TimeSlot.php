@@ -14,9 +14,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class TimeSlot
 {
-    public const DATE_FORMAT_DATE = "Y-m-d";
-    public const DATE_FORMAT_DATETIME = "Y-m-d H:i:s";
-
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -66,12 +63,17 @@ class TimeSlot
     private bool $enabled = true;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+    private bool $autoDestroy = false;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private ?\DateTimeInterface $enableAfter = null;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private ?\DateTimeInterface $disableAfter = null;
 
@@ -300,6 +302,16 @@ class TimeSlot
     public function setEnableAfter(?\DateTimeInterface $enableAfter): void
     {
         $this->enableAfter = $enableAfter;
+    }
+
+    public function isAutoDestroy(): bool
+    {
+        return $this->autoDestroy;
+    }
+
+    public function setAutoDestroy(bool $autoDestroy): void
+    {
+        $this->autoDestroy = $autoDestroy;
     }
 
     public function getDisableAfter(): ?\DateTimeInterface

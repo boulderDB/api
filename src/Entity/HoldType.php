@@ -25,9 +25,9 @@ class HoldType implements LocationResourceInterface
     private ?string $name = null;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string", nullable=true, name="icon")
      */
-    private ?string $media = null;
+    private ?string $image = null;
 
     public function getId(): ?int
     {
@@ -44,13 +44,13 @@ class HoldType implements LocationResourceInterface
         $this->name = $name;
     }
 
-    public function getMedia(): ?string
+    public function getImage(): ?string
     {
-        return $this->media;
+        return $this->image;
     }
 
-    public function setMedia(?string $media): void
+    public function setImage(?string $image): void
     {
-        $this->media = $media;
+        $this->image = $image;
     }
 }

@@ -2,15 +2,16 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  */
-class Setter implements LocationResourceInterface, TimestampableInterface
+class Setter implements TimestampableInterface
 {
     use TimestampTrait;
-    use LocationTrait;
 
     /**
      * @ORM\Id()
@@ -34,6 +35,24 @@ class Setter implements LocationResourceInterface, TimestampableInterface
      * @ORM\Column(type="boolean", options={"default": true})
      */
     private bool $active = true;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Location", fetch="LAZY", inversedBy="setters")
+     * @ORM\JoinTable(name="setter_locations",
+     *     joinColumns={
+     *         @ORM\JoinColumn(name="setter_id", referencedColumnName="id"),
+     *      },
+     *     inverseJoinColumns={
+     *         @ORM\JoinColumn(name="location_id", referencedColumnName="id")
+     *     }
+     * )
+     */
+    private ?Collection $locations = null;
+
+    public function __construct()
+    {
+        $this->locations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -69,5 +88,15 @@ class Setter implements LocationResourceInterface, TimestampableInterface
     public function setActive(bool $active): void
     {
         $this->active = $active;
+    }
+
+    public function getLocations(): ?Collection
+    {
+        return $this->locations;
+    }
+
+    public function setLocations(?Collection $locations): void
+    {
+        $this->locations = $locations;
     }
 }

@@ -37,7 +37,7 @@ class TimeSlotController extends AbstractController
     {
         $this->timeSlotRepository = $timeSlotRepository;
         $this->contextService = $contextService;
-        $this->entityManager = $entityManager;
+        $this->entityManager    = $entityManager;
     }
 
     /**
@@ -47,20 +47,12 @@ class TimeSlotController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        $roomId = $request->query->get("roomId");
-
-        $builder = $this->timeSlotRepository->createQueryBuilder("timeSlot")
-            ->innerJoin("timeSlot.room", "room")
-            ->where("room.location = :locationId")
-            ->setParameter("locationId", $this->contextService->getLocation()->getId());
-
-        if ($roomId) {
-            $builder->andWhere("room.id = :roomId")->setParameter("roomId", $roomId);
-        }
-
-        $timeSlots = TimeSlotCollection::orderByDayAndTime(
-            $builder->getQuery()->getResult()
+        $timeSlots = $this->timeSlotRepository->getForLocationAndRoom(
+            $this->contextService->getLocation()->getId(),
+            $request->query->get("roomId")
         );
+
+        $timeSlots = TimeSlotCollection::orderByDayAndTime($timeSlots);
 
         return $this->okResponse(Serializer::serialize($timeSlots));
     }

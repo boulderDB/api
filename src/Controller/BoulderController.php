@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Ascent;
 use App\Entity\Boulder;
 use App\Entity\BoulderLabel;
+use App\Entity\Grade;
 use App\Factory\RedisConnectionFactory;
 use App\Form\BoulderType;
 use App\Form\MassOperationType;
@@ -15,11 +16,15 @@ use App\Controller\RateLimiterTrait;
 use App\Controller\RequestTrait;
 use App\Controller\ResponseTrait;
 use App\Service\ContextService;
+use App\Service\Serializer;
+use App\Service\SerializerInterface;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,34 +63,28 @@ class BoulderController extends AbstractController
      */
     public function show(string $id)
     {
-        $queryBuilder = $this->getBoulderQueryBuilder("
-            partial ascent.{id, userId, type, createdAt}, 
-            partial user.{id, username, visible}"
-        );
-
         /**
          * @var Boulder $boulder
          */
-        try {
-            $boulder = $queryBuilder
-                ->leftJoin('boulder.ascents', 'ascent', Join::ON)
-                ->leftJoin('ascent.user', 'user', Join::WITH, 'user.visible = true')
-                ->where('boulder.id = :id')
-                ->setParameter('id', $id)
-                ->getQuery()
-                ->getSingleResult(AbstractQuery::HYDRATE_ARRAY);
+        $boulder = $this->boulderRepository
+            ->createQueryBuilder("boulder")
+            ->innerJoin("boulder.holdType", "holdType")
+            ->innerJoin("boulder.grade", "grade")
+            ->innerJoin("boulder.startWall", "startWall")
+            ->leftJoin("boulder.endWall", "endWall")
+            ->leftJoin("boulder.setters", "setter")
+            ->leftJoin("boulder.tags", "tag")
+            ->where("boulder.id = :id")
+            ->setParameter("id", $id)
+            ->getQuery()
+            ->setFetchMode(Grade::class, "grade", ClassMetadataInfo::FETCH_EAGER)
+            ->getOneOrNullResult();
 
-        } catch (NoResultException $e) {
+        if (!$boulder) {
             return $this->resourceNotFoundResponse("Boulder", $id);
-        } catch (NonUniqueResultException $e) {
-            return $this->internalError();
         }
 
-        $boulder = self::replaceLegacyNames($boulder);
-        $boulder['ascents'] = $this->filterAscents($boulder['ascents']);
-        $boulder['labels'] = $this->getLabels($id);
-
-        return $this->okResponse($boulder);
+        return $this->okResponse(Serializer::serialize($boulder, [SerializerInterface::GROUP_DETAIL]));
     }
 
     /**
@@ -158,7 +157,7 @@ class BoulderController extends AbstractController
                 unset($boulder["internal_grade"]);
             }
 
-            return self::replaceLegacyNames($boulder);
+            return $boulder;
         }, $results);
 
         return $this->json($results);
@@ -258,21 +257,7 @@ class BoulderController extends AbstractController
         //}, $this->redis->keys($key));
     }
 
-    private static function replaceLegacyNames(array $boulder)
-    {
-        $boulder['createdAt'] = $boulder['createdAt']->format('c');
-
-        $boulder['holdStyle'] = $boulder['color'];
-        unset($boulder['color']);
-
-        if (!$boulder['endWall']) {
-            $boulder['endWall'] = $boulder['startWall'];
-        }
-
-        return $boulder;
-    }
-
-    private function getBoulderQueryBuilder(string $select = null)
+    private function getBoulderQueryBuilder(string $select = null): QueryBuilder
     {
         $partials = "
                 partial boulder.{id, name, createdAt, status, points}, 
@@ -280,7 +265,7 @@ class BoulderController extends AbstractController
                 partial endWall.{id}, 
                 partial tag.{id}, 
                 partial setter.{id},
-                partial holdStyle.{id}, 
+                partial holdType.{id}, 
                 partial grade.{id},
                 partial internalGrade.{id}
         ";
@@ -298,6 +283,6 @@ class BoulderController extends AbstractController
             ->leftJoin('boulder.endWall', 'endWall')
             ->innerJoin('boulder.grade', 'grade')
             ->leftJoin('boulder.internalGrade', 'internalGrade')
-            ->innerJoin('boulder.color', 'holdStyle');
+            ->innerJoin('boulder.holdType', 'holdType');
     }
 }

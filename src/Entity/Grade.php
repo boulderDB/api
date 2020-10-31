@@ -38,11 +38,6 @@ class Grade implements LocationResourceInterface
      */
     private ?string $color = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Grade")
-     * @ORM\JoinColumn(name="internal_grade", referencedColumnName="id")
-     */
-    private ?Grade $internalGrade;
 
     public function getId(): ?int
     {
@@ -87,15 +82,5 @@ class Grade implements LocationResourceInterface
     public function setColor(?string $color): void
     {
         $this->color = $color;
-    }
-
-    public function getInternalGrade(): ?Grade
-    {
-        return $this->internalGrade;
-    }
-
-    public function setInternalGrade(?Grade $internalGrade): void
-    {
-        $this->internalGrade = $internalGrade;
     }
 }

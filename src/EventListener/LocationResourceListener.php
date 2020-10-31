@@ -28,8 +28,14 @@ class LocationResourceListener implements EventSubscriber
     {
         $subject = $args->getObject();
 
-        if ($subject instanceof LocationResourceInterface) {
-            $subject->setLocation($this->contextService->getLocation());
+        if (!$subject instanceof LocationResourceInterface) {
+            return;
         }
+
+        if (!$this->contextService->getLocation()) {
+            return;
+        }
+
+        $subject->setLocation($this->contextService->getLocation());
     }
 }

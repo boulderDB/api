@@ -212,6 +212,10 @@ class GlobalController extends AbstractController
          */
         $user = $this->userRepository->findOneBy(["email" => $email]);
 
+        if (!$user) {
+            return $this->resourceNotFoundResponse("User", $email);
+        }
+
         $clientHostname = $_ENV['CLIENT_HOSTNAME'];
         $storageKey = "pending_password_reset_{$user->getId()}";
         $hash = hash('sha256', $storageKey);

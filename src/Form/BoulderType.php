@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Boulder;
+use App\Entity\HoldType;
 use App\Entity\Tag;
 use App\Entity\Grade;
 use App\Entity\User;
@@ -21,7 +22,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class BoulderType extends AbstractType
 {
-    private $contextService;
+    private ContextService $contextService;
 
     public function __construct(ContextService $contextService)
     {
@@ -51,7 +52,7 @@ class BoulderType extends AbstractType
         $builder
             ->add('name', TextType::class, [])
             ->add('holdStyle', EntityType::class, [
-                'class' => HoldStyle::class,
+                'class' => HoldType::class,
                 'constraints' => [new NotBlank()],
                 'query_builder' => $locationQuery
             ])
