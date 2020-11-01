@@ -90,14 +90,14 @@ class User implements UserInterface
     private ?\DateTime $lastActivity = null;
 
     /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?\DateTime $lastLogin = null;
+
+    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Ascent", mappedBy="user", fetch="LAZY")
      */
     private ?Collection $ascents = null;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Boulder", mappedBy="setters", fetch="LAZY")
-     */
-    private ?Collection $boulders = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="participants", fetch="LAZY")
@@ -257,16 +257,6 @@ class User implements UserInterface
         $this->ascents = $ascents;
     }
 
-    public function getBoulders()
-    {
-        return $this->boulders;
-    }
-
-    public function setBoulders($boulders): void
-    {
-        $this->boulders = $boulders;
-    }
-
     public function getEvents()
     {
         return $this->events;
@@ -295,5 +285,15 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         $this->plainPassword = null;
+    }
+
+    public function getLastLogin(): ?\DateTime
+    {
+        return $this->lastLogin;
+    }
+
+    public function setLastLogin(?\DateTime $lastLogin): void
+    {
+        $this->lastLogin = $lastLogin;
     }
 }

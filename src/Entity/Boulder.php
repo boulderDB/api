@@ -78,12 +78,6 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
     private ?\DateTime $removedAt = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="boulders", fetch="LAZY")
-     * @ORM\JoinTable(name="boulder_setters")
-     */
-    private ?Collection $setters = null;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Ascent", mappedBy="boulder", fetch="LAZY", cascade={"remove"})
      */
     private ?Collection $ascents = null;
@@ -105,6 +99,19 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
      * )
      */
     private ?Collection $tags = null;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Setter", fetch="LAZY", inversedBy="boulders")
+     * @ORM\JoinTable(name="boulder_setters_v2",
+     *     joinColumns={
+     *         @ORM\JoinColumn(name="boulder_id", referencedColumnName="id")
+     *      },
+     *     inverseJoinColumns={
+     *         @ORM\JoinColumn(name="setter_id", referencedColumnName="id"),
+     *     }
+     * )
+     */
+    private ?Collection $setters = null;
 
     public function __construct()
     {

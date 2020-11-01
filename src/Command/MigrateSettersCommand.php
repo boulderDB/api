@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\BoulderSetter;
 use App\Entity\Location;
 use App\Entity\Setter;
 use App\Entity\User;
@@ -102,6 +103,38 @@ class MigrateSettersCommand extends Command
                 $this->entityManager->flush();
             }
         }
+
+        $connection = $this->entityManager->getConnection();
+
+        $statement = "select boulder_id, user_id from boulder_setters";
+        $query = $connection->prepare($statement);
+        $query->execute();
+
+        $boulderSetters = $query->fetchAll();
+
+        $progress = $io->createProgressBar(count($boulderSetters));
+
+        foreach ($boulderSetters as $boulderSetter) {
+
+            /**
+             * @var Setter $setter
+             */
+            $setter = $this->setterRepository->findOneBy([
+                "user" => $boulderSetter["user_id"]
+            ]);
+
+            if (!$setter) {
+                continue;
+            }
+
+            $statement = "INSERT INTO boulder_setters_v2 (boulder_id, setter_id) VALUES ('{$boulderSetter["boulder_id"]}', '{$setter->getId()}');";
+            $query = $connection->prepare($statement);
+            $query->execute();
+
+            $progress->advance();
+        }
+
+        $progress->finish();
 
         return 0;
     }
