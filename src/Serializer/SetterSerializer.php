@@ -15,6 +15,7 @@ class SetterSerializer implements SerializerInterface
         return [
             "id" => $class->getId(),
             "username" => $class->getUsername(),
+            "active" => $class->isActive()
         ];
     }
 }
