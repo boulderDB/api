@@ -113,6 +113,19 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
      */
     private ?Collection $setters = null;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Label", fetch="LAZY", inversedBy="boulders")
+     * @ORM\JoinTable(name="boulder_label",
+     *     joinColumns={
+     *         @ORM\JoinColumn(name="boulder_id", referencedColumnName="id")
+     *      },
+     *     inverseJoinColumns={
+     *         @ORM\JoinColumn(name="label_id", referencedColumnName="id"),
+     *     }
+     * )
+     */
+    private ?Collection $labels = null;
+
     public function __construct()
     {
         $this->setters = new ArrayCollection();

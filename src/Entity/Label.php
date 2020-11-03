@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class BoulderLabel
+class Label implements UserResourceInterface
 {
     /**
      * @ORM\Id()
@@ -15,12 +15,6 @@ class BoulderLabel
      * @ORM\Column(type="integer")
      */
     private ?int $id = null;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Boulder", inversedBy="ascents")
-     * @ORM\JoinColumn(name="boulder_id", referencedColumnName="id")
-     */
-    private ?Boulder $boulder = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="ascents")
@@ -36,16 +30,6 @@ class BoulderLabel
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getBoulder(): ?Boulder
-    {
-        return $this->boulder;
-    }
-
-    public function setBoulder(?Boulder $boulder): void
-    {
-        $this->boulder = $boulder;
     }
 
     public function getUser(): ?User

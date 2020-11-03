@@ -15,8 +15,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AscentDoubtController extends AbstractController
 {
-    private $contextService;
-    private $ascentDoubtRepository;
+    private ContextService $contextService;
+    private AscentDoubtRepository $ascentDoubtRepository;
 
     public function __construct(
         ContextService $contextService,

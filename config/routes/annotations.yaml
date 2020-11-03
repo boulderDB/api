@@ -49,7 +49,7 @@ boulderDoubt:
   prefix: /api/{location}/
 
 boulderLabel:
-  resource: ../../src/Controller/BoulderLabelController.php
+  resource: ../../src/Controller/LabelController.php
   type: annotation
   prefix: /api/{location}/
 

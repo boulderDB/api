@@ -18,8 +18,8 @@ class BoulderErrorController extends AbstractController
 {
     use ContextualizedControllerTrait;
 
-    private $entityManager;
-    private $contextService;
+    private EntityManagerInterface $entityManager;
+    private ContextService $contextService;
 
     public function __construct(
         EntityManagerInterface $entityManager,

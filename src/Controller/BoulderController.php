@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Ascent;
 use App\Entity\Boulder;
-use App\Entity\BoulderLabel;
+use App\Entity\Label;
 use App\Entity\Grade;
 use App\Factory\RedisConnectionFactory;
 use App\Form\BoulderType;
