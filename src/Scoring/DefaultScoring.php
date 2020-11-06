@@ -50,7 +50,7 @@ class DefaultScoring implements ScoringInterface
                         "user" => [
                             "id" => $ascent->getUser()->getId(),
                             "gender" => $ascent->getUser()->getGender(),
-                            "media" => $ascent->getUser()->getMedia(),
+                            "image" => $ascent->getUser()->getImage(),
                             "lastActivity" => $ascent->getUser()->getLastActivity()->format("c"),
                             "username" => $ascent->getUser()->getUsername()
                         ]

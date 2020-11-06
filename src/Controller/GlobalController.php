@@ -6,12 +6,12 @@ use App\Command\ProcessAccountDeletionsCommand;
 use App\Entity\Location;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
-use App\Factory\ResponseFactory;
 use App\Form\PasswordResetRequestType;
 use App\Form\PasswordResetType;
 use App\Form\UserType;
 use App\Repository\LocationRepository;
 use App\Repository\UserRepository;
+use App\Service\StorageClient;
 use App\Service\ContextService;
 use App\Service\Serializer;
 use App\Service\SerializerInterface;
@@ -22,6 +22,7 @@ use Namshi\JOSE\JWS;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
@@ -52,6 +53,7 @@ class GlobalController extends AbstractController
     private TokenStorageInterface $tokenStorage;
     private TokenExtractorInterface $tokenExtractor;
     private LocationRepository $locationRepository;
+    private StorageClient $storageClient;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -61,7 +63,8 @@ class GlobalController extends AbstractController
         ContextService $contextService,
         TokenStorageInterface $tokenStorage,
         TokenExtractorInterface $tokenExtractor,
-        LocationRepository $locationRepository
+        LocationRepository $locationRepository,
+        StorageClient $storageClient
     )
     {
         $this->entityManager = $entityManager;
@@ -73,6 +76,7 @@ class GlobalController extends AbstractController
         $this->tokenStorage = $tokenStorage;
         $this->tokenExtractor = $tokenExtractor;
         $this->locationRepository = $locationRepository;
+        $this->storageClient = $storageClient;
     }
 
     /**
@@ -244,7 +248,6 @@ class GlobalController extends AbstractController
 
         return $this->noContentResponse();
     }
-
 
     /**
      * @Route("/reset/{hash}", methods={"POST"})
@@ -424,6 +427,21 @@ class GlobalController extends AbstractController
         $this->redis->del($hash);
 
         return $this->noContentResponse();
+    }
 
+    /**
+     * @Route("/upload", methods={"POST"})
+     */
+    public function upload(Request $request)
+    {
+        /**
+         * @var UploadedFile $file
+         */
+        $file = $request->files->get("file");
+        $resource = $this->storageClient->upload($file);
+
+        return $this->okResponse([
+            "file" => $resource
+        ]);
     }
 }

@@ -19,7 +19,7 @@ class BoulderRepository extends ServiceEntityRepository
             ->select('
                 partial boulder.{id, points},
                 partial ascent.{id, type},
-                partial user.{id, username, gender, lastActivity, media, visible}
+                partial user.{id, username, gender, lastActivity, image, visible}
             ')
             ->innerJoin('boulder.ascents', 'ascent')
             ->innerJoin('ascent.user', 'user')

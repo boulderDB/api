@@ -48,7 +48,7 @@ class UserController extends AbstractController
             ->orderBy("user.username")
             ->setMaxResults(20)
             ->getQuery()
-            ->getSingleResult();
+            ->getResult();
 
         return $this->okResponse($users);
     }

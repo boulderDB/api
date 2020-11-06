@@ -14,7 +14,7 @@ class UserStruct
 
     private \DateTime $lastActivity;
 
-    private ?string $media = null;
+    private ?string $image = null;
 
     public static function fromArray(array $data)
     {
@@ -43,8 +43,8 @@ class UserStruct
             }
         }
 
-        if (isset($data['media'])) {
-            $self->setMedia($data['media']);
+        if (isset($data['image'])) {
+            $self->setImage($data['image']);
         }
 
         return $self;
@@ -90,13 +90,13 @@ class UserStruct
         $this->lastActivity = $lastActivity;
     }
 
-    public function getMedia(): ?string
+    public function getImage(): ?string
     {
-        return $this->media;
+        return $this->image;
     }
 
-    public function setMedia(string $media): void
+    public function setImage(string $image): void
     {
-        $this->media = $media;
+        $this->image = $image;
     }
 }

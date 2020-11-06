@@ -75,9 +75,9 @@ class User implements UserInterface
     private bool $visible = true;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(name="media", type="string", nullable=true)
      */
-    private ?string $media = null;
+    private ?string $image = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -217,14 +217,14 @@ class User implements UserInterface
         $this->visible = $visible;
     }
 
-    public function getMedia(): ?string
+    public function getImage(): ?string
     {
-        return $this->media;
+        return $this->image;
     }
 
-    public function setMedia(?string $media): void
+    public function setImage(?string $image): void
     {
-        $this->media = $media;
+        $this->image = $image;
     }
 
     public function getLastVisitedLocation(): ?int

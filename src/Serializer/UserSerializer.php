@@ -14,7 +14,7 @@ class UserSerializer implements SerializerInterface
          */
         $data = [
             "id" => $class->getId(),
-            "media" => $class->getMedia(),
+            "image" => $class->getImage(),
             "visible" => $class->isVisible(),
             "username" => $class->getUsername(),
             "firstName" => $class->getFirstName(),

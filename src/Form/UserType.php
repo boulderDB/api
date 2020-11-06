@@ -19,53 +19,54 @@ class UserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('visible', CheckboxType::class)
-            ->add('gender', ChoiceType::class, [
-                'choices' => [
-                    'female' => 'female',
-                    'male' => 'male',
-                    'neutral' => 'neutral'
+            ->add("visible", CheckboxType::class)
+            ->add("gender", ChoiceType::class, [
+                "choices" => [
+                    "female" => "female",
+                    "male" => "male",
+                    "neutral" => "neutral"
                 ],
-                'constraints' => [
+                "constraints" => [
                     new NotBlank()
                 ]
             ])
-            ->add('email', EmailType::class, [
-                'constraints' => [
+            ->add("email", EmailType::class, [
+                "constraints" => [
                     new NotBlank()
                 ]
             ])
-            ->add('firstName', TextType::class, [
-                'constraints' => [
+            ->add("firstName", TextType::class, [
+                "constraints" => [
                     new NotBlank()
                 ]
             ])
-            ->add('lastName', TextType::class, [
-                'constraints' => [
+            ->add("lastName", TextType::class, [
+                "constraints" => [
                     new NotBlank()
                 ]
-            ]);
+            ])
+            ->add("image", TextType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'csrf_protection' => false,
-            'data_class' => User::class,
-            'allow_extra_fields' => true
+            "csrf_protection" => false,
+            "data_class" => User::class,
+            "allow_extra_fields" => true
         ]);
     }
 
     public static function passWordField(): array
     {
         return [
-            'password',
+            "password",
             TextType::class,
             [
-                'property_path' => 'plainPassword',
-                'constraints' => [
+                "property_path" => "plainPassword",
+                "constraints" => [
                     new NotBlank(),
-                    new Length(['min' => 6, 'max' => 50])
+                    new Length(["min" => 6, "max" => 50])
                 ]
             ]
         ];
@@ -74,12 +75,12 @@ class UserType extends AbstractType
     public static function usernameField(): array
     {
         return [
-            'username',
+            "username",
             TextType::class,
             [
-                'constraints' => [
+                "constraints" => [
                     new NotBlank(),
-                    new Length(['min' => 2, 'max' => 50])
+                    new Length(["min" => 2, "max" => 50])
                 ]
             ]
         ];
@@ -88,10 +89,10 @@ class UserType extends AbstractType
     public static function emailField(): array
     {
         return [
-            'email',
+            "email",
             Email::class,
             [
-                'constraints' => [
+                "constraints" => [
                     new NotBlank()
                 ]
             ]

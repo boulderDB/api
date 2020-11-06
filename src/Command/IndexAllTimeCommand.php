@@ -112,7 +112,7 @@ class IndexAllTimeCommand extends Command
                         'gender' => $user->getGender(),
                         'lastActivity' => $user->getLastActivity()->format('c'),
                         'username' => $user->getUsername(),
-                        'media' => $user->getMedia(),
+                        'image' => $user->getImage(),
                     ]
                 ];
             }
