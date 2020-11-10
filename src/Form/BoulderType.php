@@ -4,9 +4,9 @@ namespace App\Form;
 
 use App\Entity\Boulder;
 use App\Entity\HoldType;
+use App\Entity\Setter;
 use App\Entity\Tag;
 use App\Entity\Grade;
-use App\Entity\User;
 use App\Entity\Wall;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityRepository;
@@ -31,76 +31,76 @@ class BoulderType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $setterRole = $this->contextService->getLocationRole(User::ROLE_SETTER);
         $locationId = $this->contextService->getLocation()->getId();
 
-        $setterQuery = function (EntityRepository $entityRepository) use ($setterRole) {
+        $setterQuery = function (EntityRepository $entityRepository) {
 
-            return $entityRepository->createQueryBuilder('user')
-                ->where('user.roles LIKE :role')
-                ->setParameter('role', '%"' . $setterRole . '"%')
-                ->orderBy('lower(user.username)', 'ASC');
+            return $entityRepository->createQueryBuilder("setter")
+                ->innerJoin("setter.locations", "location")
+                ->where("location.id = :locationId")
+                ->setParameter("locationId", $this->contextService->getLocation()->getId())
+                ->orderBy("lower(setter.username)", "ASC");
         };
 
         $locationQuery = function (EntityRepository $entityRepository) use ($locationId) {
 
-            return $entityRepository->createQueryBuilder('locationResource')
-                ->where('locationResource.location = :location')
-                ->setParameter('location', $locationId);
+            return $entityRepository->createQueryBuilder("locationResource")
+                ->where("locationResource.location = :location")
+                ->setParameter("location", $locationId);
         };
 
         $builder
-            ->add('name', TextType::class, [])
-            ->add('holdStyle', EntityType::class, [
-                'class' => HoldType::class,
-                'constraints' => [new NotBlank()],
-                'query_builder' => $locationQuery
+            ->add("name", TextType::class, [])
+            ->add("hold_type", EntityType::class, [
+                "class" => HoldType::class,
+                "constraints" => [new NotBlank()],
+                "query_builder" => $locationQuery
             ])
-            ->add('grade', EntityType::class,
+            ->add("grade", EntityType::class,
                 [
-                    'class' => Grade::class,
-                    'constraints' => [new NotBlank()],
-                    'query_builder' => $locationQuery
+                    "class" => Grade::class,
+                    "constraints" => [new NotBlank()],
+                    "query_builder" => $locationQuery
                 ]
             )
-            ->add('internalGrade', EntityType::class,
+            ->add("internal_grade", EntityType::class,
                 [
-                    'class' => Grade::class,
-                    'query_builder' => $locationQuery
+                    "class" => Grade::class,
+                    "query_builder" => $locationQuery
                 ]
             )
-            ->add('startWall', EntityType::class, [
-                'class' => Wall::class,
-                'constraints' => [new NotBlank()],
-                'query_builder' => $locationQuery
+            ->add("start_wall", EntityType::class, [
+                "class" => Wall::class,
+                "constraints" => [new NotBlank()],
+                "query_builder" => $locationQuery
             ])
-            ->add('endWall', EntityType::class, [
-                'class' => Wall::class,
-                'query_builder' => $locationQuery
+            ->add("end_wall", EntityType::class, [
+                "class" => Wall::class,
+                "query_builder" => $locationQuery
 
             ])
-            ->add('setters', EntityType::class,
+            ->add("setters", EntityType::class,
                 [
-                    'class' => User::class,
-                    'multiple' => true,
-                    'constraints' => [new NotNull()],
-                    'query_builder' => $setterQuery
+                    "class" => Setter::class,
+                    "multiple" => true,
+                    "constraints" => [new NotNull()],
+                    "query_builder" => $setterQuery
                 ]
             )
-            ->add('tags', EntityType::class, [
-                'class' => Tag::class,
-                'multiple' => true,
-                'constraints' => [new NotNull()],
-                'query_builder' => $locationQuery
+            ->add("tags", EntityType::class, [
+                "class" => Tag::class,
+                "multiple" => true,
+                "constraints" => [new NotNull()],
+                "query_builder" => $locationQuery
             ])
-            ->add('points', IntegerType::class, [
-                'constraints' => [new NotBlank()]
+            ->add("points", IntegerType::class, [
+                "constraints" => [new NotBlank()]
             ])
-            ->add('status', ChoiceType::class, [
-                    'constraints' => [new NotBlank()],
-                    'choices' => [
-                        'active' => Boulder::STATUS_ACTIVE,
-                        'removed' => Boulder::STATUS_INACTIVE
+            ->add("status", ChoiceType::class, [
+                    "constraints" => [new NotBlank()],
+                    "choices" => [
+                        "active" => Boulder::STATUS_ACTIVE,
+                        "removed" => Boulder::STATUS_INACTIVE
                     ]
                 ]
             );
@@ -109,8 +109,8 @@ class BoulderType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'csrf_protection' => false,
-            'data_class' => Boulder::class,
+            "csrf_protection" => false,
+            "data_class" => Boulder::class,
         ]);
     }
 }

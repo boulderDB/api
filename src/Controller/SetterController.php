@@ -43,7 +43,12 @@ class SetterController extends AbstractController
      */
     public function index()
     {
-        $setters = $this->setterRepository->findAll();
+        $setters = $this->setterRepository->createQueryBuilder("setter")
+            ->innerJoin("setter.locations", "location")
+            ->where("location.id = :locationId")
+            ->setParameter("locationId", $this->contextService->getLocation()->getId())
+            ->getQuery()
+            ->getResult();
 
         return $this->json(Serializer::serialize($setters));
     }
