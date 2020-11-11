@@ -2,6 +2,7 @@
 
 namespace App\Struct;
 
+use App\Entity\Boulder;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -12,6 +13,11 @@ class BoulderStruct
     private string $points;
 
     private Collection $ascents;
+
+    public static function fromInstance(Boulder $boulder)
+    {
+        
+    }
 
     public static function fromArray(array $data)
     {

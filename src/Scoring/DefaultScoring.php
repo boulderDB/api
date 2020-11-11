@@ -3,11 +3,31 @@
 namespace App\Scoring;
 
 use App\Entity\Ascent;
+use App\Entity\Boulder;
 use App\Struct\AscentStruct;
 use App\Struct\BoulderStruct;
 
 class DefaultScoring implements ScoringInterface
 {
+    public function calculateScore(Boulder $boulder): void
+    {
+        $ascentCount = $boulder->getAscents()->count();
+        $points = $boulder->getPoints();
+
+        /**
+         * @var AscentStruct $ascent
+         */
+        foreach ($boulder->getAscents() as $ascent) {
+            if ($ascent->getType() === Ascent::ASCENT_FLASH) {
+                $score = ($points / $ascentCount) * 1.1;
+            } else {
+                $score = $points / $ascentCount;
+            }
+
+            $ascent->setScore($score);
+        }
+    }
+
     /**
      * @param BoulderStruct[] $boulders
      * @return array
@@ -16,22 +36,7 @@ class DefaultScoring implements ScoringInterface
     {
         // calculate each ascent score first
         foreach ($boulders as $boulder) {
-            $ascentCount = $boulder->getAscents()->count();
-            $points = $boulder->getPoints();
-
-            /**
-             * @var AscentStruct $ascent
-             */
-            foreach ($boulder->getAscents() as $ascent) {
-
-                if ($ascent->getType() === Ascent::ASCENT_FLASH) {
-                    $score = ($points / $ascentCount) * 1.1;
-                } else {
-                    $score = $points / $ascentCount;
-                }
-
-                $ascent->setScore($score);
-            }
+            $this->calculateScore($boulder);
         }
 
         $ranking = [];

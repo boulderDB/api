@@ -7,6 +7,7 @@ use App\Entity\AscentDoubt;
 use App\Entity\Boulder;
 use App\Form\AscentDoubtType;
 use App\Form\AscentType;
+use App\Scoring\DefaultScoring;
 use App\Scoring\ScoringInterface;
 use App\Serializer\AscentSerializer;
 use App\Service\ContextService;
@@ -63,6 +64,9 @@ class AscentController extends AbstractController
 
         $this->entityManager->persist($ascent);
         $this->entityManager->flush();
+
+        $defaultScoring = new DefaultScoring();
+        $defaultScoring->calculateScore($ascent->getBoulder());
 
         return $this->json(AscentSerializer::serialize($ascent));
     }

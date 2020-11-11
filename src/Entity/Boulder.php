@@ -209,6 +209,11 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
         return $this->status;
     }
 
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
     public function setStatus(?string $status): void
     {
         if (!$status) {
