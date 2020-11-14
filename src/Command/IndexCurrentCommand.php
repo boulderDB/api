@@ -54,14 +54,10 @@ class IndexCurrentCommand extends Command
 
             $io->writeln("Processing location $locationId – {$location->getName()}");
 
-            $boulders = $this->boulderRepository->getAscentData($locationId);
-
-            $boulderStructs = array_map(function ($boulder) {
-                return BoulderStruct::fromArray($boulder);
-            }, $boulders);
+            $boulders = $this->boulderRepository->getWithAscents($locationId);
 
             $defaultScoring = new DefaultScoring();
-            $ranking = $defaultScoring->calculate($boulderStructs);
+            $ranking = $defaultScoring->calculate($boulders);
 
             $this->redis->set(self::getTimestampCacheKey($locationId), $current->format('c'));
             $this->redis->set(self::getCacheKey($locationId), json_encode($ranking));

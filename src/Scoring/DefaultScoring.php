@@ -4,8 +4,6 @@ namespace App\Scoring;
 
 use App\Entity\Ascent;
 use App\Entity\Boulder;
-use App\Struct\AscentStruct;
-use App\Struct\BoulderStruct;
 
 class DefaultScoring implements ScoringInterface
 {
@@ -15,7 +13,7 @@ class DefaultScoring implements ScoringInterface
         $points = $boulder->getPoints();
 
         /**
-         * @var AscentStruct $ascent
+         * @var Ascent $ascent
          */
         foreach ($boulder->getAscents() as $ascent) {
             if ($ascent->getType() === Ascent::ASCENT_FLASH) {
@@ -29,7 +27,7 @@ class DefaultScoring implements ScoringInterface
     }
 
     /**
-     * @param BoulderStruct[] $boulders
+     * @param Boulder[] $boulders
      * @return array
      */
     public function calculate(array $boulders): array
@@ -43,6 +41,10 @@ class DefaultScoring implements ScoringInterface
 
         foreach ($boulders as $boulder) {
             foreach ($boulder->getAscents() as $ascent) {
+
+                /**
+                 * @var Ascent $ascent
+                 */
                 $userId = $ascent->getUser()->getId();
 
                 if (!array_key_exists($userId, $ranking)) {

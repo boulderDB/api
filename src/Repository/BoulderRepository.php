@@ -13,7 +13,7 @@ class BoulderRepository extends ServiceEntityRepository
         parent::__construct($registry, Boulder::class);
     }
 
-    public function getAscentData(string $locationId): array
+    public function getWithAscents(string $locationId): array
     {
         return $this->createQueryBuilder('boulder')
             ->select('
@@ -30,6 +30,6 @@ class BoulderRepository extends ServiceEntityRepository
             ->setParameter('status', Boulder::STATUS_ACTIVE)
             ->setParameter('visible', true)
             ->getQuery()
-            ->getArrayResult();
+            ->getResult();
     }
 }
