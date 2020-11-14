@@ -18,6 +18,7 @@ use App\Controller\ResponseTrait;
 use App\Service\ContextService;
 use App\Service\Serializer;
 use App\Service\SerializerInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
@@ -157,6 +158,8 @@ class BoulderController extends AbstractController
                 unset($boulder["internal_grade"]);
             }
 
+            $boulder["createdAt"] = Serializer::formatDate($boulder["createdAt"]);
+
             return $boulder;
         }, $results);
 
@@ -183,7 +186,7 @@ class BoulderController extends AbstractController
     }
 
     /**
-     * @Route("", methods={"POST"})
+     * @Route("/mass", methods={"POST"})
      */
     public function mass(Request $request)
     {
@@ -206,7 +209,7 @@ class BoulderController extends AbstractController
             }
 
             if ($form->getData()["operation"] === MassOperationType::OPERATION_PRUNE_ASCENTS) {
-                $boulder->clearAscents();
+                $boulder->setAscents(new ArrayCollection());
             }
 
             $this->entityManager->persist($boulder);

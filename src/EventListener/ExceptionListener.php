@@ -16,7 +16,7 @@ class ExceptionListener implements EventSubscriberInterface
     {
         return [
             KernelEvents::EXCEPTION => [
-                ['onKernelException', 60]
+                ['onKernelException', 512]
             ],
         ];
     }
