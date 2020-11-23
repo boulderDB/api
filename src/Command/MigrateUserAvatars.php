@@ -52,17 +52,17 @@ class MigrateUserAvatars extends Command
         foreach ($users as $user) {
 
             try {
-                $currentResource = file_get_contents("https://boulderdb.de/uploads/{$user->getImage()}");
+                $contents = file_get_contents("https://boulderdb.de/uploads/{$user->getImage()}");
             } catch (\Exception $exception) {
                 continue;
             }
 
-            if (!$currentResource) {
+            if (!$contents) {
                 continue;
             }
 
             $resource = $this->storageClient->uploadContent(
-                $currentResource,
+                $contents,
                 pathinfo($user->getImage(), \PATHINFO_EXTENSION)
             );
 

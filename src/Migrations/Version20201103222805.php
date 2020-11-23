@@ -32,24 +32,11 @@ final class Version20201103222805 extends AbstractMigration
         $this->addSql('ALTER TABLE label ADD CONSTRAINT FK_EA750E8A76ED395 FOREIGN KEY (user_id) REFERENCES users (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE boulder_label ADD CONSTRAINT FK_A89D620387658A6F FOREIGN KEY (boulder_id) REFERENCES boulder (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE boulder_label ADD CONSTRAINT FK_A89D620333B92F39 FOREIGN KEY (label_id) REFERENCES label (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('DROP TABLE boulder_setters');
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
-
-        $this->addSql('CREATE SCHEMA public');
-        $this->addSql('ALTER TABLE boulder_label DROP CONSTRAINT FK_A89D620333B92F39');
-        $this->addSql('DROP SEQUENCE label_id_seq CASCADE');
-        $this->addSql('CREATE SEQUENCE boulder_label_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE boulder_setters (boulder_id INT NOT NULL, user_id INT NOT NULL, PRIMARY KEY(boulder_id, user_id))');
-        $this->addSql('CREATE INDEX idx_1f9e154187658a6f ON boulder_setters (boulder_id)');
-        $this->addSql('CREATE INDEX idx_1f9e1541a76ed395 ON boulder_setters (user_id)');
-        $this->addSql('ALTER TABLE boulder_setters ADD CONSTRAINT fk_1f9e154187658a6f FOREIGN KEY (boulder_id) REFERENCES boulder (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE boulder_setters ADD CONSTRAINT fk_1f9e1541a76ed395 FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('DROP TABLE label');
-        $this->addSql('DROP TABLE boulder_label');
     }
 }
