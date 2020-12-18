@@ -15,9 +15,7 @@ class ExceptionListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::EXCEPTION => [
-                ['onKernelException', 512]
-            ],
+            KernelEvents::EXCEPTION => "onKernelException"
         ];
     }
 
@@ -35,7 +33,6 @@ class ExceptionListener implements EventSubscriberInterface
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
 
         if ($exception instanceof AuthenticationException) {
-
             $response = new JsonResponse([
                 "message" => "Unauthorized",
                 "code" => Response::HTTP_UNAUTHORIZED
@@ -43,7 +40,6 @@ class ExceptionListener implements EventSubscriberInterface
         }
 
         if ($exception instanceof HttpExceptionInterface) {
-
             $response = new JsonResponse([
                 "message" => $exception->getMessage(),
                 "code" => $exception->getStatusCode()
