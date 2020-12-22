@@ -4,27 +4,17 @@ namespace App\Controller;
 
 use App\Entity\Ascent;
 use App\Entity\Boulder;
-use App\Entity\Label;
 use App\Entity\Grade;
 use App\Factory\RedisConnectionFactory;
 use App\Form\BoulderType;
 use App\Form\MassOperationType;
 use App\Repository\BoulderRepository;
-use App\Controller\ContextualizedControllerTrait;
-use App\Controller\FormErrorTrait;
-use App\Controller\RateLimiterTrait;
-use App\Controller\RequestTrait;
-use App\Controller\ResponseTrait;
 use App\Service\ContextService;
 use App\Service\Serializer;
 use App\Service\SerializerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -140,20 +130,23 @@ class BoulderController extends AbstractController
      */
     public function index()
     {
+        if ($this->redis->exists(BoulderRepository::BOULDER_QUERY_CACHE_KEY)) {
+            return $this->json(json_decode($this->redis->get(BoulderRepository::BOULDER_QUERY_CACHE_KEY), true));
+        }
+
         $builder = $this->getBoulderQueryBuilder();
 
-        $results = $builder->where('boulder.location = :location')
-            ->andWhere('boulder.status = :status')
-            ->setParameter('location', $this->contextService->getLocation()->getId())
-            ->setParameter('status', Boulder::STATUS_ACTIVE)
+        $results = $builder
+            ->where("boulder.location = :location")
+            ->andWhere("boulder.status = :status")
+            ->setParameter("location", $this->contextService->getLocation()->getId())
+            ->setParameter("status", Boulder::STATUS_ACTIVE)
             ->getQuery()
             ->getArrayResult();
 
         $isAdmin = $this->isLocationAdmin();
 
         $results = array_map(function ($boulder) use ($isAdmin) {
-            $boulder['labels'] = $this->getLabels($boulder['id']);
-
             if (!$isAdmin) {
                 unset($boulder["internal_grade"]);
             }
@@ -162,6 +155,8 @@ class BoulderController extends AbstractController
 
             return $boulder;
         }, $results);
+
+        $this->redis->set(BoulderRepository::BOULDER_QUERY_CACHE_KEY, json_encode($results));
 
         return $this->json($results);
     }
@@ -244,22 +239,6 @@ class BoulderController extends AbstractController
         return array_values($ascents);
     }
 
-    private function getLabels(string $id)
-    {
-        //$key = BoulderLabel::createKey(
-        //    $this->contextService->getLocation()->getId(),
-        //    $this->getUser()->getId(),
-        //    $id,
-        //    "*"
-        //);
-        //
-        //return array_map(function ($key) {
-        //    $label = BoulderLabel::fromKey($key);
-        //
-        //    return $label->getTitle();
-        //}, $this->redis->keys($key));
-    }
-
     private function getBoulderQueryBuilder(string $select = null): QueryBuilder
     {
         $partials = "
@@ -279,13 +258,13 @@ class BoulderController extends AbstractController
 
         return $this->entityManager->createQueryBuilder()
             ->select($partials)
-            ->from(Boulder::class, 'boulder')
-            ->leftJoin('boulder.tags', 'tag')
-            ->leftJoin('boulder.setters', 'setter')
-            ->leftJoin('boulder.startWall', 'startWall')
-            ->leftJoin('boulder.endWall', 'endWall')
-            ->innerJoin('boulder.grade', 'grade')
-            ->leftJoin('boulder.internalGrade', 'internalGrade')
-            ->innerJoin('boulder.holdType', 'holdType');
+            ->from(Boulder::class, "boulder")
+            ->leftJoin("boulder.tags", "tag")
+            ->leftJoin("boulder.setters", "setter")
+            ->leftJoin("boulder.startWall", "startWall")
+            ->leftJoin("boulder.endWall", "endWall")
+            ->innerJoin("boulder.grade", "grade")
+            ->leftJoin("boulder.internalGrade", "internalGrade")
+            ->innerJoin("boulder.holdType", "holdType");
     }
 }
