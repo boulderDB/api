@@ -43,14 +43,29 @@ class SetterController extends AbstractController
      */
     public function index()
     {
-        $setters = $this->setterRepository->createQueryBuilder("setter")
-            ->innerJoin("setter.locations", "location")
-            ->where("location.id = :locationId")
-            ->setParameter("locationId", $this->contextService->getLocation()->getId())
-            ->getQuery()
-            ->getResult();
+        $this->denyUnlessLocationAdmin();
 
-        return $this->json(Serializer::serialize($setters));
+        $statement = "SELECT setter.id, setter.username FROM setter INNER JOIN boulder_setters_v2 ON setter.id = boulder_setters_v2.setter_id INNER JOIN setter_locations ON setter.id = boulder_setters_v2.setter_id WHERE setter_locations.location_id = {$this->contextService->getLocation()->getId()}  GROUP BY setter.id;";
+        $connection = $this->entityManager->getConnection();
+
+        $query = $connection->prepare($statement);
+        $query->execute();
+
+        return $this->json($query->fetchAllAssociative());
+    }
+
+    /**
+     * @Route("/current", methods={"GET"})
+     */
+    public function current()
+    {
+        $statement = "SELECT setter.id, setter.username FROM setter INNER JOIN boulder_setters_v2 ON setter.id = boulder_setters_v2.setter_id INNER JOIN boulder ON boulder_setters_v2.boulder_id = boulder.id INNER JOIN setter_locations ON setter.id = boulder_setters_v2.setter_id WHERE boulder.status = 'active' AND setter_locations.location_id = {$this->contextService->getLocation()->getId()}  GROUP BY setter.id;";
+        $connection = $this->entityManager->getConnection();
+
+        $query = $connection->prepare($statement);
+        $query->execute();
+
+        return $this->json($query->fetchAllAssociative());
     }
 
     /**
