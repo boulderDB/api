@@ -45,6 +45,11 @@ class Wall implements LocationResourceInterface
      */
     private ?Collection $boulders = null;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+    private bool $active = true;
+
     public function __construct()
     {
         $this->boulders = new ArrayCollection();
@@ -104,5 +109,15 @@ class Wall implements LocationResourceInterface
     public function setBoulders(Collection $boulders): void
     {
         $this->boulders = $boulders;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): void
+    {
+        $this->active = $active;
     }
 }
