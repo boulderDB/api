@@ -41,11 +41,11 @@ class WallController extends AbstractController
     public function index()
     {
         $connection = $this->entityManager->getConnection();
-        $statement = 'select id, name from wall where tenant_id = :tenantId';
+        $statement = "select id, name from wall where tenant_id = :tenantId and status = 'active'";
         $query = $connection->prepare($statement);
 
         $query->execute([
-            'tenantId' => $this->contextService->getLocation()->getId()
+            "tenantId" => $this->contextService->getLocation()->getId()
         ]);
 
         $results = $query->fetchAll();

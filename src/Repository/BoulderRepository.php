@@ -8,8 +8,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class BoulderRepository extends ServiceEntityRepository
 {
-    public const BOULDER_QUERY_CACHE_KEY = "boulder-cache";
-
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Boulder::class);

@@ -130,8 +130,10 @@ class BoulderController extends AbstractController
      */
     public function index()
     {
-        if ($this->redis->exists(BoulderRepository::BOULDER_QUERY_CACHE_KEY)) {
-            return $this->json(json_decode($this->redis->get(BoulderRepository::BOULDER_QUERY_CACHE_KEY), true));
+        $boulderQueryCacheKey = "boulder-cache-{$this->contextService->getLocation()->getId()}";
+
+        if ($this->redis->exists($boulderQueryCacheKey)) {
+            return $this->json(json_decode($this->redis->get($boulderQueryCacheKey), true));
         }
 
         $builder = $this->getBoulderQueryBuilder();
@@ -156,7 +158,7 @@ class BoulderController extends AbstractController
             return $boulder;
         }, $results);
 
-        $this->redis->set(BoulderRepository::BOULDER_QUERY_CACHE_KEY, json_encode($results));
+        $this->redis->set($boulderQueryCacheKey, json_encode($results));
 
         return $this->json($results);
     }
