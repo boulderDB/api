@@ -52,6 +52,8 @@ class BoulderListener implements EventSubscriber
             return;
         }
 
+        $this->redis->del("boulder-cache-{$this->contextService->getLocation()->getId()}");
+
         if (!$subject->getInternalGrade()) {
             $subject->setInternalGrade($subject->getGrade());
         }
