@@ -220,6 +220,10 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
             return;
         }
 
+        if ($this->status === Boulder::STATUS_ACTIVE && $status == Boulder::STATUS_INACTIVE) {
+            $this->removedAt = new \DateTime();
+        }
+
         $this->status = $status;
     }
 
