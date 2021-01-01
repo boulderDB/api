@@ -9,6 +9,7 @@ use App\Factory\RedisConnectionFactory;
 use App\Repository\BoulderRepository;
 use App\Repository\LocationRepository;
 use App\Repository\UserRepository;
+use App\Service\CacheService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class IndexAllTimeCommand extends Command
 {
-    protected static $defaultName = 'blocbeta:ranking:index-all-time';
+    protected static $defaultName = "blocbeta:ranking:index-all-time";
 
     private $locationRepository;
     private $boulderRepository;
@@ -41,7 +42,7 @@ class IndexAllTimeCommand extends Command
 
     protected function configure()
     {
-        $this->setDescription('Index all time rankings');
+        $this->setDescription("Index all time rankings");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -59,22 +60,22 @@ class IndexAllTimeCommand extends Command
             $io->writeln("Processing location $locationId");
 
             $from = new \DateTime();
-            $from->modify('-6 months');
+            $from->modify("-6 months");
 
             /**
              * @var User[] $users
              */
-            $users = $this->userRepository->createQueryBuilder('user')
-                ->where('user.visible = true')
-                ->andWhere('user.lastActivity > :from')
-                ->setParameter('from', $from)
+            $users = $this->userRepository->createQueryBuilder("user")
+                ->where("user.visible = true")
+                ->andWhere("user.lastActivity > :from")
+                ->setParameter("from", $from)
                 ->getQuery()
                 ->getResult();
 
-            $totalBoulders = $this->boulderRepository->createQueryBuilder('boulder')
-                ->select('count(boulder.id)')
-                ->where('boulder.location = :location')
-                ->setParameter('location', $location->getId())
+            $totalBoulders = $this->boulderRepository->createQueryBuilder("boulder")
+                ->select("count(boulder.id)")
+                ->where("boulder.location = :location")
+                ->setParameter("location", $location->getId())
                 ->getQuery()
                 ->getOneOrNullResult()[1];
 
@@ -103,35 +104,35 @@ class IndexAllTimeCommand extends Command
                 $percentage = round(($total / $totalBoulders) * 100);
 
                 $ranking[$user->getId()] = [
-                    'percentage' => $percentage,
-                    'boulders' => $total,
-                    'flashes' => $flashes,
-                    'tops' => $tops,
-                    'user' => [
-                        'id' => $user->getId(),
-                        'gender' => $user->getGender(),
-                        'lastActivity' => $user->getLastActivity()->format('c'),
-                        'username' => $user->getUsername(),
-                        'image' => $user->getImage(),
+                    "percentage" => $percentage,
+                    "boulders" => $total,
+                    "flashes" => $flashes,
+                    "tops" => $tops,
+                    "user" => [
+                        "id" => $user->getId(),
+                        "gender" => $user->getGender(),
+                        "lastActivity" => $user->getLastActivity()->format("c"),
+                        "username" => $user->getUsername(),
+                        "image" => $user->getImage(),
                     ]
                 ];
             }
 
             usort($ranking, function ($a, $b) {
-                return $a['boulders'] < $b['boulders'];
+                return $a["boulders"] < $b["boulders"];
             });
 
             $key = 1;
 
             foreach ($ranking as &$rank) {
-                $rank['rank'] = $key;
+                $rank["rank"] = $key;
                 $key++;
             }
 
-            $this->redis->set($location->getId() . '-all-time-ranking', json_encode($ranking));
+            $this->redis->set(CacheService::getAllTimeRankingKey($locationId), json_encode($ranking));
         }
 
-        $io->success('All time ranking indexed successfully');
+        $io->success("All time ranking indexed successfully");
 
         return 0;
     }

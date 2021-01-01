@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Command\IndexCurrentCommand;
 use App\Factory\RedisConnectionFactory;
 use App\Repository\BoulderRepository;
+use App\Service\CacheService;
 use App\Service\ContextService;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,8 +36,8 @@ class RankingController extends AbstractController
     {
         $locationId = $this->contextService->getLocation()->getId();
 
-        $cacheKey = IndexCurrentCommand::getCacheKey($locationId);
-        $timestampCacheKey = IndexCurrentCommand::getTimestampCacheKey($locationId);
+        $cacheKey = CacheService::getCurrentRankingKey($locationId);
+        $timestampCacheKey = CacheService::getCurrentRankingTimestampKey($locationId);
 
         if (!$this->redis->exists($cacheKey)) {
             $data = [];
@@ -45,8 +46,8 @@ class RankingController extends AbstractController
         }
 
         return $this->json([
-            'list' => $data,
-            'lastRun' => $this->redis->get($timestampCacheKey)
+            "list" => $data,
+            "lastRun" => $this->redis->get($timestampCacheKey)
         ]);
     }
 
@@ -55,11 +56,11 @@ class RankingController extends AbstractController
      */
     public function allTime()
     {
-        $ranking = $this->redis->get($this->contextService->getLocation()->getId() . "-all-time-ranking");
+        $ranking = $this->redis->get(CacheService::getAllTimeRankingKey($this->contextService->getLocation()->getId()));
 
         return $this->json([
-            'list' => json_decode($ranking),
-            'lastRun' => null
-        ], true);
+            "list" => json_decode($ranking),
+            "lastRun" => null
+        ]);
     }
 }

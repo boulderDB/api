@@ -7,7 +7,7 @@ use App\Factory\RedisConnectionFactory;
 use App\Repository\BoulderRepository;
 use App\Repository\LocationRepository;
 use App\Scoring\DefaultScoring;
-use App\Struct\BoulderStruct;
+use App\Service\CacheService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -59,22 +59,12 @@ class IndexCurrentCommand extends Command
             $defaultScoring = new DefaultScoring();
             $ranking = $defaultScoring->calculate($boulders);
 
-            $this->redis->set(self::getTimestampCacheKey($locationId), $current->format('c'));
-            $this->redis->set(self::getCacheKey($locationId), json_encode($ranking));
+            $this->redis->set(CacheService::getCurrentRankingTimestampKey($locationId), $current->format('c'));
+            $this->redis->set(CacheService::getCurrentRankingKey($locationId), json_encode($ranking));
         }
 
         $io->success('All current ranking indexed successfully');
 
         return 0;
-    }
-
-    public static function getTimestampCacheKey(string $locationId): string
-    {
-        return "location-{$locationId}-current-ranking:last-run";
-    }
-
-    public static function getCacheKey(string $locationId): string
-    {
-        return "location-{$locationId}-current-ranking";
     }
 }
