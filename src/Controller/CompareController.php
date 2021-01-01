@@ -24,10 +24,12 @@ class CompareController extends AbstractController
     private ContextService $contextService;
 
     public function __construct(
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        ContextService $contextService
     )
     {
         $this->entityManager = $entityManager;
+        $this->contextService = $contextService;
     }
 
     /**

@@ -6,7 +6,6 @@ use App\Entity\Setter;
 use App\Form\SetterType;
 use App\Repository\SetterRepository;
 use App\Service\ContextService;
-use App\Service\Serializer;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,10 +44,9 @@ class SetterController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        $statement = "SELECT setter.id, setter.username FROM setter INNER JOIN boulder_setters_v2 ON setter.id = boulder_setters_v2.setter_id INNER JOIN setter_locations ON setter.id = boulder_setters_v2.setter_id WHERE setter_locations.location_id = {$this->contextService->getLocation()->getId()}  GROUP BY setter.id;";
-        $connection = $this->entityManager->getConnection();
+        $sql = SetterRepository::getIndexStatement($this->contextService->getLocation()->getId());
 
-        $query = $connection->prepare($statement);
+        $query = $this->entityManager->getConnection()->prepare($sql);
         $query->execute();
 
         return $this->json($query->fetchAllAssociative());
@@ -59,10 +57,9 @@ class SetterController extends AbstractController
      */
     public function current()
     {
-        $statement = "SELECT setter.id, setter.username FROM setter INNER JOIN boulder_setters_v2 ON setter.id = boulder_setters_v2.setter_id INNER JOIN boulder ON boulder_setters_v2.boulder_id = boulder.id INNER JOIN setter_locations ON setter.id = boulder_setters_v2.setter_id WHERE boulder.status = 'active' AND setter_locations.location_id = {$this->contextService->getLocation()->getId()}  GROUP BY setter.id;";
-        $connection = $this->entityManager->getConnection();
+        $sql = SetterRepository::getCurrentStatement($this->contextService->getLocation()->getId());
 
-        $query = $connection->prepare($statement);
+        $query = $this->entityManager->getConnection()->prepare($sql);
         $query->execute();
 
         return $this->json($query->fetchAllAssociative());

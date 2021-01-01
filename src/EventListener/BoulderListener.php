@@ -3,6 +3,7 @@
 namespace App\EventListener;
 
 use App\Entity\Boulder;
+use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
 use App\Service\ContextService;
 use Doctrine\Common\EventSubscriber;
@@ -48,7 +49,7 @@ class BoulderListener implements EventSubscriber
     {
         $subject = $args->getObject();
 
-        if (!$subject instanceof Boulder) {
+        if (!$subject instanceof Boulder || !$subject instanceof User) {
             return;
         }
 

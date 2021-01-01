@@ -28,4 +28,24 @@ class SetterRepository extends ServiceEntityRepository
 
         return $result ? true : false;
     }
+
+    public static function getIndexStatement(string $locationId)
+    {
+        return "SELECT setter.id, setter.username FROM boulder 
+                INNER JOIN boulder_setters_v2 ON boulder_setters_v2.boulder_id = boulder.id 
+                INNER JOIN setter ON setter.id = boulder_setters_v2.setter_id 
+                WHERE boulder.tenant_id = {$locationId} 
+                GROUP BY setter.id 
+                ORDER BY lower(setter.username) ASC";
+    }
+
+    public static function getCurrentStatement(string $locationId)
+    {
+        return "SELECT setter.id, setter.username FROM boulder 
+                INNER JOIN boulder_setters_v2 ON boulder_setters_v2.boulder_id = boulder.id 
+                INNER JOIN setter ON setter.id = boulder_setters_v2.setter_id 
+                WHERE boulder.status = 'active' AND boulder.tenant_id = {$locationId} 
+                GROUP BY setter.id 
+                ORDER BY lower(setter.username) ASC";
+    }
 }

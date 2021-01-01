@@ -8,11 +8,6 @@ boulder:
   type: annotation
   prefix: /api/{location}/
 
-statistic:
-  resource: ../../src/Controller/StatisticController.php
-  type: annotation
-  prefix: /api/{location}/
-
 grade:
   resource: ../../src/Controller/GradeController.php
   type: annotation

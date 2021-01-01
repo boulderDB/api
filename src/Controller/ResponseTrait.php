@@ -66,7 +66,7 @@ trait ResponseTrait
     protected function badRequestResponse(string $message)
     {
         return $this->json([
-            "type" => "formError",
+            "type" => "badRequest",
             "message" => $message,
             "code" => Response::HTTP_BAD_REQUEST,
         ], Response::HTTP_BAD_REQUEST);
