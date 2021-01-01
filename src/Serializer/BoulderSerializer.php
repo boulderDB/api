@@ -41,7 +41,6 @@ class BoulderSerializer implements SerializerInterface
                     $class->getHoldType()->getId(),
 
             "tags" => array_map(function ($tag) use ($detail) {
-
                 /**
                  * @var Tag $tag
                  */
@@ -57,8 +56,8 @@ class BoulderSerializer implements SerializerInterface
                 return $tag->getId();
 
             }, $class->getTags()->toArray()),
-            "setters" => array_map(function ($setter) use ($detail) {
 
+            "setters" => array_map(function ($setter) use ($detail) {
                 /**
                  * @var Setter $setter
                  */
@@ -73,13 +72,12 @@ class BoulderSerializer implements SerializerInterface
                 return $setter->getId();
 
             }, $class->getSetters()->toArray()),
-
             "created_at" => Serializer::formatDate($class->getCreatedAt()),
         ];
 
         if ($detail) {
 
-            $data["ascents"] = array_map(function ($ascent) {
+            $ascents = array_map(function ($ascent) {
 
                 /**
                  * @var Ascent $ascent
@@ -91,6 +89,8 @@ class BoulderSerializer implements SerializerInterface
                 ];
 
             }, $class->getAscents()->toArray());
+
+            $data["ascents"] = array_values($ascents);
         }
 
         return $data;
