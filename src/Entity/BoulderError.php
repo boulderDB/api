@@ -35,9 +35,9 @@ class BoulderError implements LocationResourceInterface
     private ?Boulder $boulder = null;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text", name="description", nullable=true)
      */
-    private ?string  $description = null;
+    private ?string $message = null;
 
     /**
      * @ORM\Column(type="string")
@@ -74,14 +74,14 @@ class BoulderError implements LocationResourceInterface
         $this->boulder = $boulder;
     }
 
-    public function getDescription(): ?string
+    public function getMessage(): ?string
     {
-        return $this->description;
+        return $this->message;
     }
 
-    public function setDescription(?string $description): void
+    public function setMessage(?string $message): void
     {
-        $this->description = $description;
+        $this->message = $message;
     }
 
     public function getStatus(): ?string
