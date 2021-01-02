@@ -7,13 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class BoulderError implements LocationResourceInterface
+class BoulderError implements LocationResourceInterface, TimestampableInterface
 {
     use TimestampTrait;
     use LocationTrait;
 
-    const STATUS_RESOLVED = 'resolved';
-    const STATUS_UNRESOLVED = 'unresolved';
+    const STATUS_RESOLVED = "resolved";
+    const STATUS_UNRESOLVED = "unresolved";
 
     /**
      * @ORM\Id()

@@ -44,14 +44,16 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface
     private ?Boulder $boulder = null;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text", name="description", nullable=true)
      */
-    private ?string $description = null;
+    private ?string $message = null;
 
     /**
      * @ORM\Column(type="integer")
      */
     private int $status = self::STATUS_UNREAD;
+
+    private ?Ascent  $ascent = null;
 
     public static function getStatues(): array
     {
@@ -78,6 +80,27 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface
         $this->author = $author;
     }
 
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setMessage(?string $message): void
+    {
+        $this->message = $message;
+    }
+
+    public function getStatus(): int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(int $status): void
+    {
+        $this->status = $status;
+    }
+
+
     public function getRecipient(): ?User
     {
         return $this->recipient;
@@ -98,23 +121,13 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface
         $this->boulder = $boulder;
     }
 
-    public function getDescription(): ?string
+    public function getAscent(): ?Ascent
     {
-        return $this->description;
+        return $this->ascent;
     }
 
-    public function setDescription(?string $description): void
+    public function setAscent(?Ascent $ascent): void
     {
-        $this->description = $description;
-    }
-
-    public function getStatus(): int
-    {
-        return $this->status;
-    }
-
-    public function setStatus(int $status): void
-    {
-        $this->status = $status;
+        $this->ascent = $ascent;
     }
 }

@@ -143,42 +143,6 @@ class AscentController extends AbstractController
         return $this->json($scores);
     }
 
-    /**
-     * @Route("/{id}/doubt", methods={"POST"})
-     */
-    public function doubt(Request $request, string $id)
-    {
-        $ascentDoubt = new AscentDoubt();
-        $ascentDoubt->setAuthor($this->getUser());
-
-        /**
-         * @var Ascent $ascent
-         */
-        $ascent = $this->entityManager->getRepository(Ascent::class)->find($id);
-
-        if (!$ascent) {
-            return $this->resourceNotFoundResponse("Ascent", $id);
-        }
-
-        $ascentDoubt->setBoulder($ascent->getBoulder());
-
-        $form = $this->createForm(AscentDoubtType::class, $ascentDoubt);
-        $form->submit(json_decode($request->getContent(), true));
-
-        if (!$form->isValid()) {
-            return $this->badFormRequestResponse($form);
-        }
-
-        $ascent->setDoubted();
-
-        $this->entityManager->persist($ascent);
-        $this->entityManager->persist($ascentDoubt);
-
-        $this->entityManager->flush();
-
-        return $this->json(null, Response::HTTP_CREATED);
-    }
-
     private static function filterUserAscent(array $ascents, int $userId): ?array
     {
         $userAscent = array_filter($ascents, function ($ascent) use ($userId) {

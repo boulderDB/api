@@ -4,12 +4,17 @@ namespace App\Controller;
 
 use App\Entity\BoulderError;
 use App\Form\BoulderErrorType;
+use App\Form\BoulderType;
+use App\Repository\BoulderErrorRepository;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
  * @Route("/error")
@@ -17,17 +22,23 @@ use Symfony\Component\Routing\Annotation\Route;
 class BoulderErrorController extends AbstractController
 {
     use ContextualizedControllerTrait;
+    use FormErrorTrait;
+    use RequestTrait;
+    use ResponseTrait;
 
     private EntityManagerInterface $entityManager;
     private ContextService $contextService;
+    private BoulderErrorRepository $boulderErrorRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        ContextService $contextService
+        ContextService $contextService,
+        BoulderErrorRepository $boulderErrorRepository
     )
     {
         $this->entityManager = $entityManager;
         $this->contextService = $contextService;
+        $this->boulderErrorRepository = $boulderErrorRepository;
     }
 
     /**
@@ -37,23 +48,10 @@ class BoulderErrorController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        $errors = $this->entityManager->createQueryBuilder()
-            ->select('
-                partial boulderError.{id, description, createdAt, location}, 
-                partial author.{id, username}, 
-                partial boulder.{id, name, startWall},
-                partial startWall.{id, name}
-            ')
-            ->from(BoulderError::class, 'boulderError')
-            ->leftJoin('boulderError.author', 'author')
-            ->leftJoin('boulderError.boulder', 'boulder')
-            ->leftJoin('boulder.startWall', 'startWall')
-            ->where('boulderError.location = :location')
-            ->andWhere('boulderError.status = :status')
-            ->setParameter('location', $this->contextService->getLocation()->getId())
-            ->setParameter('status', BoulderError::STATUS_UNRESOLVED)
-            ->getQuery()
-            ->getArrayResult();
+        $errors = $this->boulderErrorRepository->findByStatus(
+            $this->contextService->getLocation()->getId(),
+            BoulderError::STATUS_UNRESOLVED
+        );
 
         return $this->json($errors);
     }
@@ -67,9 +65,7 @@ class BoulderErrorController extends AbstractController
         $boulderError->setAuthor($this->getUser());
 
         $form = $this->createForm(BoulderErrorType::class, $boulderError);
-        $data = json_decode($request->getContent());
-
-        $form->submit($data, true);
+        $form->submit(self::decodePayLoad($request));
 
         if (!$form->isValid()) {
             return $this->json($this->getFormErrors($form));
@@ -78,7 +74,7 @@ class BoulderErrorController extends AbstractController
         $this->entityManager->persist($boulderError);
         $this->entityManager->flush();
 
-        return $this->json(null, Response::HTTP_CREATED);
+        return $this->createdResponse($boulderError);
     }
 
     /**
@@ -89,12 +85,12 @@ class BoulderErrorController extends AbstractController
         $this->denyUnlessLocationAdmin();
 
         $connection = $this->entityManager->getConnection();
-        $statement = 'select count(id) from boulder_error where tenant_id = :locationId and status = :status';
+        $statement = "select count(id) from boulder_error where tenant_id = :locationId and status = :status";
         $query = $connection->prepare($statement);
 
         $query->execute([
-            'locationId' => $this->contextService->getLocation()->getId(),
-            'status' => BoulderError::STATUS_UNRESOLVED
+            "locationId" => $this->contextService->getLocation()->getId(),
+            "status" => BoulderError::STATUS_UNRESOLVED
         ]);
 
         $results = $query->fetch();
@@ -103,10 +99,38 @@ class BoulderErrorController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/resolve", methods={"PUT"})
+     * @Route("/{id}", methods={"PUT"})
      */
-    public function resolve(string $id)
+    public function resolve(Request $request, string $id)
     {
+        $this->denyUnlessLocationAdmin();
+        $error = $this->boulderErrorRepository->find($id);
 
+        if (!$error) {
+            return $this->resourceNotFoundResponse("BoulderError", $id);
+        }
+
+        $form = $this->createFormBuilder($error, ["csrf_protection" => false])
+            ->add("status", ChoiceType::class, [
+                "choices" => [
+                    BoulderError::STATUS_UNRESOLVED => BoulderError::STATUS_UNRESOLVED,
+                    BoulderError::STATUS_RESOLVED => BoulderError::STATUS_RESOLVED
+                ],
+                "constraints" => [
+                    new NotBlank()
+                ]
+            ])
+            ->getForm();
+
+        $form->submit(json_decode($request->getContent(), true), false);
+
+        if (!$form->isValid()) {
+            return $this->badFormRequestResponse($form);
+        }
+
+        $this->entityManager->persist($error);
+        $this->entityManager->flush();
+
+        return $this->noContentResponse();
     }
 }
