@@ -13,9 +13,9 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface
     use TimestampTrait;
     use LocationTrait;
 
-    const STATUS_UNREAD = 0;
-    const STATUS_READ = 1;
     const STATUS_RESOLVED = 2;
+    const STATUS_READ = 1;
+    const STATUS_UNREAD = 0;
     const STATUS_UNRESOLVED = -1;
 
     /**

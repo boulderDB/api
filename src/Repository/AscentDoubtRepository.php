@@ -16,16 +16,14 @@ class AscentDoubtRepository extends ServiceEntityRepository
     public function countDoubts(int $locationId, int $userId, int $status = AscentDoubt::STATUS_UNRESOLVED)
     {
         $connection = $this->getEntityManager()->getConnection();
-        $statusCondition = $status === AscentDoubt::STATUS_UNRESOLVED ? "boulder.status != :status" : "boulder.status = :status";
-
-        $statement = "SELECT count(boulder_doubt.id) FROM boulder_doubt INNER JOIN boulder ON boulder_doubt.boulder_id = boulder.id WHERE boulder.tenant_id = :locationId AND recipient_id = :recipientId AND {$statusCondition}";
+        $statement = "SELECT count(boulder_doubt.id) FROM boulder_doubt INNER JOIN boulder ON boulder_doubt.boulder_id = boulder.id WHERE boulder.tenant_id = :locationId AND recipient_id = :recipientId AND boulder.status <= :status";
 
         $query = $connection->prepare($statement);
 
         $query->execute([
-            'locationId' => $userId,
-            'recipientId' => $locationId,
-            'status' => $status
+            "locationId" => $userId,
+            "recipientId" => $locationId,
+            "status" => $status
         ]);
 
         return $query->fetchOne();
@@ -34,7 +32,6 @@ class AscentDoubtRepository extends ServiceEntityRepository
     public function getDoubts(int $locationId, int $userId, int $status = AscentDoubt::STATUS_UNRESOLVED)
     {
         $connection = $this->getEntityManager()->getConnection();
-        $statusCondition = $status === AscentDoubt::STATUS_UNRESOLVED ? "boulder.status != :status" : "boulder.status = :status";
 
         $statement = "
                         SELECT
@@ -52,14 +49,14 @@ class AscentDoubtRepository extends ServiceEntityRepository
                         
                         WHERE boulder.tenant_id = :locationId
                         AND recipient_id = :recipientId
-                        AND {$statusCondition}";
+                        AND boulder.status <= :status";
 
         $query = $connection->prepare($statement);
 
         $query->execute([
-            'locationId' => $userId,
-            'recipientId' => $locationId,
-            'status' => $status
+            "locationId" => $userId,
+            "recipientId" => $locationId,
+            "status" => $status
         ]);
 
         $doubts = $query->fetchAll();
