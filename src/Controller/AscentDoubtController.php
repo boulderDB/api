@@ -106,4 +106,16 @@ class AscentDoubtController extends AbstractController
         return $this->json($doubts);
     }
 
+    /**
+     * @Route("/count", methods={"GET"})
+     */
+    public function count()
+    {
+        $doubtCount = $this->ascentDoubtRepository->countDoubts(
+            $this->contextService->getLocation()->getId(),
+            $this->getUser()->getId()
+        );
+
+        return $this->json($doubtCount ? $doubtCount[1] : 0);
+    }
 }
