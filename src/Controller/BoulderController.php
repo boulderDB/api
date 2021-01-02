@@ -9,6 +9,7 @@ use App\Factory\RedisConnectionFactory;
 use App\Form\BoulderType;
 use App\Form\MassOperationType;
 use App\Repository\BoulderRepository;
+use App\Service\CacheService;
 use App\Service\ContextService;
 use App\Service\Serializer;
 use App\Service\SerializerInterface;
@@ -130,10 +131,10 @@ class BoulderController extends AbstractController
      */
     public function index()
     {
-        $boulderQueryCacheKey = "boulder-cache-{$this->contextService->getLocation()->getId()}";
+        $boulderQueryCacheKey = CacheService::getBoulderCacheKey($this->contextService->getLocation()->getId());
 
         if ($this->redis->exists($boulderQueryCacheKey)) {
-            return $this->json(json_decode($this->redis->get($boulderQueryCacheKey), true));
+            return $this->okResponse(json_decode($this->redis->get($boulderQueryCacheKey), true));
         }
 
         $builder = $this->getBoulderQueryBuilder();
@@ -160,7 +161,7 @@ class BoulderController extends AbstractController
 
         $this->redis->set($boulderQueryCacheKey, json_encode($results));
 
-        return $this->json($results);
+        return $this->okResponse($results);
     }
 
     /**

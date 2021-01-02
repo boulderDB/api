@@ -5,6 +5,7 @@ namespace App\EventListener;
 use App\Entity\Boulder;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
+use App\Service\CacheService;
 use App\Service\ContextService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
@@ -49,11 +50,11 @@ class BoulderListener implements EventSubscriber
     {
         $subject = $args->getObject();
 
-        if (!$subject instanceof Boulder || !$subject instanceof User) {
+        if (!$subject instanceof Boulder) {
             return;
         }
 
-        $this->redis->del("boulder-cache-{$this->contextService->getLocation()->getId()}");
+        $this->redis->del(CacheService::getBoulderCacheKey($this->contextService->getLocation()->getId()));
 
         if (!$subject->getInternalGrade()) {
             $subject->setInternalGrade($subject->getGrade());

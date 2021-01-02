@@ -18,4 +18,9 @@ class CacheService
     {
         return "location-{$locationId}-all-time-ranking";
     }
+
+    public static function getBoulderCacheKey(int $locationId)
+    {
+        return "location-{$locationId}-boulder-cache";
+    }
 }

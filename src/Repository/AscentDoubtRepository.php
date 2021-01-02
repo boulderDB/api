@@ -13,23 +13,23 @@ class AscentDoubtRepository extends ServiceEntityRepository
         parent::__construct($registry, AscentDoubt::class);
     }
 
-    public function countDoubts(int $locationId, int $userId, int $status = AscentDoubt::STATUS_UNRESOLVED)
+    public function countDoubts(int $locationId, int $userId, int $status = AscentDoubt::STATUS_READ)
     {
         $connection = $this->getEntityManager()->getConnection();
-        $statement = "SELECT count(boulder_doubt.id) FROM boulder_doubt INNER JOIN boulder ON boulder_doubt.boulder_id = boulder.id WHERE boulder.tenant_id = :locationId AND recipient_id = :recipientId AND boulder.status <= :status";
+        $statement = "SELECT count(boulder_doubt.id) FROM boulder_doubt INNER JOIN boulder ON boulder_doubt.boulder_id = boulder.id WHERE boulder.tenant_id = :locationId AND recipient_id = :recipientId AND boulder_doubt.status <= :status";
 
         $query = $connection->prepare($statement);
 
         $query->execute([
-            "locationId" => $userId,
-            "recipientId" => $locationId,
+            "locationId" => $locationId,
+            "recipientId" => $userId,
             "status" => $status
         ]);
 
-        return $query->fetchOne();
+        return $query->fetchOne()["count"];
     }
 
-    public function getDoubts(int $locationId, int $userId, int $status = AscentDoubt::STATUS_UNRESOLVED)
+    public function getDoubts(int $locationId, int $userId, int $status = AscentDoubt::STATUS_READ)
     {
         $connection = $this->getEntityManager()->getConnection();
 
@@ -49,13 +49,13 @@ class AscentDoubtRepository extends ServiceEntityRepository
                         
                         WHERE boulder.tenant_id = :locationId
                         AND recipient_id = :recipientId
-                        AND boulder.status <= :status";
+                        AND boulder_doubt.status <= :status";
 
         $query = $connection->prepare($statement);
 
         $query->execute([
-            "locationId" => $userId,
-            "recipientId" => $locationId,
+            "locationId" => $locationId,
+            "recipientId" => $userId,
             "status" => $status
         ]);
 

@@ -57,8 +57,8 @@ class AscentController extends AbstractController
 
         if (!$ascent->getBoulder()->isActive()) {
             return $this->json([
-                'code' => Response::HTTP_GONE,
-                'message' => "Boulder {$ascent->getBoulder()->getId()} is deactivated"
+                "code" => Response::HTTP_GONE,
+                "message" => "Boulder {$ascent->getBoulder()->getId()} is deactivated"
             ]);
         }
 
@@ -94,18 +94,18 @@ class AscentController extends AbstractController
     public function index()
     {
         $results = $this->entityManager->createQueryBuilder()
-            ->select('
+            ->select("
                 partial boulder.{id, points},
                 partial ascent.{id, userId, type},
                 partial user.{id, visible}
-            ')
-            ->from(Boulder::class, 'boulder')
-            ->leftJoin('boulder.ascents', 'ascent')
-            ->leftJoin('ascent.user', 'user', 'WITH')
-            ->where('boulder.status = :status')
-            ->andWhere('boulder.location = :location')
-            ->setParameter('location', $this->contextService->getLocation()->getId())
-            ->setParameter('status', 'active')
+            ")
+            ->from(Boulder::class, "boulder")
+            ->leftJoin("boulder.ascents", "ascent")
+            ->leftJoin("ascent.user", "user", "WITH")
+            ->where("boulder.status = :status")
+            ->andWhere("boulder.location = :location")
+            ->setParameter("location", $this->contextService->getLocation()->getId())
+            ->setParameter("status", "active")
             ->getQuery()
             ->setHint(Query::HINT_FORCE_PARTIAL_LOAD, 1)
             ->getArrayResult();
@@ -113,11 +113,11 @@ class AscentController extends AbstractController
         $scores = [];
 
         foreach ($results as $result) {
-            $boulderId = $result['id'];
+            $boulderId = $result["id"];
             $userId = $this->getUser()->getId();
 
-            $ascents = array_filter($result['ascents'], function ($ascent) use ($boulderId) {
-                if (in_array($ascent['type'], ScoringInterface::SCORED_ASCENT_TYPES) && $ascent['user']['visible'] === true) {
+            $ascents = array_filter($result["ascents"], function ($ascent) use ($boulderId) {
+                if (in_array($ascent["type"], ScoringInterface::SCORED_ASCENT_TYPES) && $ascent["user"]["visible"] === true) {
                     return true;
                 }
 
@@ -127,16 +127,16 @@ class AscentController extends AbstractController
             $ascentCount = count($ascents) ? count($ascents) : 0;
 
             if ($ascentCount === 0) {
-                $points = $result['points'];
+                $points = $result["points"];
             } else {
-                $points = $result['points'] / ($ascentCount + 1);
+                $points = $result["points"] / ($ascentCount + 1);
             }
 
             $scores[] = [
-                'boulderId' => $boulderId,
-                'points' => round($points),
-                'ascents' => $ascentCount,
-                'me' => self::filterUserAscent($result['ascents'], $userId)
+                "boulderId" => $boulderId,
+                "points" => round($points),
+                "ascents" => $ascentCount,
+                "me" => self::filterUserAscent($result["ascents"], $userId)
             ];
         }
 
@@ -146,7 +146,7 @@ class AscentController extends AbstractController
     private static function filterUserAscent(array $ascents, int $userId): ?array
     {
         $userAscent = array_filter($ascents, function ($ascent) use ($userId) {
-            return $ascent['userId'] === $userId;
+            return $ascent["userId"] === $userId;
         });
 
         $userAscent = array_values($userAscent);
@@ -155,7 +155,7 @@ class AscentController extends AbstractController
             return null;
         }
 
-        unset($userAscent['userId']);
+        unset($userAscent["userId"]);
 
         return array_values($userAscent)[0];
     }

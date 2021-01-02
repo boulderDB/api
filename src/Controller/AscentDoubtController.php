@@ -116,6 +116,6 @@ class AscentDoubtController extends AbstractController
             $this->getUser()->getId()
         );
 
-        return $this->json($doubtCount ? $doubtCount[1] : 0);
+        return $this->okResponse($doubtCount ? $doubtCount[1] : 0);
     }
 }
