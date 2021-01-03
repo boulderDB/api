@@ -10,9 +10,10 @@ use App\Repository\AscentDoubtRepository;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * @Route("/doubt")
@@ -39,9 +40,22 @@ class AscentDoubtController extends AbstractController
     }
 
     /**
+     * @Route(methods={"GET"})
+     */
+    public function index()
+    {
+        $doubts = $this->ascentDoubtRepository->getDoubts(
+            $this->contextService->getLocation()->getId(),
+            $this->getUser()->getId()
+        );
+
+        return $this->json($doubts);
+    }
+
+    /**
      * @Route(methods={"POST"})
      */
-    public function doubt(Request $request)
+    public function create(Request $request)
     {
         $ascentDoubt = new AscentDoubt();
         $ascentDoubt->setAuthor($this->getUser());
@@ -71,38 +85,40 @@ class AscentDoubtController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/resolve", methods={"PUT"})
+     * @Route("/{id}", methods={"PUT"})
      */
-    public function resolve(string $id)
+    public function update(Request $request, string $id)
     {
+        $doubt = $this->ascentDoubtRepository->find($id);
 
-    }
+        if (!$doubt) {
+            return $this->resourceNotFoundResponse("AscentDoubt", $id);
+        }
 
-    /**
-     * @Route("/unread", methods={"GET"})
-     */
-    public function unread()
-    {
-        $doubts = $this->ascentDoubtRepository->getDoubts(
-            $this->contextService->getLocation()->getId(),
-            $this->getUser()->getId(),
-            AscentDoubt::STATUS_UNREAD
-        );
+        $form = $this->createFormBuilder($doubt, ["csrf_protection" => false])
+            ->add("status", ChoiceType::class, [
+                "choices" => [
+                    AscentDoubt::STATUS_RESOLVED => AscentDoubt::STATUS_RESOLVED,
+                    AscentDoubt::STATUS_READ => AscentDoubt::STATUS_READ,
+                    AscentDoubt::STATUS_UNREAD => AscentDoubt::STATUS_UNREAD,
+                    AscentDoubt::STATUS_UNRESOLVED => AscentDoubt::STATUS_UNRESOLVED,
+                ],
+                "constraints" => [
+                    new NotBlank()
+                ]
+            ])
+            ->getForm();
 
-        return $this->json($doubts);
-    }
+        $form->submit(self::decodePayLoad($request), false);
 
-    /**
-     * @Route(methods={"GET"})
-     */
-    public function index(Request $request)
-    {
-        $doubts = $this->ascentDoubtRepository->getDoubts(
-            $this->contextService->getLocation()->getId(),
-            $this->getUser()->getId()
-        );
+        if (!$form->isValid()) {
+            return $this->badFormRequestResponse($form);
+        }
 
-        return $this->json($doubts);
+        $this->entityManager->persist($doubt);
+        $this->entityManager->flush();
+
+        return $this->noContentResponse();
     }
 
     /**

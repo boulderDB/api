@@ -98,7 +98,7 @@ class BoulderErrorController extends AbstractController
     /**
      * @Route("/{id}", methods={"PUT"})
      */
-    public function resolve(Request $request, string $id)
+    public function update(Request $request, string $id)
     {
         $this->denyUnlessLocationAdmin();
         $error = $this->boulderErrorRepository->find($id);
@@ -119,7 +119,7 @@ class BoulderErrorController extends AbstractController
             ])
             ->getForm();
 
-        $form->submit(json_decode($request->getContent(), true), false);
+        $form->submit(self::decodePayLoad($request), false);
 
         if (!$form->isValid()) {
             return $this->badFormRequestResponse($form);

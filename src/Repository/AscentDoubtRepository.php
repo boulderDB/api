@@ -35,12 +35,13 @@ class AscentDoubtRepository extends ServiceEntityRepository
 
         $statement = "
                         SELECT
-                        doubt.id,
-                        boulder.id,
-                        boulder.name,
-                        author.username,
-                        doubt.description,
-                        doubt.created_at
+                        doubt.id AS id,
+                        boulder.id AS boulder_id,
+                        boulder.name AS boulder_name,
+                        author.id AS author_id,
+                        author.username AS author_username,
+                        doubt.description AS doubt_description,
+                        doubt.created_at AS doubt_created_at
                         
                         FROM boulder_doubt AS doubt
                         
