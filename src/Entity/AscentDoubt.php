@@ -51,9 +51,14 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface
     /**
      * @ORM\Column(type="integer")
      */
-    private int $status = self::STATUS_UNREAD;
+    private ?int $status = null;
 
     private ?Ascent  $ascent = null;
+
+    public function __construct()
+    {
+        $this->status = self::STATUS_UNREAD;
+    }
 
     public static function getStatues(): array
     {
@@ -90,16 +95,15 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface
         $this->message = $message;
     }
 
-    public function getStatus(): int
+    public function getStatus(): ?int
     {
         return $this->status;
     }
 
-    public function setStatus(int $status): void
+    public function setStatus(?int $status): void
     {
         $this->status = $status;
     }
-
 
     public function getRecipient(): ?User
     {

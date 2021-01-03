@@ -99,8 +99,7 @@ class AscentDoubtController extends AbstractController
     {
         $doubts = $this->ascentDoubtRepository->getDoubts(
             $this->contextService->getLocation()->getId(),
-            $this->getUser()->getId(),
-            AscentDoubt::STATUS_UNRESOLVED
+            $this->getUser()->getId()
         );
 
         return $this->json($doubts);
@@ -116,6 +115,6 @@ class AscentDoubtController extends AbstractController
             $this->getUser()->getId()
         );
 
-        return $this->okResponse($doubtCount ? $doubtCount[1] : 0);
+        return $this->okResponse($doubtCount);
     }
 }
