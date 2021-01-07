@@ -1,2 +1,4 @@
 #!/usr/bin/env bash
-docker exec -i $1 pg_restore -C --clean --no-acl - -no-owner -U $2 -d $3 < $4
+scp root@boulderdb.de:~/dumps/_latest.dump .
+cat _latest.dump | docker-compose exec -T postgres psql -U blocbeta
+rm _latest.dump
