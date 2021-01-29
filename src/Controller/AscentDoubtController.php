@@ -49,7 +49,31 @@ class AscentDoubtController extends AbstractController
             $this->getUser()->getId()
         );
 
-        return $this->json($doubts);
+        $data = [];
+
+        foreach ($doubts as &$doubt) {
+
+            $data[] = [
+                "id" => $doubt["id"],
+                "author" => [
+                    "id" => $doubt["author_id"],
+                    "username" => $doubt["author_username"],
+                    "message" => $doubt["doubt_description"],
+                ],
+                "ascent" => [
+                    "type" => str_replace(Ascent::PENDING_DOUBT_FLAG, "", $doubt["ascent_type"])
+                ],
+                "boulder" => [
+                    "id" => $doubt["boulder_id"],
+                    "name" => $doubt["boulder_name"]
+                ],
+                "created_at" => $doubt["doubt_created_at"],
+            ];
+
+            $doubt["ascent_type"] = str_replace(Ascent::PENDING_DOUBT_FLAG, "", $doubt["ascent_type"]);
+        }
+
+        return $this->json($data);
     }
 
     /**

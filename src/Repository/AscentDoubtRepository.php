@@ -36,10 +36,15 @@ class AscentDoubtRepository extends ServiceEntityRepository
         $statement = "
                         SELECT
                         doubt.id AS id,
+                        
                         boulder.id AS boulder_id,
                         boulder.name AS boulder_name,
+                        
+                        ascent.type AS ascent_type,
+                        
                         author.id AS author_id,
                         author.username AS author_username,
+                        
                         doubt.description AS doubt_description,
                         doubt.created_at AS doubt_created_at
                         
@@ -47,6 +52,7 @@ class AscentDoubtRepository extends ServiceEntityRepository
                         
                         INNER JOIN users AS author ON author.id = author_id
                         INNER JOIN boulder ON doubt.boulder_id = boulder.id
+                        INNER JOIN ascent ON boulder.id = ascent.boulder_id AND ascent.user_id = :recipientId
                         
                         WHERE boulder.tenant_id = :locationId
                         AND recipient_id = :recipientId
