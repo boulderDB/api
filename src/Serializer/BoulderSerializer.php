@@ -77,6 +77,7 @@ class BoulderSerializer implements SerializerInterface
 
             }, $class->getSetters()->toArray()),
             "created_at" => Serializer::formatDate($class->getCreatedAt()),
+            "status" => $class->getStatus()
         ];
 
         if ($detail) {
