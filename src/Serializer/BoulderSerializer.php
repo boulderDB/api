@@ -8,12 +8,16 @@ use App\Entity\Setter;
 use App\Entity\Tag;
 use App\Service\Serializer;
 use App\Service\SerializerInterface;
+use App\Service\SerializerTrait;
 
 class BoulderSerializer implements SerializerInterface
 {
+    use SerializerTrait;
+
     public function serialize($class, array $groups = [], array $arguments = []): array
     {
-        $detail = in_array(SerializerInterface::GROUP_DETAIL, $groups);
+        $detail = self::matchesGroup(SerializerInterface::GROUP_DETAIL);
+        $admin = self::matchesGroup(SerializerInterface::GROUP_ADMIN);
 
         /**
          * @var Boulder $class
@@ -76,7 +80,6 @@ class BoulderSerializer implements SerializerInterface
         ];
 
         if ($detail) {
-
             $ascents = array_map(function ($ascent) {
 
                 /**
@@ -91,6 +94,10 @@ class BoulderSerializer implements SerializerInterface
             }, $class->getAscents()->toArray());
 
             $data["ascents"] = array_values($ascents);
+        }
+
+        if ($admin) {
+            $data["internal_grade"] = Serializer::serialize($class->getInternalGrade(), $groups);
         }
 
         return $data;

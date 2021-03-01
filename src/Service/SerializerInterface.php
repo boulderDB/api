@@ -4,6 +4,7 @@ namespace App\Service;
 
 interface SerializerInterface
 {
+    public const GROUP_ADMIN = "admin";
     public const GROUP_DETAIL = "detail";
     public const GROUP_INDEX = "index";
 

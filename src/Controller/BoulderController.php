@@ -62,6 +62,7 @@ class BoulderController extends AbstractController
             ->createQueryBuilder("boulder")
             ->innerJoin("boulder.holdType", "holdType")
             ->innerJoin("boulder.grade", "grade")
+            ->innerJoin("boulder.internalGrade", "internalGrade")
             ->innerJoin("boulder.startWall", "startWall")
             ->leftJoin("boulder.endWall", "endWall")
             ->leftJoin("boulder.setters", "setter")
@@ -76,7 +77,13 @@ class BoulderController extends AbstractController
             return $this->resourceNotFoundResponse("Boulder", $id);
         }
 
-        return $this->okResponse(Serializer::serialize($boulder, [SerializerInterface::GROUP_DETAIL]));
+        return $this->okResponse(Serializer::serialize(
+            $boulder,
+            [
+                SerializerInterface::GROUP_DETAIL,
+                $this->isLocationAdmin() ? SerializerInterface::GROUP_ADMIN : null
+            ]
+        ));
     }
 
     /**
