@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use Doctrine\ORM\AbstractQuery;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +22,25 @@ class UserController extends AbstractController
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @Route("/{id}", methods={"GET"})
+     */
+    public function show(int $id)
+    {
+        $builder = $this->entityManager->createQueryBuilder();
+
+        $user = $builder
+            ->from(User::class, "user")
+            ->select("user.id, user.username")
+            ->where("user.visible = true")
+            ->andWhere("user.id = :id")
+            ->setParameter("id", $id)
+            ->getQuery()
+            ->getSingleResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
+
+        return $this->okResponse($user);
     }
 
     /**
