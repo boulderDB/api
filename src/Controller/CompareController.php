@@ -109,7 +109,8 @@ class CompareController extends AbstractController
                 ->where('user.id = :userId')
                 ->setParameter('userId', $userId)
                 ->getQuery()
-                ->getSingleResult(AbstractQuery::HYDRATE_ARRAY);
+                ->getSingleResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
+            
         } catch (NoResultException $exception) {
             return false;
         }

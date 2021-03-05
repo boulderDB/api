@@ -38,7 +38,7 @@ class UserController extends AbstractController
             ->andWhere("user.id = :id")
             ->setParameter("id", $id)
             ->getQuery()
-            ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
+            ->getSingleResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
 
         if (!$user) {
             return $this->resourceNotFoundResponse("User", $id);
