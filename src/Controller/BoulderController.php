@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Ascent;
 use App\Entity\Boulder;
-use App\Entity\Grade;
 use App\Factory\RedisConnectionFactory;
 use App\Form\BoulderType;
 use App\Form\MassOperationType;
@@ -15,8 +13,6 @@ use App\Service\Serializer;
 use App\Service\SerializerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,23 +51,7 @@ class BoulderController extends AbstractController
      */
     public function show(string $id)
     {
-        /**
-         * @var Boulder $boulder
-         */
-        $boulder = $this->boulderRepository
-            ->createQueryBuilder("boulder")
-            ->innerJoin("boulder.holdType", "holdType")
-            ->innerJoin("boulder.grade", "grade")
-            ->innerJoin("boulder.internalGrade", "internalGrade")
-            ->innerJoin("boulder.startWall", "startWall")
-            ->leftJoin("boulder.endWall", "endWall")
-            ->leftJoin("boulder.setters", "setter")
-            ->leftJoin("boulder.tags", "tag")
-            ->where("boulder.id = :id")
-            ->setParameter("id", $id)
-            ->getQuery()
-            ->setFetchMode(Grade::class, "grade", ClassMetadataInfo::FETCH_EAGER)
-            ->getOneOrNullResult();
+        $boulder = $this->boulderRepository->getOne($id);
 
         if (!$boulder) {
             return $this->resourceNotFoundResponse("Boulder", $id);
@@ -144,31 +124,14 @@ class BoulderController extends AbstractController
             return $this->okResponse(json_decode($this->redis->get($boulderQueryCacheKey), true));
         }
 
-        $builder = $this->getBoulderQueryBuilder();
+        $boulder = $this->boulderRepository->getAll(
+            $this->contextService->getLocation()->getId(),
+            $this->isLocationAdmin()
+        );
 
-        $results = $builder
-            ->where("boulder.location = :location")
-            ->andWhere("boulder.status = :status")
-            ->setParameter("location", $this->contextService->getLocation()->getId())
-            ->setParameter("status", Boulder::STATUS_ACTIVE)
-            ->getQuery()
-            ->getArrayResult();
+        $this->redis->set($boulderQueryCacheKey, json_encode($boulder));
 
-        $isAdmin = $this->isLocationAdmin();
-
-        $results = array_map(function ($boulder) use ($isAdmin) {
-            if (!$isAdmin) {
-                unset($boulder["internal_grade"]);
-            }
-
-            $boulder["createdAt"] = Serializer::formatDate($boulder["createdAt"]);
-
-            return $boulder;
-        }, $results);
-
-        $this->redis->set($boulderQueryCacheKey, json_encode($results));
-
-        return $this->okResponse($results);
+        return $this->okResponse($boulder);
     }
 
     /**
@@ -176,18 +139,11 @@ class BoulderController extends AbstractController
      */
     public function count()
     {
-        $builder = $this->boulderRepository->createQueryBuilder("boulder");
+        $count = $this->boulderRepository->countActive(
+            $this->contextService->getLocation()->getId()
+        );
 
-        $count = $builder
-            ->select("count(boulder.id)")
-            ->where("boulder.location = :location")
-            ->andWhere("boulder.status = :status")
-            ->setParameter("location", $this->contextService->getLocation()->getId())
-            ->setParameter("status", Boulder::STATUS_ACTIVE)
-            ->getQuery()
-            ->getSingleResult();
-
-        return $this->okResponse($count ? $count[1] : 0);
+        return $this->okResponse($count);
     }
 
     /**
@@ -223,58 +179,5 @@ class BoulderController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
-    }
-
-    private function filterAscents(array $ascents): array
-    {
-        $types = [
-            Ascent::ASCENT_FLASH,
-            Ascent::ASCENT_TOP,
-            Ascent::ASCENT_FLASH . Ascent::PENDING_DOUBT_FLAG,
-            Ascent::ASCENT_TOP . Ascent::PENDING_DOUBT_FLAG,
-        ];
-
-        $ascents = array_filter($ascents, function ($ascent) use ($types) {
-            if (!in_array($ascent["type"], $types)) {
-                return false;
-            }
-
-            if (!$ascent["user"]["visible"]) {
-                return false;
-            }
-
-            return true;
-        });
-
-        return array_values($ascents);
-    }
-
-    private function getBoulderQueryBuilder(string $select = null): QueryBuilder
-    {
-        $partials = "
-                partial boulder.{id, name, createdAt, status, points}, 
-                partial startWall.{id}, 
-                partial endWall.{id}, 
-                partial tag.{id}, 
-                partial setter.{id},
-                partial holdType.{id}, 
-                partial grade.{id},
-                partial internalGrade.{id}
-        ";
-
-        if ($select) {
-            $partials .= ", {$select}";
-        }
-
-        return $this->entityManager->createQueryBuilder()
-            ->select($partials)
-            ->from(Boulder::class, "boulder")
-            ->leftJoin("boulder.tags", "tag")
-            ->leftJoin("boulder.setters", "setter")
-            ->leftJoin("boulder.startWall", "startWall")
-            ->leftJoin("boulder.endWall", "endWall")
-            ->innerJoin("boulder.grade", "grade")
-            ->leftJoin("boulder.internalGrade", "internalGrade")
-            ->innerJoin("boulder.holdType", "holdType");
     }
 }
