@@ -118,10 +118,41 @@ class BoulderController extends AbstractController
      */
     public function index()
     {
-        return $this->okResponse($this->boulderRepository->getAll(
+        $boulderQueryCacheKey = CacheService::getBoulderCacheKey($this->contextService->getLocation()->getId());
+
+        if ($this->redis->exists($boulderQueryCacheKey)) {
+            return $this->okResponse(json_decode($this->redis->get($boulderQueryCacheKey), true));
+        }
+
+        $boulders = $this->boulderRepository->getAll(
             $this->contextService->getLocation()->getId(),
             $this->isLocationAdmin()
-        ));
+        );
+
+        $data = array_map(function ($boulder) {
+            $data = [
+                "id" => $boulder["id"],
+                "name" => $boulder["name"],
+                "start_wall" => $boulder["startWall"]["id"],
+                "end_wall" => $boulder["endWall"] ? $boulder["endWall"]["id"] : null,
+                "hold_type" => $boulder["holdType"]["id"],
+                "grade" => $boulder["grade"]["id"],
+                "setters" => array_map(function ($setter) {
+                    return $setter["id"];
+                }, $boulder["setters"]),
+                "created_at" => Serializer::formatDate($boulder["createdAt"]),
+            ];
+
+            if ($this->isLocationAdmin()) {
+                $data["internal_grade"] = $boulder["internalGrade"]["id"];
+            }
+
+            return $data;
+        }, $boulders);
+
+        $this->redis->set($boulderQueryCacheKey, json_encode($data));
+
+        return $this->okResponse($data);
     }
 
     /**

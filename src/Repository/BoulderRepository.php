@@ -49,40 +49,32 @@ class BoulderRepository extends ServiceEntityRepository
 
     public function getAll(int $locationId, bool $isAdmin): ?array
     {
-        $fields = [
-            "id",
-            "color_id as hold_type",
-            "grade_id as grade",
-            "start_wall_id as start_wall",
-            "end_wall_id as end_wall",
-            "name",
-            "points",
-            "created_at"
+        $partials = [
+            "partial boulder.{id, name, createdAt}",
+            "partial startWall.{id}",
+            "partial endWall.{id}",
+            "partial setter.{id}",
+            "partial holdType.{id}",
+            "partial grade.{id}",
+            "partial internalGrade.{id}"
         ];
 
-        if ($isAdmin) {
-            $fields[] = "internal_grade_id as internal_grade";
-        }
+        $queryBuilder = $this->createQueryBuilder('boulder')
+            ->select(implode(", ", $partials))
+            ->leftJoin("boulder.setters", "setter")
+            ->leftJoin("boulder.startWall", "startWall")
+            ->leftJoin("boulder.endWall", "endWall")
+            ->innerJoin("boulder.grade", "grade")
+            ->leftJoin("boulder.internalGrade", "internalGrade")
+            ->innerJoin("boulder.holdType", "holdType");
 
-        $selectFields = implode(",", $fields);
-
-        $connection = $this->getEntityManager()->getConnection();
-        $statement = "select $selectFields from boulder where status = :status and tenant_id = :locationId";
-        $query = $connection->prepare($statement);
-
-        $query->execute([
-            "status" => "active",
-            "locationId" => $locationId
-        ]);
-
-        $result = $query->fetchAllAssociative();
-
-        return array_map(function ($boulder) use ($isAdmin) {
-            $dateTime = \DateTime::createFromFormat("Y-m-d H:i:s", $boulder["created_at"]);
-            $boulder["created_at"] = Serializer::formatDate($dateTime);
-
-            return $boulder;
-        }, $result);
+        return $queryBuilder
+            ->where("boulder.location = :location")
+            ->andWhere("boulder.status = :status")
+            ->setParameter("location", $locationId)
+            ->setParameter("status", Boulder::STATUS_ACTIVE)
+            ->getQuery()
+            ->getArrayResult();
     }
 
     public function getWithAscents(string $locationId): array
