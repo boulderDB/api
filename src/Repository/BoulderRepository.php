@@ -49,40 +49,37 @@ class BoulderRepository extends ServiceEntityRepository
 
     public function getAll(int $locationId, bool $isAdmin): ?array
     {
-        $partials = [
-            "partial boulder.{id, name, createdAt, status, points}",
-            "partial startWall.{id}",
-            "partial endWall.{id}",
-            "partial tag.{id}",
-            "partial setter.{id}",
-            "partial holdType.{id}",
-            "partial grade.{id}"
+        $fields = [
+            "id",
+            "color_id as hold_type",
+            "grade_id as grade",
+            "start_wall_id as start_wall",
+            "end_wall_id as end_wall",
+            "name",
+            "points",
+            "created_at"
         ];
 
-        $queryBuilder = $this->createQueryBuilder('boulder')
-            ->select(implode(", ", $partials))
-            ->leftJoin("boulder.tags", "tag")
-            ->leftJoin("boulder.setters", "setter")
-            ->leftJoin("boulder.startWall", "startWall")
-            ->leftJoin("boulder.endWall", "endWall")
-            ->innerJoin("boulder.grade", "grade")
-            ->innerJoin("boulder.holdType", "holdType");
-
         if ($isAdmin) {
-            $partials[] = "partial internalGrade.{id}";
-            $queryBuilder->leftJoin("boulder.internalGrade", "internalGrade");
+            $fields[] = "internal_grade_id";
         }
 
-        $result = $queryBuilder
-            ->where("boulder.location = :location")
-            ->andWhere("boulder.status = :status")
-            ->setParameter("location", $locationId)
-            ->setParameter("status", Boulder::STATUS_ACTIVE)
-            ->getQuery()
-            ->getArrayResult();
+        $selectFields = implode(",", $fields);
+
+        $connection = $this->getEntityManager()->getConnection();
+        $statement = "select $selectFields from boulder where status = :status and tenant_id = :locationId";
+        $query = $connection->prepare($statement);
+
+        $query->execute([
+            "status" => "active",
+            "locationId" => $locationId
+        ]);
+
+        $result = $query->fetchAllAssociative();
 
         return array_map(function ($boulder) use ($isAdmin) {
-            $boulder["createdAt"] = Serializer::formatDate($boulder["createdAt"]);
+            $dateTime = \DateTime::createFromFormat("Y-m-d H:i:s", $boulder["created_at"]);
+            $boulder["created_at"] = Serializer::formatDate($dateTime);
 
             return $boulder;
         }, $result);
