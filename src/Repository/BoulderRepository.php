@@ -61,7 +61,7 @@ class BoulderRepository extends ServiceEntityRepository
         ];
 
         if ($isAdmin) {
-            $fields[] = "internal_grade_id";
+            $fields[] = "internal_grade_id as internal_grade";
         }
 
         $selectFields = implode(",", $fields);
