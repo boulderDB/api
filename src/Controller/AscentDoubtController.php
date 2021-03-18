@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -113,10 +112,17 @@ class AscentDoubtController extends AbstractController
      */
     public function update(Request $request, string $id)
     {
+        /**
+         * @var AscentDoubt $doubt
+         */
         $doubt = $this->ascentDoubtRepository->find($id);
 
         if (!$doubt) {
             return $this->resourceNotFoundResponse("AscentDoubt", $id);
+        }
+
+        if (!$doubt) {
+            return $this->unauthorizedResponse();
         }
 
         $form = $this->createFormBuilder($doubt, ["csrf_protection" => false])

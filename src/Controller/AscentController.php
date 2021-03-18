@@ -76,10 +76,17 @@ class AscentController extends AbstractController
      */
     public function delete(string $id)
     {
+        /**
+         * @var Ascent $ascent
+         */
         $ascent = $this->entityManager->getRepository(Ascent::class)->find($id);
 
         if (!$ascent) {
             return $this->resourceNotFoundResponse("Ascent", $id);
+        }
+
+        if (!$ascent->getUser() === $this->getUser()) {
+            return $this->unauthorizedResponse();
         }
 
         $this->entityManager->remove($ascent);
