@@ -118,12 +118,6 @@ class BoulderController extends AbstractController
      */
     public function index()
     {
-        $boulderQueryCacheKey = CacheService::getBoulderCacheKey($this->contextService->getLocation()->getId());
-
-        if ($this->redis->exists($boulderQueryCacheKey)) {
-            return $this->okResponse(json_decode($this->redis->get($boulderQueryCacheKey), true));
-        }
-
         $boulders = $this->boulderRepository->getAll(
             $this->contextService->getLocation()->getId(),
             $this->isLocationAdmin()
@@ -149,8 +143,6 @@ class BoulderController extends AbstractController
 
             return $data;
         }, $boulders);
-
-        $this->redis->set($boulderQueryCacheKey, json_encode($data));
 
         return $this->okResponse($data);
     }
