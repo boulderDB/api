@@ -47,7 +47,7 @@ class BoulderRepository extends ServiceEntityRepository
         return $count ? $count[1] : 0;
     }
 
-    public function getAll(int $locationId, bool $isAdmin): ?array
+    public function getAll(int $locationId): ?array
     {
         $partials = [
             "partial boulder.{id, name, createdAt}",

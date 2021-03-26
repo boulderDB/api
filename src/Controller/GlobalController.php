@@ -434,6 +434,8 @@ class GlobalController extends AbstractController
      */
     public function upload(Request $request)
     {
+        self::rateLimit($request, "upload", 10, 60);
+
         /**
          * @var UploadedFile $file
          */

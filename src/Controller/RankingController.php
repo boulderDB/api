@@ -7,6 +7,7 @@ use App\Factory\RedisConnectionFactory;
 use App\Repository\BoulderRepository;
 use App\Service\CacheService;
 use App\Service\ContextService;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -47,7 +48,7 @@ class RankingController extends AbstractController
 
         return $this->json([
             "list" => $data,
-            "lastRun" => $this->redis->get($timestampCacheKey)
+            "updated" => $this->redis->get($timestampCacheKey)
         ]);
     }
 
@@ -60,7 +61,7 @@ class RankingController extends AbstractController
 
         return $this->json([
             "list" => json_decode($ranking),
-            "lastRun" => null
+            "updated" => null
         ]);
     }
 }
