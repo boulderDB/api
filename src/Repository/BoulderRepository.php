@@ -33,18 +33,24 @@ class BoulderRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function countActive(int $locationId): int
+    public function countActive(int $locationId, bool $active = true): int
     {
-        $count = $this->createQueryBuilder('boulder')
+        $queryBuilder = $this->createQueryBuilder('boulder')
             ->select("count(boulder.id)")
             ->where("boulder.location = :location")
-            ->andWhere("boulder.status = :status")
-            ->setParameter("location", $locationId)
-            ->setParameter("status", Boulder::STATUS_ACTIVE)
+            ->setParameter("location", $locationId);
+
+        if ($active) {
+            $queryBuilder
+                ->andWhere("boulder.status = :status")
+                ->setParameter("status", Boulder::STATUS_ACTIVE);
+        }
+
+        $result = $queryBuilder
             ->getQuery()
             ->getSingleResult();
 
-        return $count ? $count[1] : 0;
+        return $result ? $result[1] : 0;
     }
 
     public function getAll(int $locationId): ?array

@@ -150,11 +150,11 @@ class BoulderController extends AbstractController
     /**
      * @Route("/count", methods={"GET"})
      */
-    public function count()
+    public function count(Request $request)
     {
-        $count = $this->boulderRepository->countActive(
-            $this->contextService->getLocation()->getId()
-        );
+        $filterActive = (bool)$request->get('active');
+
+        $count = $this->boulderRepository->countActive($this->contextService->getLocation()->getId(), $filterActive);
 
         return $this->okResponse($count);
     }
