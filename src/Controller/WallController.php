@@ -97,4 +97,21 @@ class WallController extends AbstractController
 
         return $this->noContentResponse();
     }
+
+    /**
+     * @Route("/{id}", methods={"GET"})
+     */
+    public function show(int $id)
+    {
+        if (!$this->wallRepository->exists($id, $this->contextService->getLocation()->getId())) {
+            return $this->resourceNotFoundResponse('wall', $id);
+        }
+
+        $detail = $this->wallRepository->getDetail(
+            $id,
+            $this->contextService->getLocation()->getId()
+        );
+
+        return $this->okResponse($detail);
+    }
 }
