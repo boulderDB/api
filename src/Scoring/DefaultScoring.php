@@ -17,12 +17,12 @@ class DefaultScoring implements ScoringInterface
          */
         foreach ($boulder->getAscents() as $ascent) {
             if ($ascent->getType() === Ascent::ASCENT_FLASH) {
-                $score = ($points / $ascentCount) * 1.1;
+                $ascent->setScore(($points / $ascentCount) * 1.1);
+            } else if ($ascent->getType() === Ascent::ASCENT_TOP) {
+                $ascent->setScore($points / $ascentCount);
             } else {
-                $score = $points / $ascentCount;
+                $ascent->setScore(0);
             }
-
-            $ascent->setScore($score);
         }
     }
 
