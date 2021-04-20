@@ -19,6 +19,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
 use Namshi\JOSE\JWS;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
@@ -380,6 +381,55 @@ class GlobalController extends AbstractController
     }
 
     /**
+     * @Route("/telemetry", methods={"POST"})
+     */
+    public function telemetry(Request $request)
+    {
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+
+        if (!$user) {
+            return $this->unauthorizedResponse();
+        }
+
+        $form = $this->createFormBuilder(null, ["csrf_protection" => false])
+            ->add("version", TextType::class, ["constraints" => [new NotBlank()]])
+            ->getForm();
+
+        $form->submit(self::decodePayLoad($request));
+
+        if (!$form->isValid()) {
+            return $this->badFormRequestResponse($form);
+        }
+
+        $versions = $this->redis->lRange("client-versions", 0, -1);
+        $currentVersion = $form->getData()["version"];
+
+        $lastVersion = $this->redis->get("client-version:user={$user->getId()}");
+
+        $data = [
+            "updates" => []
+        ];
+
+        if ($lastVersion !== $currentVersion) {
+            $updates = array_slice($versions, array_search($currentVersion, $versions));
+
+            foreach ($updates as $version) {
+                $data["updates"] = [
+                    "version" => $version,
+                    "instructions" => "https://storage.boulderdb.de/boulderdb-internal/instructions/{$version}"
+                ];
+            }
+        }
+
+        $this->redis->set("client-version:user={$user->getId()}", $currentVersion);
+
+        return $this->okResponse($data);
+    }
+
+    /**
      * @Route("/{location}/ping", methods={"GET"})
      */
     public function ping()
@@ -388,6 +438,11 @@ class GlobalController extends AbstractController
          * @var User $user
          */
         $user = $this->getUser();
+
+        if (!$user) {
+            return $this->unauthorizedResponse();
+        }
+
         $location = $this->contextService->getLocation();
 
         if ($user->getLastVisitedLocation() !== $location->getId()) {

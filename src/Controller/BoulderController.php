@@ -118,10 +118,7 @@ class BoulderController extends AbstractController
      */
     public function index()
     {
-        $boulders = $this->boulderRepository->getAll(
-            $this->contextService->getLocation()->getId(),
-            $this->isLocationAdmin()
-        );
+        $boulders = $this->boulderRepository->getAll($this->contextService->getLocation()->getId());
 
         $data = array_map(function ($boulder) {
             $data = [
