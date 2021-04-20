@@ -52,9 +52,9 @@ class PopulateClientVersionCommand extends Command
         if (!in_array($version, $versions)) {
             $this->redis->lPush("client-versions", $version);
             $io->success("Client version $version populated");
+        } else {
+            $io->note("No new version populated");
         }
-
-        $io->note("No new version populated");
 
         return 0;
     }
