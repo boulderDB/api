@@ -45,6 +45,7 @@ class SetterRepository extends ServiceEntityRepository
                 INNER JOIN boulder_setters_v2 ON boulder_setters_v2.boulder_id = boulder.id 
                 INNER JOIN setter ON setter.id = boulder_setters_v2.setter_id 
                 WHERE boulder.status = 'active' AND boulder.tenant_id = {$locationId} 
+                AND setter.active = true
                 GROUP BY setter.id 
                 ORDER BY lower(setter.username) ASC";
     }
