@@ -419,7 +419,7 @@ class GlobalController extends AbstractController
             foreach ($updates as $version) {
                 $data["updates"] = [
                     "version" => $version,
-                    "instructions" => "https://storage.boulderdb.de/boulderdb-internal/instructions/{$version}"
+                    "instructions" => "https://storage.boulderdb.de/boulderdb-internal/instructions/{$version}.md"
                 ];
             }
         }
