@@ -417,7 +417,7 @@ class GlobalController extends AbstractController
             $updates = array_slice($versions, array_search($currentVersion, $versions));
 
             foreach ($updates as $version) {
-                $data["updates"] = [
+                $data["updates"][] = [
                     "version" => $version,
                     "instructions" => "https://storage.boulderdb.de/boulderdb-internal/instructions/{$version}.md"
                 ];
