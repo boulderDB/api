@@ -52,6 +52,7 @@ class Setter implements TimestampableInterface
     public function __construct()
     {
         $this->locations = new ArrayCollection();
+        $this->active = true;
     }
 
     public function getId(): ?int

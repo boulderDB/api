@@ -18,9 +18,7 @@ class SetterType extends AbstractType
     {
         $builder
             ->add("active", CheckboxType::class)
-            ->add("username", TextType::class, [
-                "constraints" => [new NotBlank()],
-            ])
+            ->add("username")
             ->add("user", EntityType::class, [
                 "class" => User::class,
             ]);

@@ -83,6 +83,10 @@ class SetterController extends AbstractController
             );
         }
 
+        if (!$form->get("username")) {
+            $setter->setUsername($form->get("user")->getUsername());
+        }
+
         if (!$form->isValid()) {
             return $this->badFormRequestResponse($form);
         }
