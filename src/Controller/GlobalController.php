@@ -19,6 +19,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
 use Namshi\JOSE\JWS;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -55,6 +56,7 @@ class GlobalController extends AbstractController
     private TokenExtractorInterface $tokenExtractor;
     private LocationRepository $locationRepository;
     private StorageClient $storageClient;
+    private ParameterBagInterface $parameterBag;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -65,7 +67,8 @@ class GlobalController extends AbstractController
         TokenStorageInterface $tokenStorage,
         TokenExtractorInterface $tokenExtractor,
         LocationRepository $locationRepository,
-        StorageClient $storageClient
+        StorageClient $storageClient,
+        ParameterBagInterface $parameterBag
     )
     {
         $this->entityManager = $entityManager;
@@ -78,6 +81,7 @@ class GlobalController extends AbstractController
         $this->tokenExtractor = $tokenExtractor;
         $this->locationRepository = $locationRepository;
         $this->storageClient = $storageClient;
+        $this->parameterBag = $parameterBag;
     }
 
     /**
@@ -407,7 +411,9 @@ class GlobalController extends AbstractController
         $versions = $this->redis->lRange("client-versions", 0, -1);
         $currentVersion = $form->getData()["version"];
 
-        $lastVersion = $this->redis->get("client-version:user={$user->getId()}");
+        $contents = file_get_contents($this->parameterBag->get('kernel.project_dir') . "/public/meta.json");
+        $meta = json_decode($contents, true);
+        $lastVersion = $meta["version"];
 
         $data = [
             "updates" => []
