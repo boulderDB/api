@@ -47,7 +47,7 @@ class SetterRepository extends ServiceEntityRepository
                 LEFT JOIN users ON setter.user_id = users.id
                 WHERE boulder.status = 'active' AND boulder.tenant_id = {$locationId} 
                 AND setter.active = true
-                GROUP BY setter.id 
+                GROUP BY setter.id, users.id 
                 ORDER BY lower(setter.username) ASC";
     }
 }
