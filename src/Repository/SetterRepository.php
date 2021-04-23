@@ -41,10 +41,10 @@ class SetterRepository extends ServiceEntityRepository
 
     public static function getCurrentStatement(string $locationId)
     {
-        return "SELECT setter.id, setter.username, user.id as user_id FROM boulder 
+        return "SELECT setter.id, setter.username, users.id as user_id FROM boulder 
                 INNER JOIN boulder_setters_v2 ON boulder_setters_v2.boulder_id = boulder.id 
                 INNER JOIN setter ON setter.id = boulder_setters_v2.setter_id 
-                LEFT JOIN user ON setter.user_id = user.id
+                LEFT JOIN users ON setter.user_id = users.id
                 WHERE boulder.status = 'active' AND boulder.tenant_id = {$locationId} 
                 AND setter.active = true
                 GROUP BY setter.id 
