@@ -40,11 +40,16 @@ class SetterController extends AbstractController
     /**
      * @Route("", methods={"GET"})
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->denyUnlessLocationAdmin();
 
-        $sql = SetterRepository::getIndexStatement($this->contextService->getLocation()->getId());
+        $active = $request->query->get("active");
+
+        $sql = SetterRepository::getIndexStatement(
+            $this->contextService->getLocation()->getId(),
+            $active === "true"
+        );
 
         $query = $this->entityManager->getConnection()->prepare($sql);
         $query->execute();

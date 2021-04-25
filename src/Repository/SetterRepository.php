@@ -29,19 +29,22 @@ class SetterRepository extends ServiceEntityRepository
         return $result ? true : false;
     }
 
-    public static function getIndexStatement(string $locationId)
+    public static function getIndexStatement(string $locationId, bool $active)
     {
-        return "SELECT setter.id, setter.username FROM boulder 
+        $activeQuery = $active ? "AND setter.active = true" : "";
+
+        return "SELECT setter.id, setter.username, setter.active FROM boulder 
                 INNER JOIN boulder_setters_v2 ON boulder_setters_v2.boulder_id = boulder.id 
                 INNER JOIN setter ON setter.id = boulder_setters_v2.setter_id 
-                WHERE boulder.tenant_id = {$locationId} 
+                WHERE boulder.tenant_id = {$locationId}
+                {$activeQuery}
                 GROUP BY setter.id 
                 ORDER BY lower(setter.username) ASC";
     }
 
     public static function getCurrentStatement(string $locationId)
     {
-        return "SELECT setter.id, setter.username, users.id as user_id FROM boulder 
+        return "SELECT setter.id, setter.username, setter.active, users.id as user_id FROM boulder 
                 INNER JOIN boulder_setters_v2 ON boulder_setters_v2.boulder_id = boulder.id 
                 INNER JOIN setter ON setter.id = boulder_setters_v2.setter_id 
                 LEFT JOIN users ON setter.user_id = users.id
