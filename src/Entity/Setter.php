@@ -100,4 +100,9 @@ class Setter implements TimestampableInterface
     {
         $this->locations = $locations;
     }
+
+    public function addLocation(Location $location): void
+    {
+        $this->locations->add($location);
+    }
 }

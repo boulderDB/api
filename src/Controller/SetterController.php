@@ -80,7 +80,7 @@ class SetterController extends AbstractController
         $setter = new Setter();
 
         $form = $this->createForm(SetterType::class, $setter);
-        $form->submit(self::decodePayLoad($request));
+        $form->submit(self::decodePayLoad($request), false);
 
         if ($this->setterRepository->exists("username", $form->getData()->getUsername())) {
             $form->get("username")->addError(
@@ -95,6 +95,8 @@ class SetterController extends AbstractController
         if (!$form->isValid()) {
             return $this->badFormRequestResponse($form);
         }
+
+        $setter->addLocation($this->contextService->getLocation());
 
         $this->entityManager->persist($setter);
         $this->entityManager->flush();
