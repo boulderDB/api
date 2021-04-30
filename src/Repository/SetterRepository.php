@@ -29,9 +29,15 @@ class SetterRepository extends ServiceEntityRepository
         return $result ? true : false;
     }
 
-    public static function getIndexStatement(string $locationId, bool $active)
+    public static function getIndexStatement(string $locationId, string $filter = null)
     {
-        if ($active) {
+        $filters = ["active", "current"];
+
+        if ($filter && !in_array($filter, $filters)) {
+            throw new \InvalidArgumentException("Unsupported filter: '$filter'");
+        }
+
+        if ($filter === "active") {
             return "SELECT * FROM setter
                 INNER JOIN setter_locations ON setter.id = setter_locations.setter_id
                 WHERE setter_locations.location_id = {$locationId}
@@ -39,21 +45,20 @@ class SetterRepository extends ServiceEntityRepository
                 ORDER BY lower(setter.username) ASC";
         }
 
-        return "SELECT * FROM setter
-                INNER JOIN setter_locations ON setter.id = setter_locations.setter_id
-                WHERE setter_locations.location_id = {$locationId}
-                ORDER BY lower(setter.username) ASC";
-    }
-
-    public static function getCurrentStatement(string $locationId)
-    {
-        return "SELECT setter.id, setter.username, setter.active, users.id as user_id FROM boulder 
+        if ($filter === "current") {
+            return "SELECT setter.id, setter.username, setter.active, users.id as user_id FROM boulder 
                 INNER JOIN boulder_setters_v2 ON boulder_setters_v2.boulder_id = boulder.id 
                 INNER JOIN setter ON setter.id = boulder_setters_v2.setter_id 
                 LEFT JOIN users ON setter.user_id = users.id
                 WHERE boulder.status = 'active' AND boulder.tenant_id = {$locationId} 
                 AND setter.active = true
                 GROUP BY setter.id, users.id 
+                ORDER BY lower(setter.username) ASC";
+        }
+
+        return "SELECT * FROM setter
+                INNER JOIN setter_locations ON setter.id = setter_locations.setter_id
+                WHERE setter_locations.location_id = {$locationId}
                 ORDER BY lower(setter.username) ASC";
     }
 }
