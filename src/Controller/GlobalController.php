@@ -20,7 +20,6 @@ use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserTo
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
 use Namshi\JOSE\JWS;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
@@ -347,7 +346,9 @@ class GlobalController extends AbstractController
         }
 
         $password = $this->passwordEncoder->encodePassword($user, $user->getPlainPassword());
+
         $user->setPassword($password);
+        $user->setVisible(true);
 
         $this->entityManager->persist($user);
 

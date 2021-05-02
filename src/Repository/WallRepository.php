@@ -13,6 +13,26 @@ class WallRepository extends ServiceEntityRepository
         parent::__construct($registry, Wall::class);
     }
 
+    public static function getIndexStatement(int $locationId, ?string $filter): array
+    {
+        if ($filter === "active") {
+            return [
+                "sql" => "SELECT id, name, active FROM wall WHERE tenant_id = :locationId AND active = :active",
+                "parameters" => [
+                    "locationId" => $locationId,
+                    "active" => true
+                ]
+            ];
+        }
+
+        return [
+            "sql" => "SELECT id, name, active FROM wall WHERE tenant_id = :locationId",
+            "parameters" => [
+                "locationId" => $locationId
+            ]
+        ];
+    }
+
     public function exists(int $id, int $locationId): bool
     {
         $statement = "SELECT id FROM wall WHERE id = :id AND wall.tenant_id = :locationId";

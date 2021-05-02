@@ -38,17 +38,19 @@ class WallController extends AbstractController
     /**
      * @Route(methods={"GET"})
      */
-    public function index()
+    public function index(Request $request)
     {
         $connection = $this->entityManager->getConnection();
-        $statement = "select id, name from wall where tenant_id = :tenantId and active = 'true'";
-        $query = $connection->prepare($statement);
 
-        $query->execute([
-            "tenantId" => $this->contextService->getLocation()->getId()
-        ]);
+        $statement = WallRepository::getIndexStatement(
+            $this->contextService->getLocation()->getId(),
+            $request->query->get("filter")
+        );
 
-        $results = $query->fetchAll();
+        $query = $connection->prepare($statement["sql"]);
+        $query->execute($statement["parameters"]);
+
+        $results = $query->fetchAllAssociative();
 
         return $this->json($results);
     }
