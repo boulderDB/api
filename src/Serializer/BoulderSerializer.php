@@ -4,6 +4,7 @@ namespace App\Serializer;
 
 use App\Entity\Ascent;
 use App\Entity\Boulder;
+use App\Entity\BoulderComment;
 use App\Entity\Setter;
 use App\Entity\Tag;
 use App\Service\Serializer;
@@ -94,7 +95,20 @@ class BoulderSerializer implements SerializerInterface
 
             }, $class->getAscents()->toArray());
 
+            $comments = array_map(function ($comment) {
+                /**
+                 * @var BoulderComment $comment
+                 */
+                return [
+                    "id" => $comment->getId(),
+                    "author" => $comment->getAuthor()->getUsername(),
+                    "message" => $comment->getMessage()
+                ];
+
+            }, $class->getComments()->toArray());
+
             $data["ascents"] = array_values($ascents);
+            $data["comments"] = array_values($comments);
         }
 
         if ($admin) {

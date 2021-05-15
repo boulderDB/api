@@ -88,6 +88,11 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
     private ?Collection $errors = null;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\BoulderComment", mappedBy="boulder", fetch="LAZY")
+     */
+    private ?Collection $comments = null;
+
+    /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Tag", fetch="LAZY", inversedBy="boulders")
      * @ORM\JoinTable(name="boulder_tags",
      *     joinColumns={
@@ -126,12 +131,15 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
      */
     private ?Collection $labels = null;
 
+
+
     public function __construct()
     {
         $this->setters = new ArrayCollection();
         $this->ascents = new ArrayCollection();
         $this->errors = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public static function getStatuses(): array
@@ -281,6 +289,16 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
     public function setErrors($errors): void
     {
         $this->errors = $errors;
+    }
+
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    public function setComments($comments): void
+    {
+        $this->comments = $comments;
     }
 
     public function getTags()

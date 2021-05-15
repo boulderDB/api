@@ -38,6 +38,10 @@ class Grade implements LocationResourceInterface
      */
     private ?string $color = null;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+    private bool $active = true;
 
     public function getId(): ?int
     {
@@ -82,5 +86,15 @@ class Grade implements LocationResourceInterface
     public function setColor(?string $color): void
     {
         $this->color = $color;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): void
+    {
+        $this->active = $active;
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Repository\GradeRepository;
 use App\Service\ContextService;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,22 +31,19 @@ class GradeController extends AbstractController
     /**
      * @Route(methods={"GET"})
      */
-    public function index()
+    public function index(Request $request)
     {
         $connection = $this->entityManager->getConnection();
-        $statement = "select id, name, color from grade where tenant_id = :locationId and public = true";
 
-        if ($this->isLocationAdmin()) {
-            $statement = "select id, name, color from grade where tenant_id = :locationId";
-        }
-        
-        $query = $connection->prepare($statement);
-        $query->execute([
-            "locationId" => $this->contextService->getLocation()->getId()
-        ]);
+        $statement = GradeRepository::getIndexStatement(
+            $this->contextService->getLocation()->getId(),
+            $request->query->get("filter"),
+            $this->isLocationAdmin()
+        );
 
-        $results = $query->fetchAll();
+        $query = $connection->prepare($statement["sql"]);
+        $query->execute($statement["parameters"]);
 
-        return $this->json($results);
+        return $this->json($query->fetchAllAssociative());
     }
 }

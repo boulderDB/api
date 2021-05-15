@@ -29,6 +29,11 @@ class HoldType implements LocationResourceInterface
      */
     private ?string $image = null;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+    private bool $active = true;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,5 +57,15 @@ class HoldType implements LocationResourceInterface
     public function setImage(?string $image): void
     {
         $this->image = $image;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): void
+    {
+        $this->active = $active;
     }
 }

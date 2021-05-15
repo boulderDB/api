@@ -97,3 +97,8 @@ time_slot_exclusion:
   resource: ../../src/Controller/TimeSlotExclusionController.php
   type: annotation
   prefix: /api/{location}/
+
+comment:
+  resource: ../../src/Controller/BoulderCommentController.php
+  type: annotation
+  prefix: /api/{location}/

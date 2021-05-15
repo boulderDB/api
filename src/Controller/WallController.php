@@ -50,9 +50,7 @@ class WallController extends AbstractController
         $query = $connection->prepare($statement["sql"]);
         $query->execute($statement["parameters"]);
 
-        $results = $query->fetchAllAssociative();
-
-        return $this->json($results);
+        return $this->json($query->fetchAllAssociative());
     }
 
     /**

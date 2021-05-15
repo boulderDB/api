@@ -26,6 +26,7 @@ class BoulderRepository extends ServiceEntityRepository
             ->leftJoin("boulder.endWall", "endWall")
             ->leftJoin("boulder.setters", "setter")
             ->leftJoin("boulder.tags", "tag")
+            ->leftJoin("boulder.comments", "comments")
             ->where("boulder.id = :id")
             ->setParameter("id", $id)
             ->getQuery()
