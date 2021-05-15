@@ -102,7 +102,8 @@ class BoulderSerializer implements SerializerInterface
                 return [
                     "id" => $comment->getId(),
                     "author" => $comment->getAuthor()->getUsername(),
-                    "message" => $comment->getMessage()
+                    "message" => $comment->getMessage(),
+                    "created_at" => Serializer::formatDate($comment->getCreatedAt()),
                 ];
 
             }, $class->getComments()->toArray());
