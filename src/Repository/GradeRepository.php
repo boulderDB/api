@@ -17,7 +17,7 @@ class GradeRepository extends ServiceEntityRepository
     {
         if ($filter === "active" && $isAdmin) {
             return [
-                "sql" => "SELECT id, name, active FROM grade WHERE tenant_id = :locationId AND active = :active",
+                "sql" => "SELECT id, name, active, color FROM grade WHERE tenant_id = :locationId AND active = :active",
                 "parameters" => [
                     "locationId" => $locationId,
                     "active" => true
@@ -27,7 +27,7 @@ class GradeRepository extends ServiceEntityRepository
 
         if ($filter === "active") {
             return [
-                "sql" => "SELECT id, name, active FROM grade WHERE tenant_id = :locationId AND active = :active AND public = :public",
+                "sql" => "SELECT id, name, active, color FROM grade WHERE tenant_id = :locationId AND active = :active AND public = :public",
                 "parameters" => [
                     "locationId" => $locationId,
                     "active" => true,
@@ -38,7 +38,7 @@ class GradeRepository extends ServiceEntityRepository
 
         if ($isAdmin) {
             return [
-                "sql" => "SELECT id, name, active FROM grade WHERE tenant_id = :locationId",
+                "sql" => "SELECT id, name, active, color FROM grade WHERE tenant_id = :locationId",
                 "parameters" => [
                     "locationId" => $locationId
                 ]
@@ -46,7 +46,7 @@ class GradeRepository extends ServiceEntityRepository
         }
 
         return [
-            "sql" => "SELECT id, name, active color FROM grade WHERE tenant_id = :locationId AND public = :public",
+            "sql" => "SELECT id, name, active, color FROM grade WHERE tenant_id = :locationId AND public = :public",
             "parameters" => [
                 "locationId" => $locationId,
                 "public" => true
