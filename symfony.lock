@@ -1,4 +1,7 @@
 {
+    "aws/aws-sdk-php": {
+        "version": "3.158.21"
+    },
     "clue/stream-filter": {
         "version": "v1.5.0"
     },
@@ -90,6 +93,9 @@
     "egulias/email-validator": {
         "version": "2.1.17"
     },
+    "guzzlehttp/guzzle": {
+        "version": "7.2.0"
+    },
     "guzzlehttp/promises": {
         "version": "1.4.0"
     },
@@ -128,6 +134,9 @@
         "files": [
             "config/packages/lexik_jwt_authentication.yaml"
         ]
+    },
+    "mtdowling/jmespath.php": {
+        "version": "2.6.0"
     },
     "namshi/jose": {
         "version": "7.2.3"
