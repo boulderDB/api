@@ -64,7 +64,7 @@ class BoulderCommentController extends AbstractController
         $form->submit(self::decodePayLoad($request));
 
         if (!$form->isValid()) {
-            return $this->json($this->getFormErrors($form));
+            return $this->badFormRequestResponse($form);
         }
 
         $this->entityManager->persist($comment);
