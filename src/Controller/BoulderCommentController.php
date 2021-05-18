@@ -40,6 +40,19 @@ class BoulderCommentController extends AbstractController
     }
 
     /**
+     * @Route(methods={"GET"})
+     */
+    public function index(Request $request)
+    {
+        $this->denyUnlessLocationAdmin();
+
+        $filter = $request->query->get("filter") ? $request->query->get("filter") : "active";
+        $comments = $this->boulderCommentRepository->getLatest($filter);
+
+        return $this->okResponse($comments);
+    }
+
+    /**
      * @Route(methods={"POST"})
      */
     public function create(Request $request)

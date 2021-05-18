@@ -102,3 +102,8 @@ comment:
   resource: ../../src/Controller/BoulderCommentController.php
   type: annotation
   prefix: /api/{location}/
+
+rating:
+  resource: ../../src/Controller/BoulderRatingController.php
+  type: annotation
+  prefix: /api/{location}/

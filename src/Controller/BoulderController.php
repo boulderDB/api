@@ -7,7 +7,6 @@ use App\Factory\RedisConnectionFactory;
 use App\Form\BoulderType;
 use App\Form\MassOperationType;
 use App\Repository\BoulderRepository;
-use App\Service\CacheService;
 use App\Service\ContextService;
 use App\Service\Serializer;
 use App\Service\SerializerInterface;

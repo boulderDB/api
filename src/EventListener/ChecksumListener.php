@@ -3,11 +3,12 @@
 namespace App\EventListener;
 
 use App\Entity\Ascent;
+use App\Entity\BoulderRating;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
-class AscentListener implements EventSubscriber
+class ChecksumListener implements EventSubscriber
 {
     public function getSubscribedEvents()
     {
@@ -20,7 +21,7 @@ class AscentListener implements EventSubscriber
     {
         $subject = $args->getObject();
 
-        if ($subject instanceof Ascent) {
+        if ($subject instanceof Ascent || $subject instanceof BoulderRating) {
             $subject->setChecksum();
         }
     }

@@ -3,24 +3,27 @@
 namespace App\Form;
 
 use App\Entity\Boulder;
-use App\Entity\BoulderComment;
+use App\Entity\BoulderRating;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Range;
 
-class BoulderCommentType extends AbstractType
+class BoulderRatingType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add("message", TextType::class, [
+            ->add("rating", NumberType::class, [
                 "constraints" => [
                     new NotBlank(),
-                    new Length(['min' => 1, 'max' => 400])
+                    new Range([
+                        "min" => 0,
+                        "max" => 10
+                    ])
                 ]
             ])
             ->add("boulder", EntityType::class, [
@@ -33,7 +36,7 @@ class BoulderCommentType extends AbstractType
     {
         $resolver->setDefaults([
             "csrf_protection" => false,
-            "data_class" => BoulderComment::class,
+            "data_class" => BoulderRating::class,
         ]);
     }
 }

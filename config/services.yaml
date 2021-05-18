@@ -42,7 +42,7 @@ services:
     tags:
       - { name: 'doctrine.event_subscriber' }
 
-  App\EventListener\AscentListener:
+  App\EventListener\ChecksumListener:
     tags:
       - { name: 'doctrine.event_subscriber' }
 
