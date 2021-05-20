@@ -61,6 +61,8 @@ class BoulderController extends AbstractController
             [
                 SerializerInterface::GROUP_DETAIL,
                 $this->isLocationAdmin() ? SerializerInterface::GROUP_ADMIN : null
+            ], [
+                "userId" => $this->getUser()->getId()
             ]
         ));
     }

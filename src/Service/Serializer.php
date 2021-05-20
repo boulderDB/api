@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Boulder;
+use App\Entity\BoulderRating;
 use App\Entity\Grade;
 use App\Entity\HoldType;
 use App\Entity\Label;
@@ -12,6 +13,7 @@ use App\Entity\Setter;
 use App\Entity\TimeSlot;
 use App\Entity\User;
 use App\Entity\Wall;
+use App\Serializer\BoulderRatingSerializer;
 use App\Serializer\BoulderSerializer;
 use App\Serializer\GradeSerializer;
 use App\Serializer\HoldTypeSerializer;
@@ -35,7 +37,8 @@ class Serializer
         Wall::class => WallSerializer::class,
         Grade::class => GradeSerializer::class,
         HoldType::class => HoldTypeSerializer::class,
-        Label::class => LabelSerializer::class
+        Label::class => LabelSerializer::class,
+        BoulderRating::class => BoulderRatingSerializer::class
     ];
 
     public static function serialize($any, array $groups = [SerializerInterface::GROUP_INDEX], array $arguments = []): ?array

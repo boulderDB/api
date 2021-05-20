@@ -131,7 +131,10 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
      */
     private ?Collection $labels = null;
 
-
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\BoulderRating", mappedBy="boulder", fetch="LAZY")
+     */
+    private ?Collection $ratings = null;
 
     public function __construct()
     {
@@ -140,6 +143,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
         $this->errors = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->ratings = new ArrayCollection();
     }
 
     public static function getStatuses(): array
@@ -309,5 +313,15 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
     public function setTags($tags): void
     {
         $this->tags = $tags;
+    }
+
+    public function getRatings()
+    {
+        return $this->ratings;
+    }
+
+    public function setRatings($ratings): void
+    {
+        $this->ratings = $ratings;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Serializer;
 use App\Entity\Ascent;
 use App\Entity\Boulder;
 use App\Entity\BoulderComment;
+use App\Entity\BoulderRating as BoulderRatingAlias;
 use App\Entity\Setter;
 use App\Entity\Tag;
 use App\Service\Serializer;
@@ -23,6 +24,13 @@ class BoulderSerializer implements SerializerInterface
         /**
          * @var Boulder $class
          */
+        $userRating = $class->getRatings()->filter(function ($rating) use ($arguments) {
+            /**
+             * @var BoulderRatingAlias $rating
+             */
+            return $rating->getAuthor()->getId() === $arguments["userId"];
+        })->first();
+
         $data = [
             "id" => $class->getId(),
             "name" => $class->getName(),
@@ -77,6 +85,7 @@ class BoulderSerializer implements SerializerInterface
                 return $setter->getId();
 
             }, $class->getSetters()->toArray()),
+            "rating" => $userRating ? BoulderRatingSerializer::serialize($userRating): null,
             "created_at" => Serializer::formatDate($class->getCreatedAt()),
             "status" => $class->getStatus()
         ];
