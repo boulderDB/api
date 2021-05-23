@@ -57,6 +57,7 @@ class GlobalController extends AbstractController
     private LocationRepository $locationRepository;
     private StorageClient $storageClient;
     private ParameterBagInterface $parameterBag;
+    private NotificationService $notificationService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -68,7 +69,8 @@ class GlobalController extends AbstractController
         TokenExtractorInterface $tokenExtractor,
         LocationRepository $locationRepository,
         StorageClient $storageClient,
-        ParameterBagInterface $parameterBag
+        ParameterBagInterface $parameterBag,
+        NotificationService $notificationService
     )
     {
         $this->entityManager = $entityManager;
@@ -82,6 +84,7 @@ class GlobalController extends AbstractController
         $this->locationRepository = $locationRepository;
         $this->storageClient = $storageClient;
         $this->parameterBag = $parameterBag;
+        $this->notificationService = $notificationService;
     }
 
     /**
@@ -144,9 +147,10 @@ class GlobalController extends AbstractController
          */
         $user = $this->getUser();
         $currentMail = $user->getEmail();
+        $notifications = $this->notificationService->getNotificationsMap($user);
 
         $form = $this->createForm(UserType::class, $user);
-        $form->add(...UserType::notificationsField($user->getNotifications()));
+        $form->add(...UserType::notificationsField($notifications));
 
         $form->submit(json_decode($request->getContent(), true), false);
 

@@ -84,5 +84,6 @@ class RequestListener implements EventSubscriberInterface
         }
 
         $this->contextService->setLocation($location);
+        # user
     }
 }

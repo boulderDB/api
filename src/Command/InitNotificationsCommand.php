@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\Notifications;
 use App\Repository\LocationRepository;
 use App\Repository\UserRepository;
 use App\Service\NotificationService;
@@ -54,13 +55,10 @@ class InitNotificationsCommand extends Command
         $updates = 0;
 
         foreach ($users as $user) {
-            $notifications = [];
+            $notifications = new Notifications($user);
+            $notifications->setLocations($locations);
 
-            foreach ($locations as $location) {
-                $notifications = array_merge($notifications, NotificationService::getNotifications($user, $location));
-            }
-
-            $user->setNotifications($notifications);
+            $user->setNotifications($notifications->getMap());
 
             $this->entityManager->persist($user);
             $updates++;

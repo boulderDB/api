@@ -2,56 +2,24 @@
 
 namespace App\Service;
 
-use App\Entity\Location;
+use App\Entity\Notifications;
 use App\Entity\User;
+use App\Repository\LocationRepository;
 
 class NotificationService
 {
-    public const TYPE_DOUBTS = "doubts";
-    public const TYPE_ERRORS = "errors";
-    public const TYPE_COMMENTS = "comments";
+    private LocationRepository $locationRepository;
 
-    public static function getLocationNotification(string $type, string $location): string
+    public function __construct(LocationRepository $locationRepository)
     {
-        return "$type@$location";
+        $this->locationRepository = $locationRepository;
     }
 
-    public static function getAdminNotifications(): array
+    public function getNotificationsMap(User $user):array
     {
-        return [self::TYPE_DOUBTS];
-    }
+        $notifications = new Notifications($user);
+        $notifications->setLocations($this->locationRepository->findAll());
 
-    public static function getUserNotifications(): array
-    {
-        return [
-            self::TYPE_ERRORS,
-            self::TYPE_COMMENTS
-        ];
-    }
-
-    public static function getNotifications(User $user, Location $location): array
-    {
-        $notifications = [
-            NotificationService::getLocationNotification(
-                NotificationService::TYPE_DOUBTS,
-                $location->getUrl()
-            ) => true
-        ];
-
-        $role = ContextService::getLocationRoleName('ADMIN', $location->getId(), true);
-
-        if (in_array($role, $user->getRoles(), true)) {
-            $notifications[NotificationService::getLocationNotification(
-                NotificationService::TYPE_ERRORS,
-                $location->getUrl()
-            )] = true;
-
-            $notifications[NotificationService::getLocationNotification(
-                NotificationService::TYPE_COMMENTS,
-                $location->getUrl()
-            )] = true;
-        }
-
-        return $notifications;
+        return $notifications->getMap();
     }
 }
