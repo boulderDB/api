@@ -94,7 +94,7 @@ class UserType extends AbstractType
             ChoiceType::class,
             [
                 "multiple" => true,
-                "choices" => array_combine(array_keys($userNotifications), array_keys($userNotifications)),
+                "choices" => array_combine(array_values($userNotifications), array_values($userNotifications)),
                 "constraints" => [
                     new NotBlank()
                 ]
