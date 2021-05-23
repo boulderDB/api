@@ -19,6 +19,7 @@ class UserSerializer implements SerializerInterface
             "username" => $class->getUsername(),
             "firstName" => $class->getFirstName(),
             "lastName" => $class->getLastName(),
+            "notifications" => $class->getNotifications()
         ];
 
         if (in_array(self::GROUP_DETAIL, $groups)) {

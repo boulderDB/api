@@ -11,6 +11,7 @@ use App\Form\PasswordResetType;
 use App\Form\UserType;
 use App\Repository\LocationRepository;
 use App\Repository\UserRepository;
+use App\Service\NotificationService;
 use App\Service\StorageClient;
 use App\Service\ContextService;
 use App\Service\Serializer;
@@ -138,10 +139,14 @@ class GlobalController extends AbstractController
      */
     public function updateMe(Request $request)
     {
+        /**
+         * @var User $user
+         */
         $user = $this->getUser();
         $currentMail = $user->getEmail();
 
         $form = $this->createForm(UserType::class, $user);
+        $form->add(...UserType::notificationsField($user->getNotifications()));
 
         $form->submit(json_decode($request->getContent(), true), false);
 

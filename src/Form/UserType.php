@@ -86,12 +86,14 @@ class UserType extends AbstractType
         ];
     }
 
-    public static function emailField(): array
+
+    public static function notificationsField(array $userNotifications): array
     {
         return [
-            "email",
-            Email::class,
+            "notifications",
+            ChoiceType::class,
             [
+                "choices" => array_combine($userNotifications, $userNotifications),
                 "constraints" => [
                     new NotBlank()
                 ]

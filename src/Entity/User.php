@@ -106,15 +106,20 @@ class User implements UserInterface
 
     private ?string $plainPassword = null;
 
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private ?array $notifications = [];
+
     public function __construct()
     {
         $this->ascents = new ArrayCollection();
-        $this->boulders = new ArrayCollection();
         $this->events = new ArrayCollection();
 
         $this->visible = true;
         $this->active = true;
         $this->roles = [self::ROLE_USER];
+        $this->notifications = [];
     }
 
     public function getId(): ?int
@@ -295,5 +300,15 @@ class User implements UserInterface
     public function setLastLogin(?\DateTime $lastLogin): void
     {
         $this->lastLogin = $lastLogin;
+    }
+
+    public function getNotifications(): array
+    {
+        return $this->notifications;
+    }
+
+    public function setNotifications(array $notifications): void
+    {
+        $this->notifications = $notifications;
     }
 }

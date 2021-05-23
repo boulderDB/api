@@ -14,6 +14,15 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         parent::__construct($registry, User::class);
     }
 
+    public function getByRole(string $role): ?array
+    {
+        return $this->createQueryBuilder("user")
+            ->where("user.roles LIKE :roles")
+            ->setParameter('roles', '%"'.$role.'"%')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function userExists(string $property, string $value): bool
     {
         $allowedProperties = [
