@@ -20,7 +20,6 @@ class UserListener implements EventSubscriber
     {
         return [
             Events::prePersist,
-            Events::preUpdate
         ];
     }
 
