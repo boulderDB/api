@@ -307,6 +307,11 @@ class User implements UserInterface
         return $this->notifications;
     }
 
+    public function hasNotification(string $type): bool
+    {
+        return $this->notifications[$type] === true;
+    }
+
     public function setNotifications(array $notifications): void
     {
         foreach ($this->notifications as $type => $value) {

@@ -11,6 +11,7 @@ use App\Scoring\DefaultScoring;
 use App\Scoring\ScoringInterface;
 use App\Serializer\AscentSerializer;
 use App\Service\ContextService;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -62,8 +63,12 @@ class AscentController extends AbstractController
             ]);
         }
 
-        $this->entityManager->persist($ascent);
-        $this->entityManager->flush();
+        try {
+            $this->entityManager->persist($ascent);
+            $this->entityManager->flush();
+        } catch (UniqueConstraintViolationException $exception) {
+            return $this->conflictResponse("You already checked this boulder.");
+        }
 
         $defaultScoring = new DefaultScoring();
         $defaultScoring->calculateScore($ascent->getBoulder());

@@ -147,7 +147,7 @@ class GlobalController extends AbstractController
          */
         $user = $this->getUser();
         $currentMail = $user->getEmail();
-        $notifications = $this->notificationService->getNotificationsMap($user);
+        $notifications = $this->notificationService->getUserMap($user);
 
         $form = $this->createForm(UserType::class, $user);
         $form->add(...UserType::notificationsField($notifications));

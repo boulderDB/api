@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Entity\User;
 use App\Service\NotificationService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
@@ -11,7 +12,8 @@ class UserListener implements EventSubscriber
 {
     private NotificationService $notificationService;
 
-    public function __construct(NotificationService $notificationService){
+    public function __construct(NotificationService $notificationService)
+    {
 
         $this->notificationService = $notificationService;
     }
@@ -25,12 +27,13 @@ class UserListener implements EventSubscriber
 
     public function prePersist(LifecycleEventArgs $args)
     {
-        /**
-         * @var \App\Entity\User $subject
-         */
         $subject = $args->getObject();
 
-        $notifications = $this->notificationService->getNotificationsMap($subject);
+        if (!$subject instanceof User) {
+            return;
+        }
+
+        $notifications = $this->notificationService->getUserMap($subject);
         $subject->setNotifications($notifications);
     }
 }

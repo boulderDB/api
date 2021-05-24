@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Service\ContextService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
@@ -14,11 +15,21 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         parent::__construct($registry, User::class);
     }
 
+    /**
+     * @return \App\Entity\User[]
+     */
+    public function getLocationAdmins(int $locationId): ?array
+    {
+        $role = ContextService::getLocationRoleName(User::ADMIN, $locationId, true);
+
+        return $this->getByRole($role);
+    }
+
     public function getByRole(string $role): ?array
     {
         return $this->createQueryBuilder("user")
             ->where("user.roles LIKE :roles")
-            ->setParameter('roles', '%"'.$role.'"%')
+            ->setParameter('roles', '%"' . $role . '"%')
             ->getQuery()
             ->getResult();
     }

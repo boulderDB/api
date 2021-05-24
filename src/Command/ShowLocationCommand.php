@@ -56,10 +56,8 @@ class ShowLocationCommand extends Command
             return 1;
         }
 
-        $adminRole = ContextService::getLocationRoleName(User::ADMIN, $locationId, true);
-        $admins = $this->userRepository->getByRole($adminRole);
+        $admins = $this->userRepository->getLocationAdmins($locationId);
 
-        $io->block($adminRole);
         $io->table(
             ['id', 'username', 'email', 'notifications'],
             array_map(function ($admin) use ($location) {

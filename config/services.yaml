@@ -58,3 +58,7 @@ services:
   App\EventListener\UserListener:
     tags:
       - { name: 'doctrine.event_subscriber' }
+
+  App\EventListener\NotificationResourceListener:
+    tags:
+      - { name: 'doctrine.event_subscriber' }

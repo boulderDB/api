@@ -8,9 +8,9 @@ use Doctrine\Common\Collections\Collection;
 
 class Notifications
 {
-    private const TYPE_DOUBTS = "doubts";
-    private const TYPE_ERRORS = "errors";
-    private const TYPE_COMMENTS = "comments";
+    public const TYPE_DOUBTS = "doubts";
+    public const TYPE_ERRORS = "errors";
+    public const TYPE_COMMENTS = "comments";
 
     private Collection $locations;
     private User $user;
@@ -26,11 +26,6 @@ class Notifications
         $this->locations = new ArrayCollection($locations);
     }
 
-    public function addLocation(Location $location): void
-    {
-        $this->locations->add($location);
-    }
-
     public function getMap(): array
     {
         $notifications = [];
@@ -42,7 +37,7 @@ class Notifications
             // add default types
             foreach (self::getDefaultTypes() as $type) {
                 $notifications[
-                    self::getLocationNotification($type, $location->getUrl())
+                    self::getNotificationId($type, $location->getUrl())
                 ] = true;
             }
 
@@ -51,7 +46,7 @@ class Notifications
             // if is admin, add notifications
             if (in_array($locationAdminRole, $this->user->getRoles(), true)) {
                 foreach (self::getAdminTypes() as $notificationType) {
-                    $notifications[self::getLocationNotification(
+                    $notifications[self::getNotificationId(
                         $notificationType,
                         $location->getUrl()
                     )] = true;
@@ -62,7 +57,7 @@ class Notifications
         return $notifications;
     }
 
-    public static function getLocationNotification(string $type, string $location): string
+    public static function getNotificationId(string $type, string $location): string
     {
         return "$type@$location";
     }

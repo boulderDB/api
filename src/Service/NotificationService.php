@@ -15,11 +15,13 @@ class NotificationService
         $this->locationRepository = $locationRepository;
     }
 
-    public function getNotificationsMap(User $user):array
+    public function getUserMap(User $user):array
     {
         $notifications = new Notifications($user);
         $notifications->setLocations($this->locationRepository->findAll());
 
         return $notifications->getMap();
     }
+
+
 }

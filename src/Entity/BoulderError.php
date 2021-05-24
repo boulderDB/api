@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class BoulderError implements LocationResourceInterface, TimestampableInterface
+class BoulderError implements LocationResourceInterface, TimestampableInterface, NotificationResourceInterface
 {
     use TimestampTrait;
     use LocationTrait;
@@ -92,5 +92,10 @@ class BoulderError implements LocationResourceInterface, TimestampableInterface
     public function setStatus(?string $status): void
     {
         $this->status = $status;
+    }
+
+    public function getType(): string
+    {
+       return Notifications::TYPE_ERRORS;
     }
 }
