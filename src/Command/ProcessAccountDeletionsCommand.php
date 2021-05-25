@@ -39,9 +39,8 @@ class ProcessAccountDeletionsCommand extends Command
         $deletions = $this->redis->keys("deletion:user=*");
         $repository = $this->entityManager->getRepository(User::class);
 
-        foreach ($deletions as $key => $deletion) {
+        foreach ($deletions as $key) {
             $data = RedisConnectionFactory::explodeKey($key);
-
             $timestamp = $this->redis->get($key);
 
             if (time() < $timestamp) {
@@ -58,6 +57,7 @@ class ProcessAccountDeletionsCommand extends Command
                 continue;
             }
 
+            $io->writeln("Removed user ${$data['user']}");
             $this->entityManager->remove($user);
             $this->entityManager->flush();
 

@@ -314,6 +314,12 @@ class User implements UserInterface
 
     public function setNotifications(array $notifications): void
     {
+        // set given notifications directly if not previously initialized
+        if (!$this->notifications) {
+            $this->notifications = $notifications;
+            return;
+        }
+
         foreach ($this->notifications as $type => $value) {
             // if not set, default to false
             if (!in_array($type, $notifications)) {
