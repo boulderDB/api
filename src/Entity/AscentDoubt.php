@@ -53,7 +53,7 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface, 
      */
     private ?int $status = null;
 
-    private ?Ascent  $ascent = null;
+    private ?Ascent $ascent = null;
 
     public function __construct()
     {
@@ -137,6 +137,6 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface, 
 
     public function getType(): string
     {
-       return  Notifications::TYPE_DOUBTS;
+        return Notifications::TYPE_DOUBT;
     }
 }

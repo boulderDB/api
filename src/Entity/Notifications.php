@@ -8,9 +8,9 @@ use Doctrine\Common\Collections\Collection;
 
 class Notifications
 {
-    public const TYPE_DOUBTS = "doubts";
-    public const TYPE_ERRORS = "errors";
-    public const TYPE_COMMENTS = "comments";
+    public const TYPE_DOUBT = "doubt";
+    public const TYPE_ERROR = "error";
+    public const TYPE_COMMENT = "comment";
 
     private Collection $locations;
     private User $user;
@@ -65,13 +65,13 @@ class Notifications
     public static function getAdminTypes(): array
     {
         return [
-            self::TYPE_ERRORS,
-            self::TYPE_COMMENTS
+            self::TYPE_ERROR,
+            self::TYPE_COMMENT
         ];
     }
 
     public static function getDefaultTypes(): array
     {
-        return [self::TYPE_DOUBTS];
+        return [self::TYPE_DOUBT];
     }
 }
