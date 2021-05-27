@@ -2,7 +2,8 @@
 
 namespace App\Service;
 
-use App\Entity\Notifications;
+use App\Entity\Location;
+use App\Entity\Notification;
 use App\Entity\User;
 use App\Repository\LocationRepository;
 
@@ -15,13 +16,42 @@ class NotificationService
         $this->locationRepository = $locationRepository;
     }
 
-    public function getUserMap(User $user):array
+    /**
+     * @return Location[]
+     */
+    public function getUserNotifications(User $user): array
     {
-        $notifications = new Notifications($user);
-        $notifications->setLocations($this->locationRepository->findAll());
+        /**
+         * @var \App\Entity\Location[] $locations
+         */
+        $locations = $this->locationRepository->findAll();
+        $notifications = [];
 
-        return $notifications->getMap();
+        foreach ($locations as $location) {
+            $locationAdminRole = ContextService::getLocationRoleName('ADMIN', $location->getId(), true);
+
+            foreach (Notification::getDefaultTypes() as $type) {
+                $notifications[] = self::createNotification($user, $location, $type);
+            }
+
+            // if is admin, add notifications
+            if (in_array($locationAdminRole, $user->getRoles(), true)) {
+                foreach (Notification::getAdminTypes() as $type) {
+                    $notifications[] = self::createNotification($user, $location, $type);
+                }
+            }
+        }
+
+        return $notifications;
     }
 
+    private static function createNotification(User $user, Location $location, string $type): Notification
+    {
+        $notification = new Notification();
+        $notification->setUser($user);
+        $notification->setLocation($location);
+        $notification->setType($type);
 
+        return $notification;
+    }
 }

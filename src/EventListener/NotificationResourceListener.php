@@ -7,8 +7,8 @@ use App\Entity\BoulderComment;
 use App\Entity\BoulderError;
 use App\Entity\LocationResourceInterface;
 use App\Entity\NotificationResourceInterface;
-use App\Entity\Notifications;
 use App\Factory\RedisConnectionFactory;
+use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
@@ -18,11 +18,13 @@ class NotificationResourceListener implements EventSubscriber
 {
     private \Redis $redis;
     private UserRepository $userRepository;
+    private NotificationRepository $notificationRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, NotificationRepository $notificationRepository)
     {
         $this->redis = RedisConnectionFactory::create();
         $this->userRepository = $userRepository;
+        $this->notificationRepository = $notificationRepository;
     }
 
     public function getSubscribedEvents(): array
@@ -45,12 +47,12 @@ class NotificationResourceListener implements EventSubscriber
         }
 
         $type = $subject->getType();
-        $location = $subject->getLocation()->getUrl();
+        $locationId = $subject->getLocation()->getId();
         $admins = $this->userRepository->getLocationAdmins($subject->getLocation()->getId());
 
         if ($subject instanceof BoulderError) {
-            $this->queueAdminNotifications($admins, $location, $type, [
-                "location" => $location,
+            $this->queueAdminNotifications($admins, $locationId, $type, [
+                "location" => $locationId,
                 "boulder" => $subject->getBoulder()->getId(),
                 "boulderError" => $subject->getId(),
                 "type" => $subject->getType()
@@ -58,8 +60,8 @@ class NotificationResourceListener implements EventSubscriber
         }
 
         if ($subject instanceof BoulderComment) {
-            $this->queueAdminNotifications($admins, $location, $type, [
-                "location" => $location,
+            $this->queueAdminNotifications($admins, $locationId, $type, [
+                "location" => $locationId,
                 "boulder" => $subject->getBoulder()->getId(),
                 "boulderComment" => $subject->getId(),
                 "type" => $subject->getType()
@@ -70,7 +72,7 @@ class NotificationResourceListener implements EventSubscriber
             $userId = $subject->getRecipient()->getId();
 
             $this->redis->set("notification:$type:user:$userId", json_encode([
-                "location" => $location,
+                "location" => $locationId,
                 "ascent" => $subject->getId(),
                 "user" => $userId,
                 "type" => $subject->getType()
@@ -78,7 +80,7 @@ class NotificationResourceListener implements EventSubscriber
         }
     }
 
-    private function queueAdminNotifications(array $admins, string $location, string $type, array $data = []): void
+    private function queueAdminNotifications(array $admins, int $locationId, string $type, array $data = []): void
     {
         /**
          * @var \App\Entity\User $admin
@@ -86,9 +88,7 @@ class NotificationResourceListener implements EventSubscriber
         foreach ($admins as $admin) {
             $userId = $admin->getId();
 
-            $locationType = Notifications::getNotificationId($type, $location);
-
-            if (!$admin->hasNotification($locationType)) {
+            if (!$this->notificationRepository->findOneBy(['user' => $userId, 'type' => $type, 'location' => $locationId])) {
                 continue;
             }
 

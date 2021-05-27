@@ -4,11 +4,9 @@ namespace App\Command;
 
 use App\Entity\Location;
 use App\Entity\Notification;
-use App\Entity\Notifications;
 use App\Entity\User;
 use App\Repository\LocationRepository;
 use App\Repository\UserRepository;
-use App\Service\ContextService;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -24,10 +22,13 @@ class InitNotificationsCommand extends Command
     private EntityManagerInterface $entityManager;
     private LocationRepository $locationRepository;
 
+    private NotificationService $notificationService;
+
     public function __construct(
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
         LocationRepository $locationRepository,
+        NotificationService $notificationService,
         string $name = null
     )
     {
@@ -35,6 +36,7 @@ class InitNotificationsCommand extends Command
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
         $this->locationRepository = $locationRepository;
+        $this->notificationService = $notificationService;
     }
 
     protected function configure()
@@ -50,39 +52,24 @@ class InitNotificationsCommand extends Command
          */
         $users = $this->userRepository->findAll();
         $progress = $io->createProgressBar(count($users));
-
-        /**
-         * @var \App\Entity\Location[] $locations
-         */
-        $locations = $this->locationRepository->findAll();
-
         $updates = 0;
 
         foreach ($users as $user) {
-            foreach ($locations as $location) {
-                $locationAdminRole = ContextService::getLocationRoleName('ADMIN', $location->getId(), true);
+            $userNotifications = $this->notificationService->getUserNotifications($user);
 
-                foreach (Notification::getDefaultTypes() as $type) {
-                    $this->createNotification($user, $location, $type);
-                    $updates++;
-                }
-
-                // if is admin, add notifications
-                if (in_array($locationAdminRole, $user->getRoles(), true)) {
-                    foreach (Notification::getAdminTypes() as $type) {
-                        $this->createNotification($user, $location, $type);
-                        $updates++;
-                    }
-                }
+            foreach ($userNotifications as $userNotification) {
+                $this->entityManager->persist($userNotification);
+                $updates++;
             }
-
-            $progress->advance();
 
             if ($updates % 100 === 0) {
                 $this->entityManager->flush();
             }
+
+            $progress->advance();
         }
 
+        $this->entityManager->flush();
         $progress->finish();
 
         return 0;

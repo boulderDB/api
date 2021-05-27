@@ -2,9 +2,11 @@
 
 namespace App\EventListener;
 
+use App\Entity\TimestampableInterface;
 use App\Entity\User;
 use App\Service\NotificationService;
 use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
@@ -22,6 +24,7 @@ class UserListener implements EventSubscriber
     {
         return [
             Events::prePersist,
+            Events::preUpdate
         ];
     }
 
@@ -33,7 +36,14 @@ class UserListener implements EventSubscriber
             return;
         }
 
-        $notifications = $this->notificationService->getUserMap($subject);
-        $subject->setNotifications($notifications);
+    }
+
+    public function preUpdate(PreUpdateEventArgs $args)
+    {
+        $subject = $args->getObject();
+
+        if (!$subject instanceof User) {
+            return;
+        }
     }
 }

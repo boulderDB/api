@@ -137,6 +137,6 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface, 
 
     public function getType(): string
     {
-        return Notifications::TYPE_DOUBT;
+        return Notification::TYPE_DOUBT;
     }
 }

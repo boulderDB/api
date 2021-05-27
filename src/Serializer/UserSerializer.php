@@ -3,6 +3,7 @@
 namespace App\Serializer;
 
 use App\Entity\User;
+use App\Service\Serializer;
 use App\Service\SerializerInterface;
 
 class UserSerializer implements SerializerInterface
@@ -19,7 +20,13 @@ class UserSerializer implements SerializerInterface
             "username" => $class->getUsername(),
             "firstName" => $class->getFirstName(),
             "lastName" => $class->getLastName(),
-            "notifications" => $class->getNotifications()
+            "notifications" => array_map(function ($notification) {
+                /**
+                 * @var \App\Entity\Notification $notification
+                 */
+                return Serializer::serialize($notification);
+
+            }, $class->getNotifications()->toArray())
         ];
 
         if (in_array(self::GROUP_DETAIL, $groups)) {

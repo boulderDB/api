@@ -10,6 +10,7 @@ use App\Form\PasswordResetRequestType;
 use App\Form\PasswordResetType;
 use App\Form\UserType;
 use App\Repository\LocationRepository;
+use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Service\NotificationService;
 use App\Service\StorageClient;
@@ -57,7 +58,7 @@ class GlobalController extends AbstractController
     private LocationRepository $locationRepository;
     private StorageClient $storageClient;
     private ParameterBagInterface $parameterBag;
-    private NotificationService $notificationService;
+    private NotificationRepository $notificationRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -70,7 +71,7 @@ class GlobalController extends AbstractController
         LocationRepository $locationRepository,
         StorageClient $storageClient,
         ParameterBagInterface $parameterBag,
-        NotificationService $notificationService
+        NotificationRepository $notificationRepository
     )
     {
         $this->entityManager = $entityManager;
@@ -84,7 +85,7 @@ class GlobalController extends AbstractController
         $this->locationRepository = $locationRepository;
         $this->storageClient = $storageClient;
         $this->parameterBag = $parameterBag;
-        $this->notificationService = $notificationService;
+        $this->notificationRepository = $notificationRepository;
     }
 
     /**
@@ -147,12 +148,11 @@ class GlobalController extends AbstractController
          */
         $user = $this->getUser();
         $currentMail = $user->getEmail();
-        $notifications = $this->notificationService->getUserMap($user);
 
         $form = $this->createForm(UserType::class, $user);
-        $form->add(...UserType::notificationsField($notifications));
+        $form->add(...UserType::notificationsField($user->getId()));
 
-        $form->submit(json_decode($request->getContent(), true), false);
+        $form->submit(self::decodePayLoad($request), false);
 
         if ($this->userRepository->userExists("email", $form->getData()->getEmail()) && $currentMail !== $form->getData()->getEmail()) {
             $form->get("email")->addError(

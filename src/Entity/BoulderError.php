@@ -96,6 +96,6 @@ class BoulderError implements LocationResourceInterface, TimestampableInterface,
 
     public function getType(): string
     {
-       return Notifications::TYPE_ERROR;
+       return Notification::TYPE_ERROR;
     }
 }

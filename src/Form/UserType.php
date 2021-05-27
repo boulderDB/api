@@ -2,7 +2,12 @@
 
 namespace App\Form;
 
+use App\Entity\Notification;
 use App\Entity\User;
+use App\Entity\Wall;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\Entity;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -13,6 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use function Clue\StreamFilter\fun;
 
 class UserType extends AbstractType
 {
@@ -86,17 +92,21 @@ class UserType extends AbstractType
         ];
     }
 
-    public static function notificationsField(array $notifications): array
+    public static function notificationsField(int $userId): array
     {
         return [
             "notifications",
-            ChoiceType::class,
+            EntityType::class,
             [
+                "class" => Notification::class,
                 "multiple" => true,
-                "choices" => array_combine(array_keys($notifications), array_keys($notifications)),
-                "constraints" => [
-                    new NotBlank()
-                ]
+                "constraints" => [new NotBlank()],
+                "by_reference"=>    false,
+                "query_builder" => function (EntityRepository $entityRepository) use ($userId) {
+                    return $entityRepository->createQueryBuilder("notification")
+                        ->where("notification.user = :userId")
+                        ->setParameter("userId", $userId);
+                }
             ]
         ];
     }

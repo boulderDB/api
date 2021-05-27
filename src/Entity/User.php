@@ -104,6 +104,12 @@ class User implements UserInterface
      */
     private ?Collection $events = null;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Notification", mappedBy="user", fetch="LAZY")
+     * @var \App\Entity\Notification[]
+     */
+    private ?Collection $notifications = null;
+
     private ?string $plainPassword = null;
 
     public function __construct()
@@ -296,31 +302,23 @@ class User implements UserInterface
         $this->lastLogin = $lastLogin;
     }
 
-  /*  public function getNotifications(): array
+    public function getNotifications(): ?Collection
     {
         return $this->notifications;
     }
 
-    public function hasNotification(string $type): bool
+    public function setNotifications(?Collection $notifications): void
     {
-        return $this->notifications[$type] === true;
-    }
+        $enabledIds = array_map(function ($notification) {
+            return $notification->getId();
+        }, $notifications->toArray());
 
-    public function setNotifications(array $notifications): void
-    {
-        // set given notifications directly if not previously initialized
-        if (!$this->notifications) {
-            $this->notifications = $notifications;
-            return;
-        }
-
-        foreach ($this->notifications as $type => $value) {
-            // if not set, default to false
-            if (!in_array($type, $notifications)) {
-                $this->notifications[$type] = false;
+        foreach ($this->notifications as $notification) {
+            if (!in_array($notification->getId(), $enabledIds)) {
+                $notification->setActive(false);
             } else {
-                $this->notifications[$type] = true;
+                $notification->setActive(true);
             }
         }
-    }*/
+    }
 }

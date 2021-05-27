@@ -8,6 +8,7 @@ use App\Entity\Grade;
 use App\Entity\HoldType;
 use App\Entity\Label;
 use App\Entity\Location;
+use App\Entity\Notification;
 use App\Entity\Room;
 use App\Entity\Setter;
 use App\Entity\TimeSlot;
@@ -19,6 +20,7 @@ use App\Serializer\GradeSerializer;
 use App\Serializer\HoldTypeSerializer;
 use App\Serializer\LabelSerializer;
 use App\Serializer\LocationSerializer;
+use App\Serializer\NotificationSerializer;
 use App\Serializer\RoomSerializer;
 use App\Serializer\SetterSerializer;
 use App\Serializer\TimeSlotSerializer;
@@ -38,7 +40,8 @@ class Serializer
         Grade::class => GradeSerializer::class,
         HoldType::class => HoldTypeSerializer::class,
         Label::class => LabelSerializer::class,
-        BoulderRating::class => BoulderRatingSerializer::class
+        BoulderRating::class => BoulderRatingSerializer::class,
+        Notification::class => NotificationSerializer::class
     ];
 
     public static function serialize($any, array $groups = [SerializerInterface::GROUP_INDEX], array $arguments = []): ?array
