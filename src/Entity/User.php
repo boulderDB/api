@@ -106,11 +106,6 @@ class User implements UserInterface
 
     private ?string $plainPassword = null;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private ?array $notifications = [];
-
     public function __construct()
     {
         $this->ascents = new ArrayCollection();
@@ -119,7 +114,6 @@ class User implements UserInterface
         $this->visible = true;
         $this->active = true;
         $this->roles = [self::ROLE_USER];
-        $this->notifications = [];
     }
 
     public function getId(): ?int
@@ -302,7 +296,7 @@ class User implements UserInterface
         $this->lastLogin = $lastLogin;
     }
 
-    public function getNotifications(): array
+  /*  public function getNotifications(): array
     {
         return $this->notifications;
     }
@@ -328,5 +322,5 @@ class User implements UserInterface
                 $this->notifications[$type] = true;
             }
         }
-    }
+    }*/
 }
