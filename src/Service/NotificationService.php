@@ -6,14 +6,23 @@ use App\Entity\Location;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\Repository\LocationRepository;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 class NotificationService
 {
     private LocationRepository $locationRepository;
+    private ParameterBagInterface $parameterBag;
+    private Environment $twig;
 
-    public function __construct(LocationRepository $locationRepository)
+    public function __construct(LocationRepository $locationRepository, ParameterBagInterface  $parameterBag)
     {
         $this->locationRepository = $locationRepository;
+        $this->parameterBag = $parameterBag;
+
+        $loader = new FilesystemLoader($this->parameterBag->get('kernel.project_dir') . '/mails');
+        $this->twig = new Environment($loader);
     }
 
     /**
@@ -43,6 +52,11 @@ class NotificationService
         }
 
         return $notifications;
+    }
+
+    public function renderMail(string $template, array $variables): string
+    {
+        return $this->twig->render($template, $variables);
     }
 
     private static function createNotification(User $user, Location $location, string $type): Notification

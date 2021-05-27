@@ -6,11 +6,14 @@ use App\Entity\BoulderRating;
 
 class BoulderRatingSerializer
 {
-    public static function serialize(BoulderRating $rating)
+    public static function serialize($class, array $groups = [], array $arguments = [])
     {
+        /**
+         * @var BoulderRating $class
+         */
         return [
-            "id" => $rating->getId(),
-            "rating" => $rating->getRating()
+            "id" => $class->getId(),
+            "rating" => $class->getRating()
         ];
     }
 }

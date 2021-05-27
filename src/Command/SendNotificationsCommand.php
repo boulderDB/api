@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Factory\RedisConnectionFactory;
 use App\Mails;
 use App\Repository\UserRepository;
+use App\Service\NotificationService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,10 +22,12 @@ class SendNotificationsCommand extends Command
     private \Redis $redis;
     private UserRepository $userRepository;
     private MailerInterface $mailer;
+    private NotificationService $notificationService;
 
     public function __construct(
         UserRepository $userRepository,
         MailerInterface $mailer,
+        NotificationService $notificationService,
         string $name = null
     )
     {
@@ -32,6 +35,7 @@ class SendNotificationsCommand extends Command
         parent::__construct($name);
         $this->userRepository = $userRepository;
         $this->mailer = $mailer;
+        $this->notificationService = $notificationService;
     }
 
     protected function configure()
@@ -41,8 +45,10 @@ class SendNotificationsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $keys = $this->redis->keys('notification:*');
+        $progress = $io->createProgressBar(count($keys));
 
-        foreach ($this->redis->keys('notification:*') as $key) {
+        foreach ($keys as $key) {
             $data = json_decode($this->redis->get($key), true);
 
             /**
@@ -56,17 +62,25 @@ class SendNotificationsCommand extends Command
             }
 
             $recipient = $user->getEmail();
+            $type = $data["type"] ?? null;
 
             if ($_ENV["APP_DEBUG"] !== "prod") {
                 $recipient = $_ENV["DEBUG_MAIL"];
             }
 
+            if (!$type) {
+                $io->error("No type given");
+                continue;
+            }
+
+            $html = $this->notificationService->renderMail("$type-notification.twig", $data);
+
             try {
                 $email = (new Email())
                     ->from($_ENV["MAILER_FROM"])
                     ->to($recipient)
-                    ->subject("")
-                    ->html(Mails::renderNotification($data["type"], $data));
+                    ->subject("BoulderDB – New $type")
+                    ->html($html);
             } catch (RfcComplianceException $exception) {
                 $io->error("Invalid email provided {$user->getEmail()}");
                 continue;
@@ -78,7 +92,12 @@ class SendNotificationsCommand extends Command
                 $io->error("Failed to send message");
                 continue;
             }
+
+            $this->redis->del($key);
+            $progress->advance();
         }
+
+        $progress->finish();
 
         return 0;
     }

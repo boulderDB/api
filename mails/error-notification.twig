@@ -1,0 +1,19 @@
+{% extends "components/base.html.twig" %}
+
+{% block title %}Error notification{% endblock %}
+
+{% block content %}
+    <p>
+        A new error was reported on boulder "{{ boulder.name }}" starting at {{ boulder.start_wall.name }}.
+    </p>
+
+    <p>
+        <strong>Message</strong>: {{ boulderError.message }} <br/>
+        <strong>User</strong>: @{{ boulderError.author.username }}
+    </p>
+
+    <a href="{{ link }}" target="_blank" rel="noopener">
+        Show details
+    </a>
+
+{% endblock %}

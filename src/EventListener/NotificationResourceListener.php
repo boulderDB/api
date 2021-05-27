@@ -10,6 +10,7 @@ use App\Entity\NotificationResourceInterface;
 use App\Factory\RedisConnectionFactory;
 use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
+use App\Service\Serializer;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
@@ -46,25 +47,28 @@ class NotificationResourceListener implements EventSubscriber
             return;
         }
 
+        $id = $subject->getId();
         $type = $subject->getType();
         $locationId = $subject->getLocation()->getId();
         $admins = $this->userRepository->getLocationAdmins($subject->getLocation()->getId());
 
         if ($subject instanceof BoulderError) {
             $this->queueAdminNotifications($admins, $locationId, $type, [
-                "location" => $locationId,
-                "boulder" => $subject->getBoulder()->getId(),
-                "boulderError" => $subject->getId(),
-                "type" => $subject->getType()
+                "location" => Serializer::serialize($subject->getLocation()),
+                "boulder" => Serializer::serialize($subject->getBoulder()),
+                "boulderError" => Serializer::serialize($subject),
+                "type" => $subject->getType(),
+                "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/admin/errors?focus=$id"
             ]);
         }
 
         if ($subject instanceof BoulderComment) {
             $this->queueAdminNotifications($admins, $locationId, $type, [
-                "location" => $locationId,
-                "boulder" => $subject->getBoulder()->getId(),
-                "boulderComment" => $subject->getId(),
-                "type" => $subject->getType()
+                "location" => Serializer::serialize($subject->getLocation()),
+                "boulder" => Serializer::serialize($subject->getBoulder()),
+                "boulderComment" => Serializer::serialize($subject),
+                "type" => $subject->getType(),
+                "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/admin/comments?focus=$id"
             ]);
         }
 
@@ -72,10 +76,12 @@ class NotificationResourceListener implements EventSubscriber
             $userId = $subject->getRecipient()->getId();
 
             $this->redis->set("notification:$type:user:$userId", json_encode([
-                "location" => $locationId,
-                "ascent" => $subject->getId(),
-                "user" => $userId,
-                "type" => $subject->getType()
+                "location" => Serializer::serialize($subject->getLocation()),
+                "boulder" => Serializer::serialize($subject->getBoulder()),
+                "ascent" => Serializer::serialize($subject->getAscent()),
+                "user" => Serializer::serialize($subject->getRecipient()),
+                "type" => $subject->getType(),
+                "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/doubts"
             ]));
         }
     }

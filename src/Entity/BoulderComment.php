@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class BoulderComment implements LocationResourceInterface, TimestampableInterface
+class BoulderComment implements LocationResourceInterface, TimestampableInterface, NotificationResourceInterface
 {
     use TimestampTrait;
     use LocationTrait;
@@ -69,5 +69,10 @@ class BoulderComment implements LocationResourceInterface, TimestampableInterfac
     public function setMessage(?string $message): void
     {
         $this->message = $message;
+    }
+
+    public function getType(): string
+    {
+        return Notification::TYPE_COMMENT;
     }
 }
