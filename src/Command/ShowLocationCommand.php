@@ -59,7 +59,7 @@ class ShowLocationCommand extends Command
         $admins = $this->userRepository->getLocationAdmins($locationId);
 
         $io->table(
-            ['id', 'username', 'email', 'notifications'],
+            ['id', 'username', 'email', 'roles'],
             array_map(function ($admin) use ($location) {
 
                 /**
@@ -69,7 +69,7 @@ class ShowLocationCommand extends Command
                     $admin->getId(),
                     $admin->getUsername(),
                     $admin->getEmail(),
-                    implode(",", $admin->getNotifications()[$location->getId()])
+                   json_encode( $admin->getRoles())
                 ];
             }, $admins)
         );
