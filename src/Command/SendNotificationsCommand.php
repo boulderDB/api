@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use App\Service\NotificationService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -40,11 +41,14 @@ class SendNotificationsCommand extends Command
 
     protected function configure()
     {
+        $this->addOption("dry-run", "d", InputOption::VALUE_NONE);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $dryRun = $input->getOption("dry-run");
+
         $keys = $this->redis->keys('notification:*');
         $progress = $io->createProgressBar(count($keys));
 
@@ -54,7 +58,7 @@ class SendNotificationsCommand extends Command
             /**
              * @var \App\Entity\User $user
              */
-            $user = $this->userRepository->find($data["user"]["id"]);
+            $user = $this->userRepository->find($data["user"]);
 
             if (!$user) {
                 $io->error("User {$user->getId()} not found");
@@ -64,16 +68,24 @@ class SendNotificationsCommand extends Command
             $recipient = $user->getEmail();
             $type = $data["type"] ?? null;
 
-            if ($_ENV["APP_DEBUG"] !== "prod") {
+            if ($_ENV["DEBUG_MAIL"]) {
                 $recipient = $_ENV["DEBUG_MAIL"];
             }
+
+            $io->writeln("Send $type notification to $recipient");
 
             if (!$type) {
                 $io->error("No type given");
                 continue;
             }
 
+
             $html = $this->notificationService->renderMail("$type-notification.twig", $data);
+
+            if ($dryRun) {
+                $progress->advance();
+                continue;
+            }
 
             try {
                 $email = (new Email())
