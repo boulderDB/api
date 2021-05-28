@@ -3,6 +3,7 @@
 namespace App\Serializer;
 
 use App\Entity\TimeSlot;
+use App\Service\Serializer;
 use App\Service\SerializerInterface;
 
 class TimeSlotSerializer implements SerializerInterface
@@ -30,7 +31,7 @@ class TimeSlotSerializer implements SerializerInterface
 
         if (in_array(self::GROUP_DETAIL, $groups)) {
             $data["reservations"] = array_map(function ($reservation) {
-                return ReservationSerializer::serialize($reservation);
+                return Serializer::serialize($reservation);
 
             }, $class->getReservations()->toArray());
         }

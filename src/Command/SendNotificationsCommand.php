@@ -79,7 +79,6 @@ class SendNotificationsCommand extends Command
                 continue;
             }
 
-
             $html = $this->notificationService->renderMail("$type-notification.twig", $data);
 
             if ($dryRun) {

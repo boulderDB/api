@@ -3,19 +3,23 @@
 namespace App\Serializer;
 
 use App\Entity\Reservation;
+use App\Service\SerializerInterface;
 
-class ReservationSerializer
+class ReservationSerializer implements SerializerInterface
 {
-    public static function serialize(Reservation $reservation)
+    public function serialize($class, array $groups = [], array $arguments = []): array
     {
+        /**
+         * @var Reservation $class
+         */
         return [
-            "id" => $reservation->getId(),
-            "first_name" => $reservation->getFirstName(),
-            "last_name" => $reservation->getLastName(),
-            "username" => $reservation->getUsername(),
-            "appeared" => $reservation->getAppeared(),
-            "checked_in" => $reservation->getCheckedIn(),
-            "quantity" => $reservation->getQuantity()
+            "id" => $class->getId(),
+            "first_name" => $class->getFirstName(),
+            "last_name" => $class->getLastName(),
+            "username" => $class->getUsername(),
+            "appeared" => $class->getAppeared(),
+            "checked_in" => $class->getCheckedIn(),
+            "quantity" => $class->getQuantity()
         ];
     }
 }

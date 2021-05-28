@@ -3,19 +3,23 @@
 namespace App\Serializer;
 
 use App\Entity\Ascent;
+use App\Service\SerializerInterface;
 
-class AscentSerializer
+class AscentSerializer implements SerializerInterface
 {
-    public static function serialize(Ascent $ascent)
+    public function serialize($class, array $groups = [], array $arguments = []): array
     {
+        /**
+         * @var Ascent $class
+         */
         return [
-            "boulderId" => $ascent->getBoulder()->getId(),
-            "points" => $ascent->getScore(),
-            "ascents" => $ascent->getBoulder()->getAscents()->count(),
+            "boulderId" => $class->getBoulder()->getId(),
+            "points" => $class->getScore(),
+            "ascents" => $class->getBoulder()->getAscents()->count(),
             "me" => [
-                "id" => $ascent->getId(),
-                "type" => $ascent->getType(),
-                "userId" => $ascent->getUser()->getId()
+                "id" => $class->getId(),
+                "type" => $class->getType(),
+                "userId" => $class->getUser()->getId()
             ]
         ];
     }

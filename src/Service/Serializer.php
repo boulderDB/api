@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Ascent;
 use App\Entity\Boulder;
 use App\Entity\BoulderComment;
 use App\Entity\BoulderError;
@@ -11,11 +12,13 @@ use App\Entity\HoldType;
 use App\Entity\Label;
 use App\Entity\Location;
 use App\Entity\Notification;
+use App\Entity\Reservation;
 use App\Entity\Room;
 use App\Entity\Setter;
 use App\Entity\TimeSlot;
 use App\Entity\User;
 use App\Entity\Wall;
+use App\Serializer\AscentSerializer;
 use App\Serializer\BoulderCommentSerializer;
 use App\Serializer\BoulderErrorSerializer;
 use App\Serializer\BoulderRatingSerializer;
@@ -25,6 +28,7 @@ use App\Serializer\HoldTypeSerializer;
 use App\Serializer\LabelSerializer;
 use App\Serializer\LocationSerializer;
 use App\Serializer\NotificationSerializer;
+use App\Serializer\ReservationSerializer;
 use App\Serializer\RoomSerializer;
 use App\Serializer\SetterSerializer;
 use App\Serializer\TimeSlotSerializer;
@@ -34,20 +38,22 @@ use App\Serializer\WallSerializer;
 class Serializer
 {
     private static array $serializers = [
-        TimeSlot::class => TimeSlotSerializer::class,
-        User::class => UserSerializer::class,
-        Location::class => LocationSerializer::class,
-        Room::class => RoomSerializer::class,
-        Setter::class => SetterSerializer::class,
+        Ascent::class => AscentSerializer::class,
+        BoulderComment::class => BoulderCommentSerializer::class,
+        BoulderError::class => BoulderErrorSerializer::class,
+        BoulderRating::class => BoulderRatingSerializer::class,
         Boulder::class => BoulderSerializer::class,
-        Wall::class => WallSerializer::class,
         Grade::class => GradeSerializer::class,
         HoldType::class => HoldTypeSerializer::class,
         Label::class => LabelSerializer::class,
-        BoulderRating::class => BoulderRatingSerializer::class,
+        Location::class => LocationSerializer::class,
         Notification::class => NotificationSerializer::class,
-        BoulderError::class => BoulderErrorSerializer::class,
-        BoulderComment::class => BoulderCommentSerializer::class
+        Reservation::class => ReservationSerializer::class,
+        Room::class => RoomSerializer::class,
+        Setter::class => SetterSerializer::class,
+        TimeSlot::class => TimeSlotSerializer::class,
+        User::class => UserSerializer::class,
+        Wall::class => WallSerializer::class,
     ];
 
     public static function serialize($any, array $groups = [SerializerInterface::GROUP_INDEX], array $arguments = []): ?array

@@ -3,10 +3,11 @@
 namespace App\Serializer;
 
 use App\Entity\BoulderRating;
+use App\Service\SerializerInterface;
 
-class BoulderRatingSerializer
+class BoulderRatingSerializer implements SerializerInterface
 {
-    public static function serialize($class, array $groups = [], array $arguments = [])
+    public function serialize($class, array $groups = [], array $arguments = []): array
     {
         /**
          * @var BoulderRating $class
