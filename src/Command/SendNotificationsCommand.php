@@ -58,7 +58,7 @@ class SendNotificationsCommand extends Command
             /**
              * @var \App\Entity\User $user
              */
-            $user = $this->userRepository->find($data["user"]);
+            $user = $this->userRepository->find($data["user"]["id"]);
 
             if (!$user) {
                 $io->error("User {$user->getId()} not found");
