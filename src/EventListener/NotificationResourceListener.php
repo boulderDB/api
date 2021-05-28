@@ -79,7 +79,7 @@ class NotificationResourceListener implements EventSubscriber
                 "location" => Serializer::serialize($subject->getLocation()),
                 "boulder" => Serializer::serialize($subject->getBoulder()),
                 "ascent" => Serializer::serialize($subject->getAscent()),
-                "user" => Serializer::serialize($subject->getRecipient()),
+                "user" => $subject->getRecipient()->getId(),
                 "type" => $subject->getType(),
                 "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/doubts"
             ]));

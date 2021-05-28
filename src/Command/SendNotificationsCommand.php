@@ -54,11 +54,10 @@ class SendNotificationsCommand extends Command
 
         foreach ($keys as $key) {
             $data = json_decode($this->redis->get($key), true);
-
             /**
              * @var \App\Entity\User $user
              */
-            $user = $this->userRepository->find($data["user"]["id"]);
+            $user = $this->userRepository->find($data["user"]);
 
             if (!$user) {
                 $io->error("User {$user->getId()} not found");
@@ -71,8 +70,6 @@ class SendNotificationsCommand extends Command
             if ($_ENV["DEBUG_MAIL"]) {
                 $recipient = $_ENV["DEBUG_MAIL"];
             }
-
-            $io->writeln("Send $type notification to $recipient");
 
             if (!$type) {
                 $io->error("No type given");
