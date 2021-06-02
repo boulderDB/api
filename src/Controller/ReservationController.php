@@ -309,7 +309,7 @@ class ReservationController extends AbstractController
      */
     public function update(Request $request, string $id)
     {
-        $this->denyAccessUnlessGranted($this->contextService->getLocationRole(User::ROLE_ADMIN));
+        $this->denyUnlessLocationAdmin();
 
         /**
          * @var Reservation $reservation
@@ -349,7 +349,7 @@ class ReservationController extends AbstractController
      */
     public function listNoShows()
     {
-        $this->denyAccessUnlessGranted($this->contextService->getLocationRole(User::ROLE_ADMIN));
+        $this->denyUnlessLocationAdmin();
 
         return $this->json($this->reservationRepository->findNoShows());
     }
