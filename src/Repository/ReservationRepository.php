@@ -60,6 +60,20 @@ class ReservationRepository extends ServiceEntityRepository
         return $query->fetch()["count"];
     }
 
+    public function countPendingReservations(Reservation $reservation)
+    {
+        $statement = "SELECT count(id) FROM reservation WHERE date >= :dateTime AND user_id = :userId AND room_id = :roomId";
+        $query = $this->getEntityManager()->getConnection()->prepare($statement);
+
+        $query->execute([
+            "dateTime" => $reservation->getDate()->format(TimeHelper::DATE_FORMAT_DATETIME),
+            "userId" => $reservation->getUser()->getId(),
+            "roomId" => $reservation->getRoom()->getId()
+        ]);
+
+        return $query->fetch()["count"];
+    }
+
     public function hasPendingReservationForDate(Reservation $reservation)
     {
         $statement = "SELECT count(id) FROM reservation WHERE date = :dateTime AND user_id = :userId AND room_id = :roomId";

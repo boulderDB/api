@@ -32,6 +32,8 @@ class ReservationController extends AbstractController
     use ResponseTrait;
     use ContextualizedControllerTrait;
 
+    private const PENDING_RESERVATION_LIMIT = 2;
+
     private EntityManagerInterface $entityManager;
     private ContextService $contextService;
     private TimeSlotRepository $timeSlotRepository;
@@ -164,6 +166,15 @@ class ReservationController extends AbstractController
         if ($this->reservationRepository->hasPendingReservationForDate($reservation)) {
             return $this->json([
                 "message" => "You already have a reservation for this day.",
+                "code" => Response::HTTP_CONFLICT
+            ], Response::HTTP_CONFLICT);
+        }
+
+        if ($this->reservationRepository->countPendingReservations($reservation) >= self::PENDING_RESERVATION_LIMIT) {
+            $limit = self::PENDING_RESERVATION_LIMIT;
+
+            return $this->json([
+                "message" => "You exceeded limit of $limit pending reservations",
                 "code" => Response::HTTP_CONFLICT
             ], Response::HTTP_CONFLICT);
         }
