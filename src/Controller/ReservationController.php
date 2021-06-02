@@ -320,10 +320,6 @@ class ReservationController extends AbstractController
             return $this->resourceNotFoundResponse("Reservation", $id);
         }
 
-        if (!$reservation->getUser() !== $this->getUser()) {
-            return $this->unauthorizedResponse();
-        }
-
         $form = $this->createFormBuilder($reservation, ["csrf_protection" => false])
             ->add("checkedIn", CheckboxType::class, [
                 "constraints" => [new NotNull()]
