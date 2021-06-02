@@ -65,8 +65,10 @@ class ReservationRepository extends ServiceEntityRepository
         $statement = "SELECT count(id) FROM reservation WHERE date >= :dateTime AND user_id = :userId AND room_id = :roomId";
         $query = $this->getEntityManager()->getConnection()->prepare($statement);
 
+        $currentDate = new \DateTime();
+
         $query->execute([
-            "dateTime" => $reservation->getDate()->format(TimeHelper::DATE_FORMAT_DATETIME),
+            "dateTime" => $currentDate->format(TimeHelper::DATE_FORMAT_DATETIME),
             "userId" => $reservation->getUser()->getId(),
             "roomId" => $reservation->getRoom()->getId()
         ]);
