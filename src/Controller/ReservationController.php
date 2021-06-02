@@ -176,7 +176,7 @@ class ReservationController extends AbstractController
             return $this->json([
                 "message" => "You exceeded limit of $limit pending reservations",
                 "code" => Response::HTTP_CONFLICT
-            ], Response::HTTP_CONFLICT);
+            ], Response::HTTP_NOT_ACCEPTABLE);
         }
 
         /**
