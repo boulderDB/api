@@ -203,7 +203,7 @@ class GlobalController extends AbstractController
      */
     public function requestReset(Request $request)
     {
-        self::rateLimit($request, 'reset', 10);
+        self::rateLimit($request, 'reset', 50);
 
         $form = $this->createForm(PasswordResetRequestType::class);
         $form->submit(self::decodePayLoad($request));

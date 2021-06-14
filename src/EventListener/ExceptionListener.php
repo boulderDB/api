@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Exception\RateLimitException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,6 +32,13 @@ class ExceptionListener implements EventSubscriberInterface
             "message" => "Internal trouble. Someone got work to do.",
             "code" => $exception->getCode() ? $exception->getCode() : Response::HTTP_INTERNAL_SERVER_ERROR
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        if ($exception instanceof RateLimitException) {
+            $response = new JsonResponse([
+                "message" => "Too many requests",
+                "code" => Response::HTTP_TOO_MANY_REQUESTS
+            ], Response::HTTP_TOO_MANY_REQUESTS);
+        }
 
         if ($exception instanceof AuthenticationException) {
             $response = new JsonResponse([
