@@ -5,6 +5,7 @@ namespace App\EventListener;
 use App\Entity\Reservation;
 use App\Factory\RedisConnectionFactory;
 use App\Mails;
+use App\Service\NotificationService;
 use Carbon\Carbon;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
@@ -19,11 +20,13 @@ class ReservationListener implements EventSubscriber
 {
     private MailerInterface $mailer;
     private \Redis $redis;
+    private NotificationService $notificationService;
 
-    public function __construct(MailerInterface $mailer)
+    public function __construct(MailerInterface $mailer, NotificationService $notificationService)
     {
         $this->mailer = $mailer;
         $this->redis = RedisConnectionFactory::create();
+        $this->notificationService = $notificationService;
     }
 
     public function getSubscribedEvents()
@@ -73,18 +76,21 @@ class ReservationListener implements EventSubscriber
             return;
         }
 
+        $html = $this->notificationService->renderMail("reservation-confirmation.twig", [
+            "location" => $locationName,
+            "date" => $reservationDate,
+            "startTime" => $subject->getStartTime(),
+            "endTime" => $subject->getEndTime(),
+            "link" => $cancellationLink
+        ]);
+
         try {
             $email = (new Email())
                 ->from($_ENV["MAILER_FROM"])
                 ->to($subject->getEmail())
                 ->subject("Your Time Slot reservation @{$locationName} on {$reservationDate} from {$subject->getStartTime()} to {$subject->getEndTime()}")
-                ->html(Mails::renderReservationConfirmation([
-                    "locationName" => $locationName,
-                    "reservationDate" => $reservationDate,
-                    "startTime" => $subject->getStartTime(),
-                    "endTime" => $subject->getEndTime(),
-                    "cancellationLink" => $cancellationLink
-                ]));
+                ->html($html);
+            
         } catch (RfcComplianceException $exception) {
             throw new HttpException(Response::HTTP_BAD_REQUEST, "Invalid email provided");
         }

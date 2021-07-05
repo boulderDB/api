@@ -49,7 +49,7 @@ class WallRepository extends ServiceEntityRepository
 
     public function getDetail(int $id, int $locationId): ?array
     {
-        $statement = "SELECT wall.id, wall.name, description, count(boulder.id) as active_boulders FROM wall 
+        $statement = "SELECT wall.id, wall.name, wall.media, description, count(boulder.id) as active_boulders FROM wall 
                       LEFT JOIN BOULDER on boulder.start_wall_id = wall.id 
                       WHERE wall.tenant_id = :locationId AND wall.active = true 
                       AND boulder.status = 'active' 

@@ -1,0 +1,16 @@
+{% extends "components/base.html.twig" %}
+
+{% block title %}Error notification{% endblock %}
+
+{% block content %}
+    <p>
+        Your Time Slot reservation @{{ location }} on {{ date }} from {{ startTime }} to {{ endTime }}
+    </p>
+
+    <br/>
+    <br/>
+
+    <p>
+        If you cannot attend to your slot, please <a href="{{ link }}">cancel it</a>.
+    </p>
+{% endblock %}

@@ -59,6 +59,7 @@ class GlobalController extends AbstractController
     private StorageClient $storageClient;
     private ParameterBagInterface $parameterBag;
     private NotificationRepository $notificationRepository;
+    private NotificationService $notificationService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -71,7 +72,8 @@ class GlobalController extends AbstractController
         LocationRepository $locationRepository,
         StorageClient $storageClient,
         ParameterBagInterface $parameterBag,
-        NotificationRepository $notificationRepository
+        NotificationRepository $notificationRepository,
+        NotificationService $notificationService
     )
     {
         $this->entityManager = $entityManager;
@@ -86,6 +88,7 @@ class GlobalController extends AbstractController
         $this->storageClient = $storageClient;
         $this->parameterBag = $parameterBag;
         $this->notificationRepository = $notificationRepository;
+        $this->notificationService = $notificationService;
     }
 
     /**
@@ -239,11 +242,15 @@ class GlobalController extends AbstractController
 
         $this->redis->set($hash, $user->getId(), self::PASSWORD_RESET_EXPIRY);
 
+        $html = $this->notificationService->renderMail("password-reset-request.twig", [
+            "link" => "$clientHostname/password-reset/$hash"
+        ]);
+
         $email = (new Email())
             ->from($_ENV["MAILER_FROM"])
             ->to($user->getEmail())
-            ->subject('Password reset')
-            ->html("<p>Please use the following <a href='$clientHostname/password-reset/$hash'>link</a> to reset your password.</p>");
+            ->subject('BoulderDB Password reset')
+            ->html($html);
 
         $this->mailer->send($email);
 
