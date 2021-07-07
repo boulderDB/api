@@ -230,7 +230,7 @@ class GlobalController extends AbstractController
         /**
          * @var User $user
          */
-        $user = $this->userRepository->findOneBy(["email" => $email]);
+        $user = $this->userRepository->loadUserByUsername($email);
 
         if (!$user) {
             return $this->resourceNotFoundResponse("User", $email);
