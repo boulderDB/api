@@ -69,7 +69,7 @@ class SetterController extends AbstractController
         $form = $this->createForm(SetterType::class, $setter);
         $form->submit(self::decodePayLoad($request), false);
 
-        if ($this->setterRepository->exists("username", $form->getData()->getUsername())) {
+        if ($this->setterRepository->exists("username", $form->getData()->getUsername(), $this->contextService->getLocation()->getId())) {
             $form->get("username")->addError(
                 new FormError('This username is already taken')
             );
