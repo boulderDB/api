@@ -14,14 +14,21 @@ class SetterRepository extends ServiceEntityRepository
         parent::__construct($registry, Setter::class);
     }
 
-    public function exists(string $property, string $value): bool
+    public function exists(string $property, string $value, int $locationId): bool
     {
         $connection = $this->getEntityManager()->getConnection();
-        $statement = "select id from setter where lower({$property}) = lower(:property)";
+        $statement = "
+            SELECT id FROM setter 
+            INNER JOIN setter_locations on setter.id = setter_locations.setter_id 
+            WHERE lower({$property}) = lower(:property) 
+            AND setter_locations.location_id = :locationId
+        ";
+
         $query = $connection->prepare($statement);
 
         $query->execute([
-            "property" => strtolower($value)
+            "property" => strtolower($value),
+            "locationId" => $locationId
         ]);
 
         $result = $query->fetchOne();
