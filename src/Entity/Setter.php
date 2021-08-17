@@ -21,13 +21,13 @@ class Setter implements TimestampableInterface
     private ?int $id = null;
 
     /**
-     * @ORM\Column(type="string", length=64, unique=true)
+     * @ORM\Column(type="string", length=64)
      */
     private ?string $username = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", unique=true)
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private ?User $user = null;
 
