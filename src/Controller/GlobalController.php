@@ -382,7 +382,7 @@ class GlobalController extends AbstractController
      */
     public function locations()
     {
-        $locations = $this->locationRepository->findAll();
+        $locations = $this->locationRepository->getPublic();
 
         return $this->okResponse(Serializer::serialize($locations));
     }
@@ -392,7 +392,7 @@ class GlobalController extends AbstractController
      */
     public function location(string $id)
     {
-        $location = $this->locationRepository->find($id);
+        $location = $this->locationRepository->getPublicById($id);
 
         if (!$location) {
             return $this->resourceNotFoundResponse("Location", $id);

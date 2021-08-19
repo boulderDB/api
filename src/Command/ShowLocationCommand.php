@@ -19,7 +19,6 @@ class ShowLocationCommand extends Command
 
     private UserRepository $userRepository;
     private LocationRepository $locationRepository;
-    private SetterRepository $setterRepository;
 
     public function __construct(
         UserRepository $userRepository,
@@ -31,7 +30,6 @@ class ShowLocationCommand extends Command
         parent::__construct($name);
         $this->userRepository = $userRepository;
         $this->locationRepository = $locationRepository;
-        $this->setterRepository = $setterRepository;
     }
 
     protected function configure()
@@ -56,23 +54,44 @@ class ShowLocationCommand extends Command
             return 1;
         }
 
-        $admins = $this->userRepository->getLocationAdmins($locationId);
+        function logTableArguments(array $users): array
+        {
+            return [
+                ['id', 'username', 'email', 'roles'],
+                array_map(function ($user) {
+                    /**
+                     * @var User $user
+                     */
+                    return [
+                        $user->getId(),
+                        $user->getUsername(),
+                        $user->getEmail(),
+                        json_encode($user->getRoles())
+                    ];
+                }, $users)
+            ];
+        }
 
-        $io->table(
-            ['id', 'username', 'email', 'roles'],
-            array_map(function ($admin) use ($location) {
-
-                /**
-                 * @var User $admin
-                 */
-                return [
-                    $admin->getId(),
-                    $admin->getUsername(),
-                    $admin->getEmail(),
-                   json_encode( $admin->getRoles())
-                ];
-            }, $admins)
+        $admins = $this->userRepository->getByRole(
+            ContextService::getLocationRoleName(User::ADMIN, $locationId, true)
         );
+
+        $io->section("Admins");
+        $io->table(...logTableArguments($admins));
+
+        $counters = $this->userRepository->getByRole(
+            ContextService::getLocationRoleName(User::COUNTER, $locationId, true)
+        );
+
+        $io->section("Counters");
+        $io->table(...logTableArguments($counters));
+
+        $setters = $this->userRepository->getByRole(
+            ContextService::getLocationRoleName(User::SETTER, $locationId, true)
+        );
+
+        $io->section("Setters");
+        $io->table(...logTableArguments($setters));
 
         return 0;
     }

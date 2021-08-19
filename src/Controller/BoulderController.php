@@ -72,7 +72,7 @@ class BoulderController extends AbstractController
      */
     public function create(Request $request)
     {
-        $this->denyUnlessLocationAdmin();
+        $this->denyUnlessLocationAdminOrSetter();
 
         $boulder = new Boulder();
 
@@ -94,7 +94,7 @@ class BoulderController extends AbstractController
      */
     public function update(Request $request, string $id)
     {
-        $this->denyUnlessLocationAdmin();
+        $this->denyUnlessLocationAdminOrSetter();
         $boulder = $this->boulderRepository->find($id);
 
         if (!$boulder) {

@@ -7,9 +7,11 @@ use App\Entity\BoulderComment;
 use App\Entity\BoulderError;
 use App\Entity\LocationResourceInterface;
 use App\Entity\NotificationResourceInterface;
+use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
 use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
+use App\Service\ContextService;
 use App\Service\Serializer;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
@@ -50,27 +52,6 @@ class NotificationResourceListener implements EventSubscriber
         $id = $subject->getId();
         $type = $subject->getType();
         $locationId = $subject->getLocation()->getId();
-        $admins = $this->userRepository->getLocationAdmins($subject->getLocation()->getId());
-
-        if ($subject instanceof BoulderError) {
-            $this->queueAdminNotifications($admins, $locationId, $type, [
-                "location" => Serializer::serialize($subject->getLocation()),
-                "boulder" => Serializer::serialize($subject->getBoulder()),
-                "boulderError" => Serializer::serialize($subject),
-                "type" => $subject->getType(),
-                "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/admin/errors?focus=$id"
-            ]);
-        }
-
-        if ($subject instanceof BoulderComment) {
-            $this->queueAdminNotifications($admins, $locationId, $type, [
-                "location" => Serializer::serialize($subject->getLocation()),
-                "boulder" => Serializer::serialize($subject->getBoulder()),
-                "boulderComment" => Serializer::serialize($subject),
-                "type" => $subject->getType(),
-                "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/admin/comments?focus=$id"
-            ]);
-        }
 
         if ($subject instanceof AscentDoubt) {
             $userId = $subject->getRecipient()->getId();
@@ -83,22 +64,54 @@ class NotificationResourceListener implements EventSubscriber
                 "type" => $subject->getType(),
                 "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/doubts"
             ]));
+
+            return;
+        }
+
+        $admins = $this->userRepository->getByRole(
+            ContextService::getLocationRoleName(User::ADMIN, $locationId, true)
+        );
+
+        $setters = $this->userRepository->getByRole(
+            ContextService::getLocationRoleName(User::SETTER, $locationId, true)
+        );
+
+        if ($subject instanceof BoulderError) {
+            $this->queueAdminNotifications([...$admins, ...$setters], $locationId, $type, [
+                "location" => Serializer::serialize($subject->getLocation()),
+                "boulder" => Serializer::serialize($subject->getBoulder()),
+                "boulderError" => Serializer::serialize($subject),
+                "type" => $subject->getType(),
+                "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/admin/errors?focus=$id"
+            ]);
+
+            return;
+        }
+
+        if ($subject instanceof BoulderComment) {
+            $this->queueAdminNotifications([...$admins, ...$setters], $locationId, $type, [
+                "location" => Serializer::serialize($subject->getLocation()),
+                "boulder" => Serializer::serialize($subject->getBoulder()),
+                "boulderComment" => Serializer::serialize($subject),
+                "type" => $subject->getType(),
+                "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/admin/comments?focus=$id"
+            ]);
         }
     }
 
-    private function queueAdminNotifications(array $admins, int $locationId, string $type, array $data = []): void
+    private function queueAdminNotifications(array $users, int $locationId, string $type, array $data = []): void
     {
         /**
-         * @var \App\Entity\User $admin
+         * @var \App\Entity\User $user
          */
-        foreach ($admins as $admin) {
-            $userId = $admin->getId();
+        foreach ($users as $user) {
+            $userId = $user->getId();
 
             if (!$this->notificationRepository->findOneBy(['user' => $userId, 'type' => $type, 'location' => $locationId])) {
                 continue;
             }
 
-            $data["user"] = $admin->getId();
+            $data["user"] = $user->getId();
             $this->redis->set("notification:$type:user:$userId", json_encode($data));
         }
     }

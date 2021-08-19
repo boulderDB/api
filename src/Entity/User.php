@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Service\ContextService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,10 +18,19 @@ class User implements UserInterface
     public const USER = 'USER';
     public const SETTER = 'SETTER';
     public const ADMIN = 'ADMIN';
+    public const COUNTER = 'COUNTER';
 
     public const ROLE_USER = 'ROLE_' . self::USER;
     public const ROLE_SETTER = 'ROLE_' . self::SETTER;
     public const ROLE_ADMIN = 'ROLE_' . self::ADMIN;
+    public const ROLE_COUNTER = 'ROLE_' . self::COUNTER;
+
+    public const ROLES = [
+        self::USER,
+        self::SETTER,
+        self::ADMIN,
+        self::COUNTER
+    ];
 
     /**
      * @ORM\Id()
@@ -199,7 +209,10 @@ class User implements UserInterface
 
     public function getRoles(): array
     {
-        return $this->roles;
+        // filter out default role
+        return array_values(array_filter($this->roles, function (string $role) {
+            return $role !== "ROLE_USER";
+        }));
     }
 
     public function setRoles(array $roles): void

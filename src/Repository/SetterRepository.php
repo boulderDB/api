@@ -38,22 +38,14 @@ class SetterRepository extends ServiceEntityRepository
 
     public static function getIndexStatement(string $locationId, string $filter = null)
     {
-        $filters = ["active", "current"];
+        $filters = ["current"];
 
         if ($filter && !in_array($filter, $filters)) {
             throw new \InvalidArgumentException("Unsupported filter: '$filter'");
         }
 
-        if ($filter === "active") {
-            return "SELECT * FROM setter
-                INNER JOIN setter_locations ON setter.id = setter_locations.setter_id
-                WHERE setter_locations.location_id = {$locationId}
-                AND setter.active = true
-                ORDER BY lower(setter.username) ASC";
-        }
-
         if ($filter === "current") {
-            return "SELECT setter.id, setter.username, setter.active, users.id as user_id FROM boulder 
+            return "SELECT setter.id, setter.username, users.id as user_id FROM boulder 
                 INNER JOIN boulder_setters_v2 ON boulder_setters_v2.boulder_id = boulder.id 
                 INNER JOIN setter ON setter.id = boulder_setters_v2.setter_id 
                 LEFT JOIN users ON setter.user_id = users.id

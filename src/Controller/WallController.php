@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use function Symfony\Component\String\s;
 
 /**
  * @Route("/wall")
@@ -38,19 +39,11 @@ class WallController extends AbstractController
     /**
      * @Route(methods={"GET"})
      */
-    public function index(Request $request)
+    public function index()
     {
-        $connection = $this->entityManager->getConnection();
+        $locationId = $this->contextService->getLocation()->getId();
 
-        $statement = WallRepository::getIndexStatement(
-            $this->contextService->getLocation()->getId(),
-            $request->query->get("filter")
-        );
-
-        $query = $connection->prepare($statement["sql"]);
-        $query->execute($statement["parameters"]);
-
-        return $this->json($query->fetchAllAssociative());
+        return $this->json($this->wallRepository->getActive($locationId));
     }
 
     /**

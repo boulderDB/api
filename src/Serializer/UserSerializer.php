@@ -15,22 +15,27 @@ class UserSerializer implements SerializerInterface
          */
         $data = [
             "id" => $class->getId(),
-            "image" => $class->getImage(),
-            "visible" => $class->isVisible(),
             "username" => $class->getUsername(),
-            "firstName" => $class->getFirstName(),
-            "lastName" => $class->getLastName(),
-            "notifications" => array_map(function ($notification) {
+        ];
+
+        if (in_array(self::GROUP_DETAIL, $groups)) {
+            $data["email"] = $class->getEmail();
+            $data["image"] = $class->getImage();
+            $data["visible"] = $class->isVisible();
+            $data["firstName"] = $class->getFirstName();
+            $data["lastName"] = $class->getLastName();
+
+            $data["notifications"] = array_map(function ($notification) {
                 /**
                  * @var \App\Entity\Notification $notification
                  */
                 return Serializer::serialize($notification);
 
-            }, $class->getNotifications()->toArray())
-        ];
+            }, $class->getNotifications()->toArray());
+        }
 
-        if (in_array(self::GROUP_DETAIL, $groups)) {
-            $data["email"] = $class->getEmail();
+        if (in_array(self::GROUP_ADMIN, $groups)) {
+            $data["roles"] = $class->getRoles();
         }
 
         return $data;

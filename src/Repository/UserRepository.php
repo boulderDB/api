@@ -15,16 +15,6 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         parent::__construct($registry, User::class);
     }
 
-    /**
-     * @return \App\Entity\User[]
-     */
-    public function getLocationAdmins(int $locationId): ?array
-    {
-        $role = ContextService::getLocationRoleName(User::ADMIN, $locationId, true);
-
-        return $this->getByRole($role);
-    }
-
     public function getByRole(string $role): ?array
     {
         return $this->createQueryBuilder("user")

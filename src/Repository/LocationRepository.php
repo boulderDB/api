@@ -12,4 +12,22 @@ class LocationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Location::class);
     }
+
+    public function getPublic()
+    {
+        return $this->createQueryBuilder("location")
+            ->where("location.public = true")
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getPublicById(int $id)
+    {
+        return $this->createQueryBuilder("location")
+            ->where("location.id = :id")
+            ->andWhere("location.public = true")
+            ->setParameter("id", $id)
+            ->getQuery()
+            ->getResult();
+    }
 }

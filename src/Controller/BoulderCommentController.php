@@ -44,7 +44,7 @@ class BoulderCommentController extends AbstractController
      */
     public function index(Request $request)
     {
-        $this->denyUnlessLocationAdmin();
+        $this->denyUnlessLocationAdminOrSetter();
 
         $filter = $request->query->get("filter") ? $request->query->get("filter") : "active";
         $comments = $this->boulderCommentRepository->getLatest($filter);

@@ -43,7 +43,7 @@ class BoulderErrorController extends AbstractController
      */
     public function index()
     {
-        $this->denyUnlessLocationAdmin();
+        $this->denyUnlessLocationAdminOrSetter();
 
         $errors = $this->boulderErrorRepository->findByStatus(
             $this->contextService->getLocation()->getId(),
@@ -79,7 +79,7 @@ class BoulderErrorController extends AbstractController
      */
     public function count()
     {
-        $this->denyUnlessLocationAdmin();
+        $this->denyUnlessLocationAdminOrSetter();
 
         $connection = $this->entityManager->getConnection();
         $statement = "select count(id) from boulder_error where tenant_id = :locationId and status = :status";
@@ -100,7 +100,7 @@ class BoulderErrorController extends AbstractController
      */
     public function update(Request $request, string $id)
     {
-        $this->denyUnlessLocationAdmin();
+        $this->denyUnlessLocationAdminOrSetter();
         $error = $this->boulderErrorRepository->find($id);
 
         if (!$error) {

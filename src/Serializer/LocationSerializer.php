@@ -15,8 +15,7 @@ class LocationSerializer implements SerializerInterface
         $data = [
             "id" => $class->getId(),
             "name" => $class->getName(),
-            "url" => $class->getUrl(),
-            "public" => $class->getPublic()
+            "url" => $class->getUrl()
         ];
 
         if (in_array(self::GROUP_DETAIL, $groups)) {

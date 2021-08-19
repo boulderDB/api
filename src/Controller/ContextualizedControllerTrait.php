@@ -12,6 +12,11 @@ use App\Service\ContextService;
  */
 trait ContextualizedControllerTrait
 {
+    protected function denyUnlessLocationAdminOrSetter()
+    {
+        return $this->isGranted($this->contextService->getLocationRole(User::ROLE_ADMIN)) || $this->isGranted($this->contextService->getLocationRole(User::SETTER));
+    }
+
     protected function denyUnlessLocationAdmin()
     {
         $this->denyAccessUnlessGranted($this->contextService->getLocationRole(User::ROLE_ADMIN));

@@ -107,3 +107,8 @@ rating:
   resource: ../../src/Controller/BoulderRatingController.php
   type: annotation
   prefix: /api/{location}/
+
+location:
+  resource: ../../src/Controller/LocationController.php
+  type: annotation
+  prefix: /api/{location}/

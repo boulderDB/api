@@ -44,7 +44,7 @@ class AddRoleCommand extends Command
         $role = strtoupper($input->getArgument("role"));
         $locationId = $input->getArgument("locationId");
 
-        if (!in_array($role, [User::SETTER, User::ADMIN])) {
+        if (!in_array($role, User::ROLES)) {
             $io->error("Role {$role} does not exist");
 
             return 1;

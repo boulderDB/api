@@ -18,6 +18,20 @@ class ContextService
         $this->location = $location;
     }
 
+    public static function isLocationRole(string $role, int $locationId): bool
+    {
+        return self::getLocationIdFromRoleName($role) === $locationId;
+    }
+
+    public static function getLocationIdFromRoleName(string $role): ?int
+    {
+        if (strpos($role, "@") === false) {
+            return null;
+        }
+
+        return (int)explode("@", $role)[1];
+    }
+
     public static function getLocationRoleName(string $role, int $locationId, bool $prefix = false): string
     {
         if ($prefix) {

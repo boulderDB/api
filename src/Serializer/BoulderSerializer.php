@@ -25,6 +25,10 @@ class BoulderSerializer implements SerializerInterface
          * @var Boulder $class
          */
         $userRating = $class->getRatings()->filter(function ($rating) use ($arguments) {
+            if (!isset($arguments["userId"])) {
+                return false;
+            }
+
             /**
              * @var BoulderRatingAlias $rating
              */
@@ -85,7 +89,7 @@ class BoulderSerializer implements SerializerInterface
                 return $setter->getId();
 
             }, $class->getSetters()->toArray()),
-            "rating" => $userRating ? BoulderRatingSerializer::serialize($userRating): null,
+            "rating" => $userRating ? BoulderRatingSerializer::serialize($userRating) : null,
             "created_at" => Serializer::formatDate($class->getCreatedAt()),
             "status" => $class->getStatus()
         ];
