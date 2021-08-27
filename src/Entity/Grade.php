@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class Grade implements LocationResourceInterface
+class Grade implements LocationResourceInterface, DeactivatableInterface
 {
     use LocationTrait;
 

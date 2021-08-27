@@ -29,9 +29,9 @@ trait ResponseTrait
         ], Response::HTTP_NOT_FOUND);
     }
 
-    protected function okResponse($data)
+    protected function okResponse($data, array $groups = ["default"])
     {
-        return $this->json($data, Response::HTTP_OK);
+        return $this->json($data, Response::HTTP_OK, [], ["groups" => $groups]);
     }
 
 

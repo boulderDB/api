@@ -93,7 +93,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
     private ?Collection $comments = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Tag", fetch="LAZY", inversedBy="boulders")
+     * @ORM\ManyToMany(targetEntity="BoulderTag", fetch="LAZY", inversedBy="boulders")
      * @ORM\JoinTable(name="boulder_tags",
      *     joinColumns={
      *         @ORM\JoinColumn(name="boulder_id", referencedColumnName="id")
@@ -117,19 +117,6 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
      * )
      */
     private ?Collection $setters = null;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Label", fetch="LAZY", inversedBy="boulders")
-     * @ORM\JoinTable(name="boulder_label",
-     *     joinColumns={
-     *         @ORM\JoinColumn(name="boulder_id", referencedColumnName="id")
-     *      },
-     *     inverseJoinColumns={
-     *         @ORM\JoinColumn(name="label_id", referencedColumnName="id"),
-     *     }
-     * )
-     */
-    private ?Collection $labels = null;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\BoulderRating", mappedBy="boulder", fetch="LAZY")

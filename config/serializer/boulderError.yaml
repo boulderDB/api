@@ -1,0 +1,12 @@
+App\Entity\BoulderError:
+  attributes:
+    id:
+      groups: [ "default" ]
+    message:
+      groups: [ "default" ]
+    boulder:
+      groups: [ "default" ]
+    status:
+      groups: [ "default" ]
+    author:
+      groups: [ "default" ]

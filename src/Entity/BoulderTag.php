@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\Table(name="tag")
  */
-class Tag implements LocationResourceInterface
+class BoulderTag implements LocationResourceInterface, DeactivatableInterface
 {
     use LocationTrait;
 
@@ -27,7 +27,12 @@ class Tag implements LocationResourceInterface
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string  $emoji = null;
+    private ?string $emoji = null;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+    private bool $active = true;
 
     public function getId(): ?int
     {
@@ -52,5 +57,15 @@ class Tag implements LocationResourceInterface
     public function setEmoji(?string $emoji): void
     {
         $this->emoji = $emoji;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): void
+    {
+        $this->active = $active;
     }
 }

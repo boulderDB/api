@@ -7,7 +7,7 @@ use App\Entity\Boulder;
 use App\Entity\BoulderComment;
 use App\Entity\BoulderRating as BoulderRatingAlias;
 use App\Entity\Setter;
-use App\Entity\Tag;
+use App\Entity\BoulderTag;
 use App\Service\Serializer;
 use App\Service\SerializerInterface;
 use App\Service\SerializerTrait;
@@ -59,7 +59,7 @@ class BoulderSerializer implements SerializerInterface
 
             "tags" => array_map(function ($tag) use ($detail) {
                 /**
-                 * @var Tag $tag
+                 * @var BoulderTag $tag
                  */
                 if ($detail) {
 

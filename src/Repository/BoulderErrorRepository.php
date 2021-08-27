@@ -9,6 +9,8 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class BoulderErrorRepository extends ServiceEntityRepository
 {
+    use FilterTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, BoulderError::class);
@@ -16,15 +18,7 @@ class BoulderErrorRepository extends ServiceEntityRepository
 
     public function findByStatus(int $locationId, string $status = BoulderError::STATUS_UNRESOLVED)
     {
-        return $this
-            ->createQueryBuilder("boulderError")
-            ->select("
-                partial boulderError.{id, description, createdAt, location}, 
-                partial author.{id, username}, 
-                partial boulder.{id, name, startWall},
-                partial startWall.{id, name}
-            ")
-            ->from(BoulderError::class, "boulderError")
+        return $this->createQueryBuilder("boulderError")
             ->leftJoin("boulderError.author", "author")
             ->leftJoin("boulderError.boulder", "boulder")
             ->leftJoin("boulder.startWall", "startWall")
@@ -33,6 +27,18 @@ class BoulderErrorRepository extends ServiceEntityRepository
             ->setParameter("location", $locationId)
             ->setParameter("status", $status)
             ->getQuery()
-            ->getArrayResult();
+            ->getResult();
+    }
+
+    public function countByStatus(int $locationId, string $status = BoulderError::STATUS_UNRESOLVED)
+    {
+        return $this->createQueryBuilder("boulderError")
+            ->select("count(boulderError.id)")
+            ->where("boulderError.location = :location")
+            ->andWhere("boulderError.status = :status")
+            ->setParameter("location", $locationId)
+            ->setParameter("status", $status)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

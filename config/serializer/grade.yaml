@@ -1,0 +1,10 @@
+App\Entity\Grade:
+  attributes:
+    id:
+      groups: [ "default" ]
+    name:
+      groups: [ "default" ]
+    color:
+      groups: [ "default" ]
+    active:
+      groups: [ "detail" ]

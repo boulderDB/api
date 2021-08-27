@@ -9,17 +9,15 @@ use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use function Symfony\Component\String\s;
 
 /**
  * @Route("/wall")
  */
 class WallController extends AbstractController
 {
+    use CrudTrait;
     use ContextualizedControllerTrait;
-    use ResponseTrait;
 
     private EntityManagerInterface $entityManager;
     private ContextService $contextService;
@@ -39,11 +37,31 @@ class WallController extends AbstractController
     /**
      * @Route(methods={"GET"})
      */
-    public function index()
+    public function index(Request $request)
     {
-        $locationId = $this->contextService->getLocation()->getId();
+        $filters = $request->get("filter");
 
-        return $this->json($this->wallRepository->getActive($locationId));
+        if ($filters) {
+            return $this->okResponse($this->wallRepository->queryWhere(
+                $this->getLocationId(),
+                ["active" => "bool"],
+                $filters
+            ));
+        }
+
+        return $this->okResponse($this->wallRepository->getActive(
+            $this->getLocationId()
+        ));
+    }
+
+    /**
+     * @Route("/{id}", methods={"GET"})
+     */
+    public function read(int $id)
+    {
+        $this->denyUnlessLocationAdmin();
+
+        return $this->readEntity(Wall::class, $id);
     }
 
     /**
@@ -53,16 +71,7 @@ class WallController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        $wall = new Wall();
-
-        $form = $this->createForm(WallType::class, $wall);
-        $form->submit(json_decode($request->getContent(), true), false);
-
-        if (!$form->isValid()) {
-            return $this->badFormRequestResponse($form);
-        }
-
-        return $this->json(null, Response::HTTP_CREATED);
+        return $this->createEntity($request, Wall::class, WallType::class);
     }
 
     /**
@@ -72,39 +81,16 @@ class WallController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        $wall = $this->wallRepository->find($id);
-
-        if (!$wall) {
-            return $this->resourceNotFoundResponse("Wall", $id);
-        }
-
-        $form = $this->createForm(WallType::class, $wall);
-        $form->submit(json_decode($request->getContent(), true), false);
-
-        if (!$form->isValid()) {
-            return $this->badFormRequestResponse($form);
-        }
-
-        $this->entityManager->persist($wall);
-        $this->entityManager->flush();
-
-        return $this->noContentResponse();
+        return $this->updateEntity($request, Wall::class, WallType::class, $id);
     }
 
     /**
-     * @Route("/{id}", methods={"GET"})
+     * @Route("/{id}", methods={"DELETE"})
      */
-    public function show(int $id)
+    public function delete(string $id)
     {
-        if (!$this->wallRepository->exists($id, $this->contextService->getLocation()->getId())) {
-            return $this->resourceNotFoundResponse('wall', $id);
-        }
+        $this->denyUnlessLocationAdmin();
 
-        $detail = $this->wallRepository->getDetail(
-            $id,
-            $this->contextService->getLocation()->getId()
-        );
-
-        return $this->okResponse($detail);
+        return $this->deleteEntity(Wall::class, $id, true);
     }
 }

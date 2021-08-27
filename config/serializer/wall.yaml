@@ -1,0 +1,8 @@
+App\Entity\Wall:
+  attributes:
+    id:
+      groups: [ "default" ]
+    name:
+      groups: [ "default" ]
+    active:
+      groups: [ "detail" ]

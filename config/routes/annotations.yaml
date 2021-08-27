@@ -13,8 +13,8 @@ grade:
   type: annotation
   prefix: /api/{location}/
 
-holdStyle:
-  resource: ../../src/Controller/HoldStyleController.php
+holdType:
+  resource: ../../src/Controller/HoldTypeController.php
   type: annotation
   prefix: /api/{location}/
 
@@ -43,11 +43,6 @@ boulderDoubt:
   type: annotation
   prefix: /api/{location}/
 
-boulderLabel:
-  resource: ../../src/Controller/LabelController.php
-  type: annotation
-  prefix: /api/{location}/
-
 setter:
   resource: ../../src/Controller/SetterController.php
   type: annotation
@@ -60,11 +55,6 @@ user:
 
 global:
   resource: ../../src/Controller/GlobalController.php
-  type: annotation
-  prefix: /api
-
-token:
-  resource: ../../src/Controller/TokenController.php
   type: annotation
   prefix: /api
 
@@ -110,5 +100,10 @@ rating:
 
 location:
   resource: ../../src/Controller/LocationController.php
+  type: annotation
+  prefix: /api/{location}/
+
+area:
+  resource: ../../src/Controller/AreaController.php
   type: annotation
   prefix: /api/{location}/

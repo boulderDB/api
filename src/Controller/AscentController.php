@@ -3,9 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Ascent;
-use App\Entity\AscentDoubt;
 use App\Entity\Boulder;
-use App\Form\AscentDoubtType;
 use App\Form\AscentType;
 use App\Scoring\DefaultScoring;
 use App\Scoring\ScoringInterface;

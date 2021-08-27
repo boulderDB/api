@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Grade;
+use App\Form\GradeType;
 use App\Repository\GradeRepository;
 use App\Service\ContextService;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,18 +16,22 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class GradeController extends AbstractController
 {
+    use CrudTrait;
     use ContextualizedControllerTrait;
 
     private EntityManagerInterface $entityManager;
     private ContextService $contextService;
+    private GradeRepository $gradeRepository;
 
     public function __construct(
+        GradeRepository $gradeRepository,
         EntityManagerInterface $entityManager,
         ContextService $contextService
     )
     {
         $this->entityManager = $entityManager;
         $this->contextService = $contextService;
+        $this->gradeRepository = $gradeRepository;
     }
 
     /**
@@ -33,17 +39,58 @@ class GradeController extends AbstractController
      */
     public function index(Request $request)
     {
-        $connection = $this->entityManager->getConnection();
+        $filters = $request->get("filter");
 
-        $statement = GradeRepository::getIndexStatement(
-            $this->contextService->getLocation()->getId(),
-            $request->query->get("filter"),
-            $this->isLocationAdmin()
-        );
+        if ($filters) {
+            return $this->okResponse($this->gradeRepository->queryWhere(
+                $this->getLocationId(),
+                ["active" => "bool"],
+                $filters
+            ));
+        }
 
-        $query = $connection->prepare($statement["sql"]);
-        $query->execute($statement["parameters"]);
+        return $this->okResponse($this->gradeRepository->getActive(
+            $this->getLocationId()
+        ));
+    }
 
-        return $this->json($query->fetchAllAssociative());
+    /**
+     * @Route("/{id}", methods={"GET"})
+     */
+    public function read(int $id)
+    {
+        $this->denyUnlessLocationAdmin();
+
+        return $this->readEntity(Grade::class, $id);
+    }
+
+    /**
+     * @Route(methods={"POST"})
+     */
+    public function create(Request $request)
+    {
+        $this->denyUnlessLocationAdmin();
+
+        return $this->createEntity($request, Grade::class, GradeType::class);
+    }
+
+    /**
+     * @Route("/{id}", methods={"PUT"})
+     */
+    public function update(Request $request, string $id)
+    {
+        $this->denyUnlessLocationAdmin();
+
+        return $this->updateEntity($request, Grade::class, GradeType::class, $id);
+    }
+
+    /**
+     * @Route("/{id}", methods={"DELETE"})
+     */
+    public function delete(string $id)
+    {
+        $this->denyUnlessLocationAdmin();
+
+        return $this->deleteEntity(Grade::class, $id, true);
     }
 }

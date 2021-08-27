@@ -1,0 +1,8 @@
+App\Entity\BoulderTag:
+  attributes:
+    id:
+      groups: [ "default" ]
+    name:
+      groups: [ "default" ]
+    emoji:
+      groups: [ "default" ]

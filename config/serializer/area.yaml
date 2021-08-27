@@ -1,0 +1,10 @@
+App\Entity\Area:
+  attributes:
+    id:
+      groups: [ "default" ]
+    name:
+      groups: [ "default" ]
+    walls:
+      groups: [ "detail" ]
+    active:
+      groups: [ "detail" ]

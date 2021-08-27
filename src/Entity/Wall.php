@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
  */
-class Wall implements LocationResourceInterface
+class Wall implements LocationResourceInterface, DeactivatableInterface
 {
+    public const RESOURCE_NAME = "Wall";
+
     use LocationTrait;
 
     /**
@@ -36,25 +36,9 @@ class Wall implements LocationResourceInterface
     private ?string $media = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Area", mappedBy="walls", fetch="LAZY")
-     */
-    private ?Collection $areas = null;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Boulder", mappedBy="startWall", fetch="LAZY")
-     */
-    private ?Collection $boulders = null;
-
-    /**
-     * @ORM\Column(type="boolean", options={"default": false})
+     * @ORM\Column(type="boolean", options={"default": true})
      */
     private bool $active = true;
-
-    public function __construct()
-    {
-        $this->boulders = new ArrayCollection();
-        $this->areas = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -89,26 +73,6 @@ class Wall implements LocationResourceInterface
     public function setMedia(?string $media): void
     {
         $this->media = $media;
-    }
-
-    public function getAreas(): ?Collection
-    {
-        return $this->areas;
-    }
-
-    public function setAreas(Collection $areas): void
-    {
-        $this->areas = $areas;
-    }
-
-    public function getBoulders(): ?Collection
-    {
-        return $this->boulders;
-    }
-
-    public function setBoulders(Collection $boulders): void
-    {
-        $this->boulders = $boulders;
     }
 
     public function isActive(): bool

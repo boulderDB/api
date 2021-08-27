@@ -19,10 +19,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class BoulderCommentController extends AbstractController
 {
+    use CrudTrait;
     use ContextualizedControllerTrait;
-    use FormErrorTrait;
-    use RequestTrait;
-    use ResponseTrait;
 
     private EntityManagerInterface $entityManager;
     private ContextService $contextService;
@@ -78,22 +76,6 @@ class BoulderCommentController extends AbstractController
      */
     public function delete(int $id)
     {
-        /**
-         * @var BoulderComment $comment
-         */
-        $comment = $this->boulderCommentRepository->find($id);
-
-        if (!$comment) {
-            return $this->resourceNotFoundResponse("BoulderComment", $id);
-        }
-
-        if (!$comment->getAuthor() === $this->getUser()) {
-            return $this->unauthorizedResponse();
-        }
-
-        $this->entityManager->remove($comment);
-        $this->entityManager->flush();
-
-        return $this->json(null, Response::HTTP_NO_CONTENT);
+        return $this->deleteEntity(BoulderComment::class, $id);
     }
 }

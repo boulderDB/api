@@ -26,4 +26,9 @@ trait ContextualizedControllerTrait
     {
         return $this->isGranted($this->contextService->getLocationRole(User::ROLE_ADMIN));
     }
+
+    protected function getLocationId(): int
+    {
+        return $this->contextService->getLocation()->getId();
+    }
 }

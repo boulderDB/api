@@ -9,7 +9,6 @@ use App\Entity\BoulderError;
 use App\Entity\BoulderRating;
 use App\Entity\Grade;
 use App\Entity\HoldType;
-use App\Entity\Label;
 use App\Entity\Location;
 use App\Entity\Notification;
 use App\Entity\Reservation;
@@ -25,7 +24,6 @@ use App\Serializer\BoulderRatingSerializer;
 use App\Serializer\BoulderSerializer;
 use App\Serializer\GradeSerializer;
 use App\Serializer\HoldTypeSerializer;
-use App\Serializer\LabelSerializer;
 use App\Serializer\LocationSerializer;
 use App\Serializer\NotificationSerializer;
 use App\Serializer\ReservationSerializer;
@@ -45,7 +43,6 @@ class Serializer
         Boulder::class => BoulderSerializer::class,
         Grade::class => GradeSerializer::class,
         HoldType::class => HoldTypeSerializer::class,
-        Label::class => LabelSerializer::class,
         Location::class => LocationSerializer::class,
         Notification::class => NotificationSerializer::class,
         Reservation::class => ReservationSerializer::class,

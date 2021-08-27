@@ -2,36 +2,36 @@
 
 namespace App\Controller;
 
-use App\Entity\BoulderTag;
-use App\Form\BoulderTagType;
-use App\Repository\BoulderTagRepository;
+use App\Entity\Area;
+use App\Form\AreaType;
+use App\Repository\AreaRepository;
 use App\Service\ContextService;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/boulder-tag")
+ * @Route("/area")
  */
-class BoulderTagController extends AbstractController
+class AreaController extends AbstractController
 {
     use CrudTrait;
     use ContextualizedControllerTrait;
 
+    private AreaRepository $areaRepository;
     private ContextService $contextService;
     private EntityManagerInterface $entityManager;
-    private BoulderTagRepository $boulderTagRepository;
 
     public function __construct(
+        AreaRepository $areaRepository,
         ContextService $contextService,
-        EntityManagerInterface $entityManager,
-        BoulderTagRepository $boulderTagRepository
+        EntityManagerInterface $entityManager
     )
     {
+        $this->areaRepository = $areaRepository;
         $this->contextService = $contextService;
         $this->entityManager = $entityManager;
-        $this->boulderTagRepository = $boulderTagRepository;
     }
 
     /**
@@ -42,14 +42,14 @@ class BoulderTagController extends AbstractController
         $filters = $request->get("filter");
 
         if ($filters) {
-            return $this->okResponse($this->boulderTagRepository->queryWhere(
+            return $this->okResponse($this->areaRepository->queryWhere(
                 $this->getLocationId(),
                 ["active" => "bool"],
                 $filters
             ));
         }
 
-        return $this->okResponse($this->boulderTagRepository->getActive(
+        return $this->okResponse($this->areaRepository->getActive(
             $this->getLocationId()
         ));
     }
@@ -61,7 +61,7 @@ class BoulderTagController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->readEntity(BoulderTag::class, $id, ["default", "detail"]);
+        return $this->readEntity(Area::class, $id, ["default", "detail"]);
     }
 
     /**
@@ -71,7 +71,7 @@ class BoulderTagController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->createEntity($request, BoulderTag::class, BoulderTagType::class);
+        return $this->createEntity($request, Area::class, AreaType::class);
     }
 
     /**
@@ -81,7 +81,7 @@ class BoulderTagController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->updateEntity($request, BoulderTag::class, BoulderTagType::class, $id);
+        return $this->updateEntity($request, Area::class, AreaType::class, $id);
     }
 
     /**
@@ -91,6 +91,6 @@ class BoulderTagController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->deleteEntity(BoulderTag::class, $id, true);
+        return $this->deleteEntity(Area::class, $id, true);
     }
 }

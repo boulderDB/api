@@ -1,0 +1,10 @@
+App\Entity\HoldType:
+  attributes:
+    id:
+      groups: [ "default" ]
+    name:
+      groups: [ "default" ]
+    image:
+      groups: [ "default" ]
+    active:
+      groups: [ "detail" ]

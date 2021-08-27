@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\BoulderTag;
-use App\Form\BoulderTagType;
-use App\Repository\BoulderTagRepository;
+use App\Entity\HoldType;
+use App\Form\HoldTypeType;
+use App\Repository\HoldTypeRepository;
 use App\Service\ContextService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,26 +12,26 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
- * @Route("/boulder-tag")
+ * @Route("/holdtype")
  */
-class BoulderTagController extends AbstractController
+class HoldTypeController extends AbstractController
 {
     use CrudTrait;
     use ContextualizedControllerTrait;
 
-    private ContextService $contextService;
     private EntityManagerInterface $entityManager;
-    private BoulderTagRepository $boulderTagRepository;
+    private ContextService $contextService;
+    private HoldTypeRepository $holdTypeRepository;
 
     public function __construct(
-        ContextService $contextService,
         EntityManagerInterface $entityManager,
-        BoulderTagRepository $boulderTagRepository
+        ContextService $contextService,
+        HoldTypeRepository $holdTypeRepository
     )
     {
-        $this->contextService = $contextService;
         $this->entityManager = $entityManager;
-        $this->boulderTagRepository = $boulderTagRepository;
+        $this->contextService = $contextService;
+        $this->holdTypeRepository = $holdTypeRepository;
     }
 
     /**
@@ -42,14 +42,14 @@ class BoulderTagController extends AbstractController
         $filters = $request->get("filter");
 
         if ($filters) {
-            return $this->okResponse($this->boulderTagRepository->queryWhere(
+            return $this->okResponse($this->holdTypeRepository->queryWhere(
                 $this->getLocationId(),
                 ["active" => "bool"],
                 $filters
             ));
         }
 
-        return $this->okResponse($this->boulderTagRepository->getActive(
+        return $this->okResponse($this->holdTypeRepository->getActive(
             $this->getLocationId()
         ));
     }
@@ -61,7 +61,7 @@ class BoulderTagController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->readEntity(BoulderTag::class, $id, ["default", "detail"]);
+        return $this->readEntity(HoldType::class, $id);
     }
 
     /**
@@ -71,7 +71,7 @@ class BoulderTagController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->createEntity($request, BoulderTag::class, BoulderTagType::class);
+        return $this->createEntity($request, HoldType::class, HoldTypeType::class);
     }
 
     /**
@@ -81,7 +81,7 @@ class BoulderTagController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->updateEntity($request, BoulderTag::class, BoulderTagType::class, $id);
+        return $this->updateEntity($request, HoldType::class, HoldTypeType::class, $id);
     }
 
     /**
@@ -91,6 +91,6 @@ class BoulderTagController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->deleteEntity(BoulderTag::class, $id, true);
+        return $this->deleteEntity(HoldType::class, $id, true);
     }
 }

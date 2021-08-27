@@ -8,20 +8,16 @@ use App\Repository\BoulderErrorRepository;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
- * @Route("/error")
+ * @Route("/boulder-error")
  */
 class BoulderErrorController extends AbstractController
 {
+    use CrudTrait;
     use ContextualizedControllerTrait;
-    use FormErrorTrait;
-    use RequestTrait;
-    use ResponseTrait;
 
     private EntityManagerInterface $entityManager;
     private ContextService $contextService;
@@ -41,16 +37,23 @@ class BoulderErrorController extends AbstractController
     /**
      * @Route(methods={"GET"})
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->denyUnlessLocationAdminOrSetter();
 
-        $errors = $this->boulderErrorRepository->findByStatus(
-            $this->contextService->getLocation()->getId(),
-            BoulderError::STATUS_UNRESOLVED
-        );
+        $filters = $request->get("filter");
 
-        return $this->json($errors);
+        if ($filters) {
+            return $this->okResponse($this->boulderErrorRepository->queryWhere(
+                $this->getLocationId(),
+                ["status" => "string"],
+                $filters
+            ));
+        }
+
+        return $this->okResponse(
+            $this->boulderErrorRepository->findByStatus($this->contextService->getLocation()->getId())
+        );
     }
 
     /**
@@ -61,17 +64,7 @@ class BoulderErrorController extends AbstractController
         $boulderError = new BoulderError();
         $boulderError->setAuthor($this->getUser());
 
-        $form = $this->createForm(BoulderErrorType::class, $boulderError);
-        $form->submit(self::decodePayLoad($request));
-
-        if (!$form->isValid()) {
-            return $this->json($this->getFormErrors($form));
-        }
-
-        $this->entityManager->persist($boulderError);
-        $this->entityManager->flush();
-
-        return $this->createdResponse($boulderError);
+        return $this->createEntity($request, $boulderError, BoulderErrorType::class);
     }
 
     /**
@@ -80,19 +73,9 @@ class BoulderErrorController extends AbstractController
     public function count()
     {
         $this->denyUnlessLocationAdminOrSetter();
+        $count = $this->boulderErrorRepository->countByStatus($this->contextService->getLocation()->getId());
 
-        $connection = $this->entityManager->getConnection();
-        $statement = "select count(id) from boulder_error where tenant_id = :locationId and status = :status";
-        $query = $connection->prepare($statement);
-
-        $query->execute([
-            "locationId" => $this->contextService->getLocation()->getId(),
-            "status" => BoulderError::STATUS_UNRESOLVED
-        ]);
-
-        $results = $query->fetch();
-
-        return $this->json($results);
+        return $this->okResponse($count);
     }
 
     /**
@@ -101,33 +84,12 @@ class BoulderErrorController extends AbstractController
     public function update(Request $request, string $id)
     {
         $this->denyUnlessLocationAdminOrSetter();
-        $error = $this->boulderErrorRepository->find($id);
 
-        if (!$error) {
-            return $this->resourceNotFoundResponse("BoulderError", $id);
-        }
-
-        $form = $this->createFormBuilder($error, ["csrf_protection" => false])
-            ->add("status", ChoiceType::class, [
-                "choices" => [
-                    BoulderError::STATUS_UNRESOLVED => BoulderError::STATUS_UNRESOLVED,
-                    BoulderError::STATUS_RESOLVED => BoulderError::STATUS_RESOLVED
-                ],
-                "constraints" => [
-                    new NotBlank()
-                ]
-            ])
-            ->getForm();
-
-        $form->submit(self::decodePayLoad($request), false);
-
-        if (!$form->isValid()) {
-            return $this->badFormRequestResponse($form);
-        }
-
-        $this->entityManager->persist($error);
-        $this->entityManager->flush();
-
-        return $this->noContentResponse();
+        return $this->updateEntity(
+            $request,
+            BoulderError::class,
+            BoulderErrorType::class,
+            $id
+        );
     }
 }
