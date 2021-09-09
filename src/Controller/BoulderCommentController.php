@@ -13,9 +13,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use function Clue\StreamFilter\fun;
 
 /**
- * @Route("/comment")
+ * @Route("/boulder-comments")
  */
 class BoulderCommentController extends AbstractController
 {
@@ -38,41 +39,35 @@ class BoulderCommentController extends AbstractController
     }
 
     /**
-     * @Route(methods={"GET"})
+     * @Route(methods={"GET"}, name="boulder_comments_index")
      */
     public function index(Request $request)
     {
         $this->denyUnlessLocationAdminOrSetter();
 
-        $filter = $request->query->get("filter") ? $request->query->get("filter") : "active";
-        $comments = $this->boulderCommentRepository->getLatest($filter);
-
-        return $this->okResponse($comments);
+        return $this->okResponse($this->boulderCommentRepository->findForActiveBoulders($this->getLocationId()));
     }
 
     /**
-     * @Route(methods={"POST"})
+     * @Route(methods={"POST"}, name="boulder_comments_create")
      */
     public function create(Request $request)
     {
-        $comment = new BoulderComment();
-        $comment->setAuthor($this->getUser());
-
-        $form = $this->createForm(BoulderCommentType::class, $comment);
-        $form->submit(self::decodePayLoad($request));
-
-        if (!$form->isValid()) {
-            return $this->badFormRequestResponse($form);
-        }
-
-        $this->entityManager->persist($comment);
-        $this->entityManager->flush();
-
-        return $this->createdResponse($comment);
+        return $this->createEntity(
+            $request,
+            BoulderComment::class,
+            BoulderCommentType::class,
+            function ($entity) {
+                /**
+                 * @var BoulderComment $entity
+                 */
+                $entity->setAuthor($this->getUser());
+            }
+        );
     }
 
     /**
-     * @Route("/{id}", methods={"DELETE"})
+     * @Route("/{id}", methods={"DELETE"}, name="boulder_comments_delete")
      */
     public function delete(int $id)
     {

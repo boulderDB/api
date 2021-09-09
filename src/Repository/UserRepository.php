@@ -57,4 +57,20 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function searchByUsername(string $username)
+    {
+        $builder = $this->createQueryBuilder("user");
+
+        return $builder
+            ->distinct()
+            ->select("user.id, user.username")
+            ->where("user.visible = true")
+            ->andWhere($builder->expr()->like("lower(user.username)", ":term"))
+            ->setParameter("term", "%" . addcslashes(strtolower($username), "%") . "%")
+            ->orderBy("user.username")
+            ->setMaxResults(20)
+            ->getQuery()
+            ->getResult();
+    }
 }

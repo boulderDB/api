@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class BoulderTag implements LocationResourceInterface, DeactivatableInterface
 {
+    public const RESOURCE_NAME = "BoulderTag";
+
     use LocationTrait;
 
     /**
@@ -30,7 +32,7 @@ class BoulderTag implements LocationResourceInterface, DeactivatableInterface
     private ?string $emoji = null;
 
     /**
-     * @ORM\Column(type="boolean", options={"default": false})
+     * @ORM\Column(type="boolean", options={"default": true})
      */
     private bool $active = true;
 

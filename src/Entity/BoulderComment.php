@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class BoulderComment implements LocationResourceInterface, TimestampableInterface, NotificationResourceInterface
 {
+    public const RESOURCE_NAME = "BoulderComment";
+
     use TimestampTrait;
     use LocationTrait;
 
@@ -26,7 +28,7 @@ class BoulderComment implements LocationResourceInterface, TimestampableInterfac
     private ?User $author = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Boulder", inversedBy="errors")
+     * @ORM\ManyToOne(targetEntity="Boulder")
      * @ORM\JoinColumn(name="boulder_id", referencedColumnName="id")
      */
     private ?Boulder $boulder = null;

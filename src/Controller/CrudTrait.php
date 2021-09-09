@@ -3,7 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\DeactivatableInterface;
+use App\Entity\UserResourceInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method createForm(string $type, $data = null, array $options = []): FormInterface
@@ -14,7 +18,7 @@ trait CrudTrait
     use ResponseTrait;
     use RequestTrait;
 
-    private function createEntity(Request $request, $resource, string $formType)
+    private function handleForm(Request $request, $resource, string $formType): FormInterface
     {
         if (is_string($resource)) {
             $object = new $resource;
@@ -22,16 +26,23 @@ trait CrudTrait
             $object = $resource;
         }
 
-        if (!is_object($object)) {
-            $type = gettype($resource);
-            throw new \InvalidArgumentException("Cannot handle type '$type' as resource");
-        }
-
         $form = $this->createForm($formType, $object);
         $form->submit(self::decodePayLoad($request));
 
+        return $form;
+    }
+
+    private function createEntity(Request $request, $resource, string $formType, callable $prePersist = null)
+    {
+        $form = $this->handleForm($request, $resource, $formType);
+        $object = $form->getData();
+
         if (!$form->isValid()) {
             return $this->badFormRequestResponse($form);
+        }
+
+        if (is_callable($prePersist)) {
+            $prePersist($object);
         }
 
         $this->entityManager->persist($object);
@@ -40,7 +51,7 @@ trait CrudTrait
         return $this->createdResponse($object);
     }
 
-    private function readEntity(string $resource, string $id, array $groups = ["default", "detail"])
+    private function readEntity(string $resource, string $id, array $groups = ["default"])
     {
         $object = $this->entityManager->getRepository($resource)->find($id);
 
@@ -59,6 +70,20 @@ trait CrudTrait
             return $this->resourceNotFoundResponse($resource::RESOURCE_NAME, $id);
         }
 
+        if ($object instanceof UserResourceInterface) {
+            if (!method_exists($this, "getUser")) {
+                throw new AccessDeniedHttpException("Access denied");
+            }
+
+            if (!$this->getUser() instanceof UserInterface) {
+                throw new AccessDeniedHttpException("Access denied");
+            }
+
+            if ($this->getUser() !== $object->getOwner()) {
+                throw new AccessDeniedHttpException("Access denied");
+            }
+        }
+
         /**
          * @var \Symfony\Component\Form\Form $form
          */
@@ -72,7 +97,7 @@ trait CrudTrait
         $this->entityManager->persist($object);
         $this->entityManager->flush();
 
-        return $this->createdResponse($object);
+        return $this->noContentResponse();
     }
 
     private function deleteEntity(string $resource, string $id, bool $deactivate = false)
@@ -88,7 +113,7 @@ trait CrudTrait
             throw new \LogicException("Cannot deactivate $resource as it does not implement $class");
         }
 
-        if ($deactivate) {
+        if ($deactivate && $object instanceof DeactivatableInterface && $object->isActive()) {
             $object->setActive(false);
             $object->setName($object->getName() . " (deactivated)");
             $this->entityManager->persist($object);

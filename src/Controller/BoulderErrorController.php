@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\BoulderError;
 use App\Form\BoulderErrorType;
+use App\Form\BoulderErrorUpdateType;
 use App\Repository\BoulderErrorRepository;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/boulder-error")
+ * @Route("/boulder-errors")
  */
 class BoulderErrorController extends AbstractController
 {
@@ -35,7 +36,7 @@ class BoulderErrorController extends AbstractController
     }
 
     /**
-     * @Route(methods={"GET"})
+     * @Route(methods={"GET"}, name="boulder_errors_index")
      */
     public function index(Request $request)
     {
@@ -57,18 +58,25 @@ class BoulderErrorController extends AbstractController
     }
 
     /**
-     * @Route(methods={"POST"})
+     * @Route(methods={"POST"}, name="boulder_errors_create")
      */
     public function create(Request $request)
     {
-        $boulderError = new BoulderError();
-        $boulderError->setAuthor($this->getUser());
-
-        return $this->createEntity($request, $boulderError, BoulderErrorType::class);
+        return $this->createEntity(
+            $request,
+            BoulderError::class,
+            BoulderErrorType::class,
+            function ($entity) {
+                /**
+                 * @var BoulderError $entity
+                 */
+                $entity->setAuthor($this->getUser());
+            }
+        );
     }
 
     /**
-     * @Route("/count", methods={"GET"})
+     * @Route("/count", methods={"GET"}, name="boulder_errors_count")
      */
     public function count()
     {
@@ -79,7 +87,7 @@ class BoulderErrorController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"PUT"})
+     * @Route("/{id}", methods={"PUT"}, name="boulder_errors_update")
      */
     public function update(Request $request, string $id)
     {
@@ -88,7 +96,7 @@ class BoulderErrorController extends AbstractController
         return $this->updateEntity(
             $request,
             BoulderError::class,
-            BoulderErrorType::class,
+            BoulderErrorUpdateType::class,
             $id
         );
     }

@@ -18,23 +18,23 @@ class MassOperationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('items', EntityType::class, [
-                'class' => Boulder::class,
-                'multiple' => true,
+            ->add("items", EntityType::class, [
+                "class" => Boulder::class,
+                "multiple" => true,
             ])
-            ->add('operation', ChoiceType::class, [
-                'choices' => [
+            ->add("operation", ChoiceType::class, [
+                "choices" => [
                     self::OPERATION_DEACTIVATE,
                     self::OPERATION_PRUNE_ASCENTS,
                 ],
-                'constraints' => [new NotBlank()],
+                "constraints" => [new NotBlank()],
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'csrf_protection' => false
+            "csrf_protection" => false
         ]);
     }
 }

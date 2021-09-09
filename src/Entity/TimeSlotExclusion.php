@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class TimeSlotExclusion
 {
+    public const RESOURCE_NAME = "TimeSlotExclusion";
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Event implements LocationResourceInterface
 {
+    public const RESOURCE_NAME = "Event";
+
     use TimestampTrait;
     use LocationTrait;
 

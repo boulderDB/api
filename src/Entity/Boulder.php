@@ -12,13 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Boulder implements LocationResourceInterface, TimestampableInterface
 {
-    public const DEFAULT_SCORE = 1000;
-
     use TimestampTrait;
     use LocationTrait;
 
-    const STATUS_ACTIVE = 'active';
-    const STATUS_INACTIVE = 'inactive';
+    public const RESOURCE_NAME = "Boulder";
+    public const DEFAULT_SCORE = 1000;
+    public const STATUS_ACTIVE = "active";
+    public const STATUS_INACTIVE = "inactive";
 
     /**
      * @ORM\Id()
@@ -51,7 +51,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
     private ?Grade $internalGrade = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Wall", inversedBy="boulders", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Wall", fetch="EAGER")
      * @ORM\JoinColumn(name="start_wall_id", referencedColumnName="id")
      */
     private ?Wall $startWall = null;
@@ -78,14 +78,9 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
     private ?\DateTime $removedAt = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Ascent", mappedBy="boulder", fetch="LAZY", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Ascent", mappedBy="boulder", fetch="LAZY")
      */
     private ?Collection $ascents = null;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\BoulderError", mappedBy="boulder", fetch="LAZY")
-     */
-    private ?Collection $errors = null;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\BoulderComment", mappedBy="boulder", fetch="LAZY")
@@ -93,7 +88,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
     private ?Collection $comments = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="BoulderTag", fetch="LAZY", inversedBy="boulders")
+     * @ORM\ManyToMany(targetEntity="BoulderTag", fetch="LAZY")
      * @ORM\JoinTable(name="boulder_tags",
      *     joinColumns={
      *         @ORM\JoinColumn(name="boulder_id", referencedColumnName="id")
@@ -127,7 +122,6 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
     {
         $this->setters = new ArrayCollection();
         $this->ascents = new ArrayCollection();
-        $this->errors = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->ratings = new ArrayCollection();
@@ -263,23 +257,13 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
             /**
              * @var Ascent $ascent
              */
-            return $ascent->getUser()->isVisible();
+            return $ascent->getOwner()->isVisible();
         });
     }
 
     public function setAscents($ascents): void
     {
         $this->ascents = $ascents;
-    }
-
-    public function getErrors()
-    {
-        return $this->errors;
-    }
-
-    public function setErrors($errors): void
-    {
-        $this->errors = $errors;
     }
 
     public function getComments()

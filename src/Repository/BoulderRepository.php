@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Boulder;
 use App\Entity\Grade;
-use App\Service\Serializer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\Persistence\ManagerRegistry;
@@ -35,40 +34,23 @@ class BoulderRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function countActive(int $locationId, bool $active = true): int
+    public function countByStatus(int $locationId, string $status = Boulder::STATUS_ACTIVE): int
     {
-        $queryBuilder = $this->createQueryBuilder('boulder')
+        $result = $this->createQueryBuilder('boulder')
             ->select("count(boulder.id)")
             ->where("boulder.location = :location")
-            ->setParameter("location", $locationId);
-
-        if ($active) {
-            $queryBuilder
-                ->andWhere("boulder.status = :status")
-                ->setParameter("status", Boulder::STATUS_ACTIVE);
-        }
-
-        $result = $queryBuilder
+            ->andWhere("boulder.status = :status")
+            ->setParameter("location", $locationId)
+            ->setParameter("status", $status)
             ->getQuery()
             ->getSingleResult();
 
         return $result ? $result[1] : 0;
     }
 
-    public function getAll(int $locationId): ?array
+    public function getByStatus(int $locationId, string $status = Boulder::STATUS_ACTIVE): ?array
     {
-        $partials = [
-            "partial boulder.{id, name, createdAt}",
-            "partial startWall.{id}",
-            "partial endWall.{id}",
-            "partial setter.{id}",
-            "partial holdType.{id}",
-            "partial grade.{id}",
-            "partial internalGrade.{id}"
-        ];
-
-        $queryBuilder = $this->createQueryBuilder('boulder')
-            ->select(implode(", ", $partials))
+        $queryBuilder = $this->createQueryBuilder("boulder")
             ->leftJoin("boulder.setters", "setter")
             ->leftJoin("boulder.startWall", "startWall")
             ->leftJoin("boulder.endWall", "endWall")
@@ -80,9 +62,9 @@ class BoulderRepository extends ServiceEntityRepository
             ->where("boulder.location = :location")
             ->andWhere("boulder.status = :status")
             ->setParameter("location", $locationId)
-            ->setParameter("status", Boulder::STATUS_ACTIVE)
+            ->setParameter("status", $status)
             ->getQuery()
-            ->getArrayResult();
+            ->getResult();
     }
 
     public function getWithAscents(string $locationId): array

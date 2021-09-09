@@ -20,6 +20,7 @@ trait FilterTrait
         $converters = [
             "bool" => fn($value) => $value === "true",
             "integer" => fn($value) => (int)$value,
+            "string" => fn($value) => (string)$value,
         ];
 
         $supportedFilters = array_keys($config);
@@ -44,13 +45,25 @@ trait FilterTrait
         }
     }
 
-    public function queryWhere(int $locationId, array $config, array $filters)
+    public function getLocationResourceQueryBuilder(int $locationId): QueryBuilder
     {
-        $builder = $this->createQueryBuilder("object")
+        return $this->createQueryBuilder("object")
             ->where("object.location = :locationId")
             ->setParameter("locationId", $locationId);
+    }
+
+    public function getFilterQueryBuilder(int $locationId, array $config, array $filters): QueryBuilder
+    {
+        $builder = $this->getLocationResourceQueryBuilder($locationId);
 
         $this->addFilters($builder, "object", $config, $filters);
+
+        return $builder;
+    }
+
+    public function queryWhere(int $locationId, array $config, array $filters)
+    {
+        $builder = $this->getFilterQueryBuilder($locationId, $config, $filters);
 
         return $builder
             ->getQuery()

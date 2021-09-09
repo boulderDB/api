@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Boulder;
 use App\Entity\BoulderError;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,6 +18,7 @@ class BoulderErrorRepository extends ServiceEntityRepository
     public function findByStatus(int $locationId, string $status = BoulderError::STATUS_UNRESOLVED)
     {
         return $this->createQueryBuilder("boulderError")
+            ->select(["boulderError", "boulder"])
             ->leftJoin("boulderError.author", "author")
             ->leftJoin("boulderError.boulder", "boulder")
             ->leftJoin("boulder.startWall", "startWall")

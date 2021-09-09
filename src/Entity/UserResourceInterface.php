@@ -4,5 +4,5 @@ namespace App\Entity;
 
 interface UserResourceInterface
 {
-    public function getUser(): ?User;
+    public function getOwner(): ?User;
 }

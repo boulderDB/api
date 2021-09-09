@@ -14,6 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class TimeSlot
 {
+    public const RESOURCE_NAME = "TimeSlot";
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -191,11 +193,11 @@ class TimeSlot
             /**
              * @var Reservation $reservation
              */
-            if (!$reservation->getUser()) {
+            if (!$reservation->getOwner()) {
                 return null;
             }
 
-            return $reservation->getUser()->getId() === $userId;
+            return $reservation->getOwner()->getId() === $userId;
 
         })->first();
 

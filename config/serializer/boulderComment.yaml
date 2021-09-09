@@ -1,0 +1,10 @@
+App\Entity\BoulderComment:
+  attributes:
+    id:
+      groups: [ "default" ]
+    message:
+      groups: [ "default" ]
+    boulder:
+      groups: [ "default" ]
+    author:
+      groups: [ "default" ]

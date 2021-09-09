@@ -13,6 +13,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class Reservation implements UserResourceInterface
 {
+    public const RESOURCE_NAME = "Reservation";
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -122,7 +124,7 @@ class Reservation implements UserResourceInterface
         return md5($roomId . $locationId . $startTime . $endTime . $dateYMD);
     }
 
-    public function getUser(): ?User
+    public function getOwner(): ?User
     {
         return $this->user;
     }

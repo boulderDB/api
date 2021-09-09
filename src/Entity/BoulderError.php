@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class BoulderError implements LocationResourceInterface, TimestampableInterface, NotificationResourceInterface
 {
+    public const RESOURCE_NAME = "BoulderError";
+
     use TimestampTrait;
     use LocationTrait;
 
@@ -29,7 +31,7 @@ class BoulderError implements LocationResourceInterface, TimestampableInterface,
     private ?User $author = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Boulder", inversedBy="errors")
+     * @ORM\ManyToOne(targetEntity="Boulder")
      * @ORM\JoinColumn(name="boulder_id", referencedColumnName="id")
      */
     private ?Boulder $boulder = null;

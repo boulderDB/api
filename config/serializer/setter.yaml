@@ -1,0 +1,6 @@
+App\Entity\Setter:
+  attributes:
+    id:
+      groups: [ "default" ]
+    username:
+      groups: [ "default" ]

@@ -16,18 +16,21 @@ use App\Service\Serializer;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class NotificationResourceListener implements EventSubscriber
 {
     private \Redis $redis;
     private UserRepository $userRepository;
     private NotificationRepository $notificationRepository;
+    private SerializerInterface $serializer;
 
-    public function __construct(UserRepository $userRepository, NotificationRepository $notificationRepository)
+    public function __construct(UserRepository $userRepository, NotificationRepository $notificationRepository, SerializerInterface $serializer)
     {
         $this->redis = RedisConnectionFactory::create();
         $this->userRepository = $userRepository;
         $this->notificationRepository = $notificationRepository;
+        $this->serializer = $serializer;
     }
 
     public function getSubscribedEvents(): array
@@ -56,14 +59,20 @@ class NotificationResourceListener implements EventSubscriber
         if ($subject instanceof AscentDoubt) {
             $userId = $subject->getRecipient()->getId();
 
-            $this->redis->set("notification:$type:user:$userId", json_encode([
-                "location" => Serializer::serialize($subject->getLocation()),
-                "boulder" => Serializer::serialize($subject->getBoulder()),
-                "ascent" => Serializer::serialize($subject->getAscent()),
-                "user" => $subject->getRecipient()->getId(),
-                "type" => $subject->getType(),
-                "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/doubts"
-            ]));
+            $payload = $this->serializer->serialize(
+                [
+                    "location" => $subject->getLocation(),
+                    "boulder" => $subject->getBoulder(),
+                    "ascent" => $subject->getAscent(),
+                    "user" => $subject->getRecipient()->getId(),
+                    "type" => $subject->getType(),
+                    "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/doubts"
+                ],
+                "json",
+                ["groups" => "default"]
+            );
+
+            $this->redis->set("notification:$type:user:$userId", $payload);
 
             return;
         }

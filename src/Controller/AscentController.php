@@ -88,7 +88,7 @@ class AscentController extends AbstractController
             return $this->resourceNotFoundResponse("Ascent", $id);
         }
 
-        if (!$ascent->getUser() === $this->getUser()) {
+        if (!$ascent->getOwner() === $this->getUser()) {
             return $this->unauthorizedResponse();
         }
 

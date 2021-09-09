@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
- * @Route("/boulder-tag")
+ * @Route("/boulder-tags")
  */
 class BoulderTagController extends AbstractController
 {
@@ -35,13 +35,15 @@ class BoulderTagController extends AbstractController
     }
 
     /**
-     * @Route(methods={"GET"})
+     * @Route(methods={"GET"}, name="boulder_tags_index")
      */
     public function index(Request $request)
     {
         $filters = $request->get("filter");
 
         if ($filters) {
+            $this->denyUnlessLocationAdmin();
+
             return $this->okResponse($this->boulderTagRepository->queryWhere(
                 $this->getLocationId(),
                 ["active" => "bool"],
@@ -55,7 +57,7 @@ class BoulderTagController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"GET"})
+     * @Route("/{id}", methods={"GET"}, name="boulder_tags_read")
      */
     public function read(int $id)
     {
@@ -65,7 +67,7 @@ class BoulderTagController extends AbstractController
     }
 
     /**
-     * @Route(methods={"POST"})
+     * @Route(methods={"POST"}, name="boulder_tags_create")
      */
     public function create(Request $request)
     {
@@ -75,7 +77,7 @@ class BoulderTagController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"PUT"})
+     * @Route("/{id}", methods={"PUT"}, name="boulder_tags_update")
      */
     public function update(Request $request, string $id)
     {
@@ -85,7 +87,7 @@ class BoulderTagController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"DELETE"})
+     * @Route("/{id}", methods={"DELETE"}, name="boulder_tags_delete")
      */
     public function delete(string $id)
     {

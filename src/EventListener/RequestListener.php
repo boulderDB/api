@@ -71,6 +71,7 @@ class RequestListener implements EventSubscriberInterface
             return;
         }
 
+        /* todo: load locations from redis cache */
         $location = $this->entityManager->createQueryBuilder()
             ->select('location')
             ->from(Location::class, 'location')
@@ -84,6 +85,5 @@ class RequestListener implements EventSubscriberInterface
         }
 
         $this->contextService->setLocation($location);
-        # user
     }
 }

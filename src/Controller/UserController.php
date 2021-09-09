@@ -3,10 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use Doctrine\ORM\AbstractQuery;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -14,37 +13,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class UserController extends AbstractController
 {
-    use RequestTrait;
-    use ResponseTrait;
+    use CrudTrait;
 
-    private EntityManagerInterface $entityManager;
+    private UserRepository $userRepository;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->entityManager = $entityManager;
+        $this->userRepository = $userRepository;
     }
 
     /**
      * @Route("/{id}", requirements={"id": "\d+"}, methods={"GET"})
      */
-    public function show(int $id)
+    public function read(int $id)
     {
-        $builder = $this->entityManager->createQueryBuilder();
-
-        $user = $builder
-            ->from(User::class, "user")
-            ->select("user.id, user.username")
-            ->where("user.visible = true")
-            ->andWhere("user.id = :id")
-            ->setParameter("id", $id)
-            ->getQuery()
-            ->getSingleResult(AbstractQuery::HYDRATE_ARRAY);
-
-        if (!$user) {
-            return $this->resourceNotFoundResponse("User", $id);
-        }
-
-        return $this->okResponse($user);
+        return $this->readEntity(User::class, $id);
     }
 
     /**
@@ -53,27 +36,12 @@ class UserController extends AbstractController
     public function search(Request $request)
     {
         $this->denyAccessUnlessGranted(User::ROLE_ADMIN);
+        $username = $request->query->get("username");
 
-        $term = $request->query->get("username");
-
-        if (!$term) {
-            return $this->badRequestResponse("No term provided");
+        if (!$username) {
+            return $this->badRequestResponse("No username provided");
         }
 
-        $builder = $this->entityManager->createQueryBuilder();
-
-        $users = $builder
-            ->from(User::class, "user")
-            ->distinct()
-            ->select("user.id, user.username")
-            ->where("user.visible = true")
-            ->andWhere($builder->expr()->like("lower(user.username)", ":term"))
-            ->setParameter("term", "%" . addcslashes(strtolower($term), "%") . "%")
-            ->orderBy("user.username")
-            ->setMaxResults(20)
-            ->getQuery()
-            ->getResult();
-
-        return $this->okResponse($users);
+        return $this->okResponse($this->userRepository->searchByUsername($username));
     }
 }

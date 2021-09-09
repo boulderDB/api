@@ -1,0 +1,10 @@
+App\Entity\Notification:
+  attributes:
+    id:
+      groups: [ "default" ]
+    type:
+      groups: [ "default" ]
+    active:
+      groups: [ "default" ]
+    location:
+      groups: [ "default" ]

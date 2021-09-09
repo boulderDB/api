@@ -45,7 +45,7 @@ class DefaultScoring implements ScoringInterface
                 /**
                  * @var Ascent $ascent
                  */
-                $userId = $ascent->getUser()->getId();
+                $userId = $ascent->getOwner()->getId();
 
                 if (!array_key_exists($userId, $ranking)) {
                     $ranking[$userId] = [
@@ -55,11 +55,11 @@ class DefaultScoring implements ScoringInterface
                         "flashes" => 0,
                         "advance" => 0,
                         "user" => [
-                            "id" => $ascent->getUser()->getId(),
-                            "gender" => $ascent->getUser()->getGender(),
-                            "image" => $ascent->getUser()->getImage(),
-                            "lastActivity" => $ascent->getUser()->getLastActivity()->format("c"),
-                            "username" => $ascent->getUser()->getUsername()
+                            "id" => $ascent->getOwner()->getId(),
+                            "gender" => $ascent->getOwner()->getGender(),
+                            "image" => $ascent->getOwner()->getImage(),
+                            "lastActivity" => $ascent->getOwner()->getLastActivity()->format("c"),
+                            "username" => $ascent->getOwner()->getUsername()
                         ]
                     ];
                 } else {

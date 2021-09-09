@@ -1,11 +1,11 @@
 <?php
 
-
 namespace App\Controller;
 
 use App\Entity\Ascent;
 use App\Entity\AscentDoubt;
 use App\Form\AscentDoubtType;
+use App\Form\AscentDoubtUpdateType;
 use App\Repository\AscentDoubtRepository;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,13 +16,12 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/doubt")
+ * @Route("/ascent-doubts")
  */
 class AscentDoubtController extends AbstractController
 {
-    use FormErrorTrait;
-    use RequestTrait;
-    use ResponseTrait;
+    use CrudTrait;
+    use ContextualizedControllerTrait;
 
     private ContextService $contextService;
     private AscentDoubtRepository $ascentDoubtRepository;
@@ -40,120 +39,63 @@ class AscentDoubtController extends AbstractController
     }
 
     /**
-     * @Route(methods={"GET"})
+     * @Route(methods={"GET"}, name="ascent_doubts_index")
      */
-    public function index()
+    public function index(Request $request)
     {
-        $doubts = $this->ascentDoubtRepository->getDoubts(
-            $this->contextService->getLocation()->getId(),
-            $this->getUser()->getId()
-        );
+        $filters = $request->get("filter");
+        $userId = $this->getUser()->getId();
 
-        $data = [];
-
-        foreach ($doubts as &$doubt) {
-
-            $data[] = [
-                "id" => $doubt["id"],
-                "author" => [
-                    "id" => $doubt["author_id"],
-                    "username" => $doubt["author_username"],
-                    "message" => $doubt["doubt_description"],
-                ],
-                "ascent" => [
-                    "type" => str_replace(Ascent::PENDING_DOUBT_FLAG, "", $doubt["ascent_type"])
-                ],
-                "boulder" => [
-                    "id" => $doubt["boulder_id"],
-                    "name" => $doubt["boulder_name"]
-                ],
-                "created_at" => $doubt["doubt_created_at"],
-            ];
-
-            $doubt["ascent_type"] = str_replace(Ascent::PENDING_DOUBT_FLAG, "", $doubt["ascent_type"]);
+        if ($filters && $filters["status"]) {
+            return $this->okResponse($this->ascentDoubtRepository->getByStatus(
+                $userId,
+                $filters["status"]
+            ));
         }
 
-        return $this->json($data);
+        return $this->okResponse($this->ascentDoubtRepository->getByStatus(
+            $userId,
+            $this->getLocationId()
+        ));
     }
 
     /**
-     * @Route(methods={"POST"})
+     * @Route(methods={"POST"}, name="ascent_doubts_create")
      */
     public function create(Request $request)
     {
-        $ascentDoubt = new AscentDoubt();
-        $ascentDoubt->setAuthor($this->getUser());
+        return $this->createEntity(
+            $request,
+            AscentDoubt::class,
+            AscentDoubtType::class,
+            function ($entity) {
+                /**
+                 * @var Ascent $ascent
+                 */
+                $ascent = $entity->getAscent();
+                $ascent->setDoubted();
+                $entity->setAuthor($this->getUser());
 
-        $form = $this->createForm(AscentDoubtType::class, $ascentDoubt);
-        $form->submit(json_decode($request->getContent(), true));
-
-        if (!$form->isValid()) {
-            return $this->badFormRequestResponse($form);
-        }
-
-        /**
-         * @var Ascent $ascent
-         */
-        $ascent = $form->getData()->getAscent();
-        $ascent->setDoubted();
-
-        $ascentDoubt->setRecipient($ascent->getUser());
-        $ascentDoubt->setBoulder($ascent->getBoulder());
-
-        $this->entityManager->persist($ascent);
-        $this->entityManager->persist($ascentDoubt);
-
-        $this->entityManager->flush();
-
-        return $this->createdResponse($ascentDoubt);
+                $this->getDoctrine()->getManager()->persist($ascent);
+            }
+        );
     }
 
     /**
-     * @Route("/{id}", methods={"PUT"})
+     * @Route("/{id}", methods={"PUT"}, name="ascent_doubts_update")
      */
     public function update(Request $request, string $id)
     {
-        /**
-         * @var AscentDoubt $doubt
-         */
-        $doubt = $this->ascentDoubtRepository->find($id);
-
-        if (!$doubt) {
-            return $this->resourceNotFoundResponse("AscentDoubt", $id);
-        }
-
-        if (!$doubt) {
-            return $this->unauthorizedResponse();
-        }
-
-        $form = $this->createFormBuilder($doubt, ["csrf_protection" => false])
-            ->add("status", ChoiceType::class, [
-                "choices" => [
-                    AscentDoubt::STATUS_RESOLVED => AscentDoubt::STATUS_RESOLVED,
-                    AscentDoubt::STATUS_READ => AscentDoubt::STATUS_READ,
-                    AscentDoubt::STATUS_UNREAD => AscentDoubt::STATUS_UNREAD,
-                    AscentDoubt::STATUS_UNRESOLVED => AscentDoubt::STATUS_UNRESOLVED,
-                ],
-                "constraints" => [
-                    new NotBlank()
-                ]
-            ])
-            ->getForm();
-
-        $form->submit(self::decodePayLoad($request), false);
-
-        if (!$form->isValid()) {
-            return $this->badFormRequestResponse($form);
-        }
-
-        $this->entityManager->persist($doubt);
-        $this->entityManager->flush();
-
-        return $this->noContentResponse();
+        return $this->updateEntity(
+            $request,
+            AscentDoubt::class,
+            AscentDoubtUpdateType::class,
+            $id
+        );
     }
 
     /**
-     * @Route("/count", methods={"GET"})
+     * @Route("/count", methods={"GET"}, name="ascent_doubts_count")
      */
     public function count()
     {

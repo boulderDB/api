@@ -17,7 +17,7 @@ class LocationResourceListener implements EventSubscriber
         $this->contextService = $contextService;
     }
 
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             Events::prePersist

@@ -1,0 +1,10 @@
+App\Entity\AscentDoubt:
+  attributes:
+    id:
+      groups: [ "default" ]
+    message:
+      groups: [ "default" ]
+    author:
+      groups: [ "default" ]
+    boulder:
+      groups: [ "default" ]

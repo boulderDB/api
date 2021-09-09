@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Room implements LocationResourceInterface
 {
+    public const RESOURCE_NAME = "Room";
+
     use LocationTrait;
 
     /**

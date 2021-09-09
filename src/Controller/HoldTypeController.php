@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
- * @Route("/holdtype")
+ * @Route("/holdtypes")
  */
 class HoldTypeController extends AbstractController
 {
@@ -35,7 +35,7 @@ class HoldTypeController extends AbstractController
     }
 
     /**
-     * @Route(methods={"GET"})
+     * @Route(methods={"GET"}, name="hold_types_index")
      */
     public function index(Request $request)
     {
@@ -55,7 +55,7 @@ class HoldTypeController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"GET"})
+     * @Route("/{id}", methods={"GET"}, name="hold_types_rea")
      */
     public function read(int $id)
     {
@@ -65,7 +65,7 @@ class HoldTypeController extends AbstractController
     }
 
     /**
-     * @Route(methods={"POST"})
+     * @Route(methods={"POST"}, name="hold_types_create")
      */
     public function create(Request $request)
     {
@@ -75,7 +75,7 @@ class HoldTypeController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"PUT"})
+     * @Route("/{id}", methods={"PUT"}, name="hold_types_update")
      */
     public function update(Request $request, string $id)
     {
@@ -85,7 +85,7 @@ class HoldTypeController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"DELETE"})
+     * @Route("/{id}", methods={"DELETE"}, name="hold_types_delete")
      */
     public function delete(string $id)
     {

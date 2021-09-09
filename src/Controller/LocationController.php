@@ -6,8 +6,6 @@ use App\Entity\User;
 use App\Form\UserRoleType;
 use App\Repository\UserRepository;
 use App\Service\ContextService;
-use App\Service\Serializer;
-use App\Service\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +33,7 @@ class LocationController extends AbstractController
     }
 
     /**
-     * @Route("/user", methods={"GET"})
+     * @Route("/users", methods={"GET"}, name="location_users_index")
      */
     public function index()
     {
@@ -55,15 +53,18 @@ class LocationController extends AbstractController
             ContextService::getLocationRoleName(User::SETTER, $locationId, true)
         );
 
-        return $this->okResponse([
-            "setters" => Serializer::serialize($setters, [SerializerInterface::GROUP_ADMIN]),
-            "admins" => Serializer::serialize($admins, [SerializerInterface::GROUP_ADMIN]),
-            "counters" => Serializer::serialize($counters, [SerializerInterface::GROUP_ADMIN])
-        ]);
+        return $this->okResponse(
+            [
+                "setters" => $setters,
+                "admins" => $admins,
+                "counters" => $counters
+            ],
+            ["default", "admin"]
+        );
     }
 
     /**
-     * @Route("/user/{id}", methods={"PUT"})
+     * @Route("/users/{id}", methods={"PUT"}, name="location_users_update")
      */
     public function updateUser(Request $request, int $id)
     {

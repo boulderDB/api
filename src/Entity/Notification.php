@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Notification implements LocationResourceInterface
 {
+    public const RESOURCE_NAME = "Notification";
+
     use LocationTrait;
 
     public const TYPE_DOUBT = "doubt";
@@ -34,7 +36,7 @@ class Notification implements LocationResourceInterface
     private ?string $type = null;
 
     /**
-     * @ORM\Column(type="boolean", options={"default": false})
+     * @ORM\Column(type="boolean", options={"default": true})
      */
     private bool $active = true;
 

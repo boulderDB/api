@@ -3,18 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Boulder;
-use App\Factory\RedisConnectionFactory;
 use App\Form\BoulderType;
 use App\Form\MassOperationType;
 use App\Repository\BoulderRepository;
 use App\Service\ContextService;
-use App\Service\Serializer;
-use App\Service\SerializerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -22,16 +18,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class BoulderController extends AbstractController
 {
-    use FormErrorTrait;
-    use ResponseTrait;
-    use RequestTrait;
-    use RateLimiterTrait;
     use ContextualizedControllerTrait;
+    use CrudTrait;
 
     private EntityManagerInterface $entityManager;
     private ContextService $contextService;
     private BoulderRepository $boulderRepository;
-    private \Redis $redis;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -42,29 +34,16 @@ class BoulderController extends AbstractController
         $this->entityManager = $entityManager;
         $this->contextService = $contextService;
         $this->boulderRepository = $boulderRepository;
-        $this->redis = RedisConnectionFactory::create();
     }
 
     /**
-     * @Route("/{id}", requirements={"id": "\d+"}, methods={"GET"})
+     * @Route("", methods={"GET"})
      */
-    public function show(string $id)
+    public function index()
     {
-        $boulder = $this->boulderRepository->getOne($id);
+        $boulders = $this->boulderRepository->getByStatus($this->contextService->getLocation()->getId());
 
-        if (!$boulder) {
-            return $this->resourceNotFoundResponse("Boulder", $id);
-        }
-
-        return $this->okResponse(Serializer::serialize(
-            $boulder,
-            [
-                SerializerInterface::GROUP_DETAIL,
-                $this->isLocationAdmin() ? SerializerInterface::GROUP_ADMIN : null
-            ], [
-                "userId" => $this->getUser()->getId()
-            ]
-        ));
+        return $this->okResponse($boulders);
     }
 
     /**
@@ -74,19 +53,15 @@ class BoulderController extends AbstractController
     {
         $this->denyUnlessLocationAdminOrSetter();
 
-        $boulder = new Boulder();
+        return $this->createEntity($request, Boulder::class, BoulderType::class);
+    }
 
-        $form = $this->createForm(BoulderType::class, $boulder);
-        $form->submit(self::decodePayLoad($request));
-
-        if (!$form->isValid()) {
-            return $this->badFormRequestResponse($form);
-        }
-
-        $this->entityManager->persist($boulder);
-        $this->entityManager->flush();
-
-        return $this->createdResponse($boulder);
+    /**
+     * @Route("/{id}", requirements={"id": "\d+"}, methods={"GET"})
+     */
+    public function read(string $id)
+    {
+        return $this->readEntity(Boulder::class, $id, ["default", "detail"]);
     }
 
     /**
@@ -95,64 +70,28 @@ class BoulderController extends AbstractController
     public function update(Request $request, string $id)
     {
         $this->denyUnlessLocationAdminOrSetter();
-        $boulder = $this->boulderRepository->find($id);
 
-        if (!$boulder) {
-            return $this->resourceNotFoundResponse("Boulder", $id);
-        }
-
-        $form = $this->createForm(BoulderType::class, $boulder);
-        $form->submit(json_decode($request->getContent(), true), false);
-
-        if (!$form->isValid()) {
-            return $this->badFormRequestResponse($form);
-        }
-
-        $this->entityManager->persist($boulder);
-        $this->entityManager->flush();
-
-        return $this->noContentResponse();
+        return $this->updateEntity($request, Boulder::class, BoulderType::class, $id);
     }
 
     /**
-     * @Route("", methods={"GET"})
+     * @Route("/{id}", requirements={"id": "\d+"}, methods={"DELETE"})
      */
-    public function index()
+    public function delete(string $id)
     {
-        $boulders = $this->boulderRepository->getAll($this->contextService->getLocation()->getId());
+        $this->denyUnlessLocationAdminOrSetter();
 
-        $data = array_map(function ($boulder) {
-            $data = [
-                "id" => $boulder["id"],
-                "name" => $boulder["name"],
-                "start_wall" => $boulder["startWall"]["id"],
-                "end_wall" => $boulder["endWall"] ? $boulder["endWall"]["id"] : null,
-                "hold_type" => $boulder["holdType"]["id"],
-                "grade" => $boulder["grade"]["id"],
-                "setters" => array_map(function ($setter) {
-                    return $setter["id"];
-                }, $boulder["setters"]),
-                "created_at" => Serializer::formatDate($boulder["createdAt"]),
-            ];
-
-            if ($this->isLocationAdmin()) {
-                $data["internal_grade"] = $boulder["internalGrade"]["id"];
-            }
-
-            return $data;
-        }, $boulders);
-
-        return $this->okResponse($data);
+        return $this->deleteEntity(Boulder::class, $id, true);
     }
 
     /**
      * @Route("/count", methods={"GET"})
      */
-    public function count(Request $request)
+    public function count()
     {
-        $filterActive = (bool)$request->get('active');
-
-        $count = $this->boulderRepository->countActive($this->contextService->getLocation()->getId(), $filterActive);
+        $count = $this->boulderRepository->countByStatus(
+            $this->contextService->getLocation()->getId()
+        );
 
         return $this->okResponse($count);
     }
@@ -162,25 +101,24 @@ class BoulderController extends AbstractController
      */
     public function mass(Request $request)
     {
-        $form = $this->createForm(MassOperationType::class);
-        $form->submit(json_decode($request->getContent(), true), false);
+        $form = $this->handleForm($request, null, MassOperationType::class);
 
         if (!$form->isValid()) {
-            return $this->json([
-                "code" => Response::HTTP_BAD_REQUEST,
-                "message" => $this->getFormErrors($form)
-            ]);
+            return $this->badFormRequestResponse($form);
         }
+
+        $items = $form->getData()["items"];
+        $operation = $form->getData()["operation"];
 
         /**
          * @var Boulder $boulder
          */
-        foreach ($form->getData()["items"] as $boulder) {
-            if ($form->getData()["operation"] === MassOperationType::OPERATION_DEACTIVATE) {
+        foreach ($items as $boulder) {
+            if ($operation === MassOperationType::OPERATION_DEACTIVATE) {
                 $boulder->setStatus(Boulder::STATUS_INACTIVE);
             }
 
-            if ($form->getData()["operation"] === MassOperationType::OPERATION_PRUNE_ASCENTS) {
+            if ($operation === MassOperationType::OPERATION_PRUNE_ASCENTS) {
                 $boulder->setAscents(new ArrayCollection());
             }
 
@@ -189,6 +127,6 @@ class BoulderController extends AbstractController
 
         $this->entityManager->flush();
 
-        return $this->json(null, Response::HTTP_NO_CONTENT);
+        return $this->noContentResponse();
     }
 }

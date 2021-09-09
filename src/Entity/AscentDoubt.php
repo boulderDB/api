@@ -8,8 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\Table(name="boulder_doubt")
  */
-class AscentDoubt implements LocationResourceInterface, TimestampableInterface, NotificationResourceInterface
+class AscentDoubt implements LocationResourceInterface, TimestampableInterface, NotificationResourceInterface, UserResourceInterface
 {
+    public const RESOURCE_NAME = "AscentDoubt";
+
     use TimestampTrait;
     use LocationTrait;
 
@@ -133,10 +135,17 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface, 
     public function setAscent(?Ascent $ascent): void
     {
         $this->ascent = $ascent;
+        $this->recipient = $ascent->getOwner();
+        $this->boulder = $ascent->getBoulder();
     }
 
     public function getType(): string
     {
         return Notification::TYPE_DOUBT;
+    }
+
+    public function getOwner(): ?User
+    {
+       return $this->getRecipient();
     }
 }

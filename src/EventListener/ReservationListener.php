@@ -4,7 +4,6 @@ namespace App\EventListener;
 
 use App\Entity\Reservation;
 use App\Factory\RedisConnectionFactory;
-use App\Mails;
 use App\Service\NotificationService;
 use Carbon\Carbon;
 use Doctrine\Common\EventSubscriber;
@@ -29,7 +28,7 @@ class ReservationListener implements EventSubscriber
         $this->notificationService = $notificationService;
     }
 
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             Events::postPersist,

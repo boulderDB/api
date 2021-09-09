@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Grade implements LocationResourceInterface, DeactivatableInterface
 {
+    public const RESOURCE_NAME = "Grade";
+
     use LocationTrait;
 
     /**
@@ -26,7 +28,7 @@ class Grade implements LocationResourceInterface, DeactivatableInterface
     /**
      * @ORM\Column(type="integer", nullable=false)
      */
-    private ?int  $position = null;
+    private ?int $position = null;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -39,7 +41,7 @@ class Grade implements LocationResourceInterface, DeactivatableInterface
     private ?string $color = null;
 
     /**
-     * @ORM\Column(type="boolean", options={"default": false})
+     * @ORM\Column(type="boolean", options={"default": true})
      */
     private bool $active = true;
 

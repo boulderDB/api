@@ -108,7 +108,7 @@ class TimeSlotController extends AbstractController
     /**
      * @Route("/{id}", methods={"GET"})
      */
-    public function show(string $id)
+    public function read(string $id)
     {
         $this->denyUnlessLocationAdmin();
 

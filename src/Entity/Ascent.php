@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Ascent implements LocationResourceInterface, TimestampableInterface, UserResourceInterface
 {
+    public const RESOURCE_NAME = "Ascent";
+
     public const ASCENT_TOP = 'top';
     public const ASCENT_FLASH = 'flash';
     public const ASCENT_RESIGNED = 'resignation';
@@ -72,7 +74,7 @@ class Ascent implements LocationResourceInterface, TimestampableInterface, UserR
         $this->boulder = $boulder;
     }
 
-    public function getUser(): ?User
+    public function getOwner(): ?User
     {
         return $this->user;
     }

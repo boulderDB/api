@@ -1,0 +1,28 @@
+App\Entity\Location:
+  attributes:
+    id:
+      groups: [ "default" ]
+    name:
+      groups: [ "default" ]
+    url:
+      groups: [ "default" ]
+    city:
+      groups: [ "detail" ]
+    zip:
+      groups: [ "detail" ]
+    addressLineOne:
+      groups: [ "detail" ]
+    addressLineTwo:
+      groups: [ "detail" ]
+    countryCode:
+      groups: [ "detail" ]
+    image:
+      groups: [ "detail" ]
+    website:
+      groups: [ "detail" ]
+    facebook:
+      groups: [ "detail" ]
+    instagram:
+      groups: [ "detail" ]
+    twitter:
+      groups: [ "detail" ]

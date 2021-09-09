@@ -14,6 +14,10 @@ class CorsListener implements EventSubscriberInterface
 {
     public function onKernelRequest(RequestEvent $event)
     {
+        if ($_ENV["APP_DEBUG"]) {
+            return;
+        }
+
         if (!$event->isMasterRequest()) {
             return;
         }
@@ -33,6 +37,10 @@ class CorsListener implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event)
     {
+        if ($_ENV["APP_DEBUG"]) {
+            return;
+        }
+
         if (!$event->isMasterRequest()) {
             return;
         }

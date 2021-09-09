@@ -11,13 +11,16 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class SetterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add("active", CheckboxType::class)
+            ->add("active", CheckboxType::class, [
+                "constraints" => [new NotNull()]
+            ])
             ->add("username")
             ->add("user", EntityType::class, [
                 "class" => User::class,

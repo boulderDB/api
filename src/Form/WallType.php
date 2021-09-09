@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class WallType extends AbstractType
 {
@@ -22,7 +23,9 @@ class WallType extends AbstractType
                 "constraints" => [new NotBlank()]
             ])
             ->add("media", TextType::class)
-            ->add("active", CheckboxType::class);
+            ->add("active", CheckboxType::class, [
+                "constraints" => [new NotNull()]
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

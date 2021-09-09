@@ -9,8 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class Setter implements TimestampableInterface
+class Setter implements TimestampableInterface, DeactivatableInterface
 {
+    public const RESOURCE_NAME = "Setter";
+
     use TimestampTrait;
 
     /**
@@ -49,10 +51,15 @@ class Setter implements TimestampableInterface
      */
     private ?Collection $locations = null;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Boulder", mappedBy="setters")
+     */
+    private ?Collection $boulders = null;
+
     public function __construct()
     {
         $this->locations = new ArrayCollection();
-        $this->active = true;
+        $this->boulders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -104,5 +111,15 @@ class Setter implements TimestampableInterface
     public function addLocation(Location $location): void
     {
         $this->locations->add($location);
+    }
+
+    public function getName(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setName(?string $name): void
+    {
+        $this->username = $name;
     }
 }

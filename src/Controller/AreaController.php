@@ -10,9 +10,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 
 /**
- * @Route("/area")
+ * @Route("/areas")
  */
 class AreaController extends AbstractController
 {
@@ -35,7 +36,7 @@ class AreaController extends AbstractController
     }
 
     /**
-     * @Route(methods={"GET"})
+     * @Route(methods={"GET"}, name="areas_index")
      */
     public function index(Request $request)
     {
@@ -55,7 +56,7 @@ class AreaController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"GET"})
+     * @Route("/{id}", methods={"GET"}, name="areas_read")
      */
     public function read(int $id)
     {
@@ -65,7 +66,10 @@ class AreaController extends AbstractController
     }
 
     /**
-     * @Route(methods={"POST"})
+     * @Route(methods={"POST"}, name="areas_create")
+     *
+     * @InvalidateRoute("areas_index")
+     * @InvalidateRoute("areas_read", params={"id" = {"expression"="id"}})")
      */
     public function create(Request $request)
     {
@@ -75,7 +79,10 @@ class AreaController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"PUT"})
+     * @Route("/{id}", methods={"PUT"}, name="areas_update")
+     *
+     * @InvalidateRoute("areas_index")
+     * @InvalidateRoute("areas_read", params={"id" = {"expression"="id"}})")
      */
     public function update(Request $request, string $id)
     {
@@ -85,7 +92,10 @@ class AreaController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"DELETE"})
+     * @Route("/{id}", methods={"DELETE"}, name="areas_delete")
+     *
+     * @InvalidateRoute("areas_index")
+     * @InvalidateRoute("areas_read", params={"id" = {"expression"="id"}})")
      */
     public function delete(string $id)
     {

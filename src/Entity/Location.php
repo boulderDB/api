@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Location
 {
+    public const RESOURCE_NAME = "Location";
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

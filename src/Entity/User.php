@@ -15,15 +15,17 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface
 {
-    public const USER = 'USER';
-    public const SETTER = 'SETTER';
-    public const ADMIN = 'ADMIN';
-    public const COUNTER = 'COUNTER';
+    public const RESOURCE_NAME = "User";
+    
+    public const USER = "USER";
+    public const SETTER = "SETTER";
+    public const ADMIN = "ADMIN";
+    public const COUNTER = "COUNTER";
 
-    public const ROLE_USER = 'ROLE_' . self::USER;
-    public const ROLE_SETTER = 'ROLE_' . self::SETTER;
-    public const ROLE_ADMIN = 'ROLE_' . self::ADMIN;
-    public const ROLE_COUNTER = 'ROLE_' . self::COUNTER;
+    public const ROLE_USER = "ROLE_" . self::USER;
+    public const ROLE_SETTER = "ROLE_" . self::SETTER;
+    public const ROLE_ADMIN = "ROLE_" . self::ADMIN;
+    public const ROLE_COUNTER = "ROLE_" . self::COUNTER;
 
     public const ROLES = [
         self::USER,
@@ -70,7 +72,7 @@ class User implements UserInterface
     private ?string $password = null;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default": true})
      */
     private bool $active = true;
 

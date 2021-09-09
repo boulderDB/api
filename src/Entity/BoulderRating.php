@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class BoulderRating
 {
+    public const RESOURCE_NAME = "BoulderRating";
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -23,7 +25,7 @@ class BoulderRating
     private ?User $author = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Boulder", inversedBy="errors")
+     * @ORM\ManyToOne(targetEntity="Boulder")
      * @ORM\JoinColumn(name="boulder_id", referencedColumnName="id")
      */
     private ?Boulder $boulder = null;

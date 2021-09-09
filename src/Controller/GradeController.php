@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
- * @Route("/grade")
+ * @Route("/grades")
  */
 class GradeController extends AbstractController
 {
@@ -35,7 +35,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * @Route(methods={"GET"})
+     * @Route(methods={"GET"}, name="grades_index")
      */
     public function index(Request $request)
     {
@@ -55,7 +55,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"GET"})
+     * @Route("/{id}", methods={"GET"}, name="grades_read")
      */
     public function read(int $id)
     {
@@ -65,7 +65,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * @Route(methods={"POST"})
+     * @Route(methods={"POST"}, name="grades_create")
      */
     public function create(Request $request)
     {
@@ -75,7 +75,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"PUT"})
+     * @Route("/{id}", methods={"PUT"}, name="grades_update")
      */
     public function update(Request $request, string $id)
     {
@@ -85,7 +85,7 @@ class GradeController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"DELETE"})
+     * @Route("/{id}", methods={"DELETE"}, name="grades_delete")
      */
     public function delete(string $id)
     {

@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class AreaType extends AbstractType
 {
@@ -36,11 +37,14 @@ class AreaType extends AbstractType
                 "multiple" => true,
                 "query_builder" => function (EntityRepository $entityRepository) use ($locationId) {
                     return $entityRepository->createQueryBuilder("wall")
-                        ->where("area.location = :location")
+                        ->where("wall.location = :location")
                         ->setParameter("location", $locationId);
                 }
             ])
-            ->add("active", CheckboxType::class);
+            ->add("active", CheckboxType::class, [
+                    "constraints" => [new NotNull()]
+                ]
+            );
 
     }
 

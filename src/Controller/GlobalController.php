@@ -92,7 +92,7 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/context", methods={"GET"})
+     * @Route("/context", methods={"GET"}, name="context")
      */
     public function context()
     {
@@ -129,20 +129,20 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/me", methods={"GET"})
+     * @Route("/me", methods={"GET"}, name="me_read")
      */
-    public function getMe()
+    public function readMe()
     {
         /**s
          * @var User $user
          */
         $user = $this->getUser();
 
-        return $this->okResponse(Serializer::serialize($user, [SerializerInterface::GROUP_DETAIL]));
+        return $this->okResponse($user, ["default", "detail"]);
     }
 
     /**
-     * @Route("/me", methods={"PUT"})
+     * @Route("/me", methods={"PUT"}, name="me_update")
      */
     public function updateMe(Request $request)
     {
@@ -170,11 +170,11 @@ class GlobalController extends AbstractController
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        return $this->json(null, Response::HTTP_NO_CONTENT);
+        return $this->noContentResponse();
     }
 
     /**
-     * @Route("/me", methods={"DELETE"})
+     * @Route("/me", methods={"DELETE"}, name="me_delete")
      */
     public function deleteMe()
     {
@@ -202,7 +202,7 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/request-reset", methods={"POST"})
+     * @Route("/password-reset", methods={"POST"}, name="password_reset_request")
      */
     public function requestReset(Request $request)
     {
@@ -258,7 +258,7 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/reset/{hash}", methods={"GET"})
+     * @Route("/password-reset/{hash}", methods={"GET"}, name="password_reset_check_hash")
      */
     public function checkReset(string $hash)
     {
@@ -270,7 +270,7 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/reset/{hash}", methods={"POST"})
+     * @Route("/password-reset/{hash}", methods={"POST"}, name="password_reset")
      */
     public function reset(Request $request, string $hash)
     {
@@ -303,7 +303,7 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/register", methods={"POST"})
+     * @Route("/register", methods={"POST"}, name="register")
      */
     public function register(Request $request)
     {
@@ -378,17 +378,17 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/location", methods={"GET"})
+     * @Route("/locations", methods={"GET"}, name="locations_index")
      */
     public function locations()
     {
         $locations = $this->locationRepository->getPublic();
 
-        return $this->okResponse(Serializer::serialize($locations));
+        return $this->okResponse($locations);
     }
 
     /**
-     * @Route("/location/{id}", methods={"GET"})
+     * @Route("/locations/{id}", methods={"GET"}, name="locations_read")
      */
     public function location(string $id)
     {
@@ -398,62 +398,11 @@ class GlobalController extends AbstractController
             return $this->resourceNotFoundResponse("Location", $id);
         }
 
-        return $this->okResponse(Serializer::serialize($location, [SerializerInterface::GROUP_DETAIL]));
+        return $this->okResponse($location, ["default", "detail"]);
     }
 
     /**
-     * @Route("/telemetry", methods={"POST"})
-     */
-    public function telemetry(Request $request)
-    {
-        /**
-         * @var User $user
-         */
-        $user = $this->getUser();
-
-        if (!$user) {
-            return $this->unauthorizedResponse();
-        }
-
-        $form = $this->createFormBuilder(null, ["csrf_protection" => false])
-            ->add("version", TextType::class, ["constraints" => [new NotBlank()]])
-            ->getForm();
-
-        $form->submit(self::decodePayLoad($request));
-
-        if (!$form->isValid()) {
-            return $this->badFormRequestResponse($form);
-        }
-
-        $versions = $this->redis->lRange("client-versions", 0, -1);
-        $currentVersion = $form->getData()["version"];
-
-        $contents = file_get_contents($this->parameterBag->get('kernel.project_dir') . "/public/meta.json");
-        $meta = json_decode($contents, true);
-        $lastVersion = $meta["version"];
-
-        $data = [
-            "updates" => []
-        ];
-
-        if ($lastVersion !== $currentVersion) {
-            $updates = array_slice($versions, array_search($currentVersion, $versions));
-
-            foreach ($updates as $version) {
-                $data["updates"][] = [
-                    "version" => $version,
-                    "instructions" => "https://storage.boulderdb.de/boulderdb-internal/instructions/{$version}.md"
-                ];
-            }
-        }
-
-        $this->redis->set("client-version:user={$user->getId()}", $currentVersion);
-
-        return $this->okResponse($data);
-    }
-
-    /**
-     * @Route("/{location}/ping", methods={"GET"})
+     * @Route("/{location}/ping", methods={"GET"}, name="ping")
      */
     public function ping()
     {
@@ -508,7 +457,7 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/upload", methods={"POST"})
+     * @Route("/upload", methods={"POST"}, name="upload")
      */
     public function upload(Request $request)
     {
