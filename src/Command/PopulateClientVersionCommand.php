@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class PopulateClientVersionCommand extends Command
 {
-    protected static $defaultName = 'blocbeta:populate-client-version';
+    protected static $defaultName = 'boulderdb:populate-client-version';
 
     private \Redis $redis;
     private ParameterBagInterface $parameterBag;

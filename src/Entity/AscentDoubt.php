@@ -135,7 +135,7 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface, 
     public function setAscent(?Ascent $ascent): void
     {
         $this->ascent = $ascent;
-        $this->recipient = $ascent->getOwner();
+        $this->recipient = $ascent->getUser();
         $this->boulder = $ascent->getBoulder();
     }
 
@@ -144,7 +144,7 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface, 
         return Notification::TYPE_DOUBT;
     }
 
-    public function getOwner(): ?User
+    public function getUser(): ?User
     {
        return $this->getRecipient();
     }

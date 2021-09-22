@@ -14,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class AutoCheckoutReservationsCommand extends Command
 {
-    protected static $defaultName = 'blocbeta:reservation:auto-checkout';
+    protected static $defaultName = 'boulderdb:reservation:auto-checkout';
 
     private ReservationRepository $reservationRepository;
     private EntityManagerInterface $entityManager;

@@ -16,99 +16,44 @@ class DefaultScoring implements ScoringInterface
          * @var Ascent $ascent
          */
         foreach ($boulder->getAscents() as $ascent) {
-            if ($ascent->getType() === Ascent::ASCENT_FLASH) {
-                $ascent->setScore(($points / $ascentCount) * 1.1);
-            } else if ($ascent->getType() === Ascent::ASCENT_TOP) {
-                $ascent->setScore($points / $ascentCount);
-            } else {
-                $ascent->setScore(0);
-            }
-        }
-    }
-
-    /**
-     * @param Boulder[] $boulders
-     * @return array
-     */
-    public function calculate(array $boulders): array
-    {
-        // calculate each ascent score first
-        foreach ($boulders as $boulder) {
-            $this->calculateScore($boulder);
-        }
-
-        $ranking = [];
-
-        foreach ($boulders as $boulder) {
-            foreach ($boulder->getAscents() as $ascent) {
-
+            $validAscentsCount = $boulder->getAscents()->filter(function ($ascent) {
                 /**
                  * @var Ascent $ascent
                  */
-                $userId = $ascent->getOwner()->getId();
+                return in_array($ascent->getType(), $this->getScoredAscentTypes()) && $ascent->getUser()->isVisible();
+            })->count();
 
-                if (!array_key_exists($userId, $ranking)) {
-                    $ranking[$userId] = [
-                        "score" => 0,
-                        "boulders" => 0,
-                        "tops" => 0,
-                        "flashes" => 0,
-                        "advance" => 0,
-                        "user" => [
-                            "id" => $ascent->getOwner()->getId(),
-                            "gender" => $ascent->getOwner()->getGender(),
-                            "image" => $ascent->getOwner()->getImage(),
-                            "lastActivity" => $ascent->getOwner()->getLastActivity()->format("c"),
-                            "username" => $ascent->getOwner()->getUsername()
-                        ]
-                    ];
-                } else {
-                    $ranking[$userId]["score"] += $ascent->getScore();
-                }
+            if ($ascent->getType() === Ascent::ASCENT_FLASH) {
+                $ascent->setScore(round(($points / $ascentCount) * 1.1));
 
-                $ranking[$userId]["boulders"]++;
-
-                if ($ascent->isType(Ascent::ASCENT_TOP)) {
-                    $ranking[$userId]["tops"]++;
-                }
-
-                if ($ascent->isType(Ascent::ASCENT_FLASH)) {
-                    $ranking[$userId]["flashes"]++;
-                }
-
-                $ranking[$userId]["score"] = round($ranking[$userId]["score"]);
-            }
-        }
-
-        $ranking = array_values($ranking);
-
-        $ranking = array_filter($ranking, function ($rank) {
-            return $rank["score"] > 0;
-        });
-
-        usort($ranking, function ($a, $b) {
-            return $a["score"] < $b["score"];
-        });
-
-        foreach ($ranking as $index => &$rank) {
-            if ($index < count($ranking)) {
-                $rank["advance"] = $rank["score"] - $ranking[$index + 1]["score"];
+            } else if ($ascent->getType() === Ascent::ASCENT_TOP) {
+                $ascent->setScore(round($points / $ascentCount));
+            } else {
+                $ascent->setScore(0);
             }
 
-            if ($index === count($ranking)) {
-                $rank["advance"] = 0;
+            if ($validAscentsCount > 0) {
+                $boulder->setCurrentPoints(round($boulder->getPoints() / ($validAscentsCount + 1)));
             }
         }
-
-        foreach ($ranking as $key => &$rank) {
-            $rank["rank"] = $key + 1;
-        }
-
-        return $ranking;
     }
 
     public function getIdentifier(): string
     {
         return "default";
+    }
+
+    public function getScoredAscentTypes(): array
+    {
+        return [Ascent::ASCENT_TOP, Ascent::ASCENT_FLASH];
+    }
+
+    public static function calculateRate(int $total, int $partial)
+    {
+        if (!$total || !$partial) {
+            return 0;
+        }
+
+        return round(($partial / $total) * 100);
     }
 }

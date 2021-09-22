@@ -193,11 +193,11 @@ class TimeSlot
             /**
              * @var Reservation $reservation
              */
-            if (!$reservation->getOwner()) {
+            if (!$reservation->getUser()) {
                 return null;
             }
 
-            return $reservation->getOwner()->getId() === $userId;
+            return $reservation->getUser()->getId() === $userId;
 
         })->first();
 

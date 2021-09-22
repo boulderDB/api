@@ -18,7 +18,7 @@ use Symfony\Component\Mime\Exception\RfcComplianceException;
 
 class SendNotificationsCommand extends Command
 {
-    protected static $defaultName = "blocbeta:notifications:send";
+    protected static $defaultName = "boulderdb:notifications:send";
 
     private \Redis $redis;
     private UserRepository $userRepository;

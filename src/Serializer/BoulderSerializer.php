@@ -103,7 +103,7 @@ class BoulderSerializer implements SerializerInterface
                 return [
                     "id" => $ascent->getId(),
                     "type" => $ascent->getType(),
-                    "username" => $ascent->getOwner()->getUsername()
+                    "username" => $ascent->getUser()->getUsername()
                 ];
 
             }, $class->getAscents()->toArray());

@@ -11,7 +11,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\Table(name="users")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- *
  */
 class User implements UserInterface
 {
@@ -335,5 +334,10 @@ class User implements UserInterface
                 $notification->setActive(true);
             }
         }
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->username;
     }
 }

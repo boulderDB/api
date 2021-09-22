@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ShowLocationCommand extends Command
 {
-    protected static $defaultName = "blocbeta:location:show";
+    protected static $defaultName = "boulderdb:location:show";
 
     private UserRepository $userRepository;
     private LocationRepository $locationRepository;

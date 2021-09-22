@@ -118,6 +118,10 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
      */
     private ?Collection $ratings = null;
 
+    private ?Ascent $userAscent = null;
+
+    private ?int $currentPoints = null;
+
     public function __construct()
     {
         $this->setters = new ArrayCollection();
@@ -227,7 +231,17 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
 
     public function setPoints(int $points): void
     {
-        $this->points = $points;
+        $this->currentPoints = $points;
+    }
+
+    public function getCurrentPoints(): int
+    {
+        return $this->currentPoints ? $this->currentPoints : $this->points;
+    }
+
+    public function setCurrentPoints(int $points): void
+    {
+        $this->currentPoints = $points;
     }
 
     public function getRemovedAt(): ?\DateTime
@@ -250,6 +264,23 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
         $this->setters = $setters;
     }
 
+    public function setUserAscent(int $userId): void
+    {
+        $match = $this->ascents->filter(function ($ascent) use ($userId) {
+            /**
+             * @var Ascent $ascent
+             */
+            return $ascent->getUser()->getId() === $userId;
+        })->first();
+
+        $this->userAscent = $match ? $match : null;
+    }
+
+    public function getUserAscent(): ?Ascent
+    {
+        return $this->userAscent;
+    }
+
     public function getAscents()
     {
         return $this->ascents->filter(function ($ascent) {
@@ -257,7 +288,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
             /**
              * @var Ascent $ascent
              */
-            return $ascent->getOwner()->isVisible();
+            return $ascent->getUser()->isVisible();
         });
     }
 

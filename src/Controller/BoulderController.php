@@ -6,6 +6,7 @@ use App\Entity\Boulder;
 use App\Form\BoulderType;
 use App\Form\MassOperationType;
 use App\Repository\BoulderRepository;
+use App\Scoring\DefaultScoring;
 use App\Service\ContextService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/boulder")
+ * @Route("/boulders")
  */
 class BoulderController extends AbstractController
 {
@@ -37,17 +38,27 @@ class BoulderController extends AbstractController
     }
 
     /**
-     * @Route("", methods={"GET"})
+     * @Route(methods={"GET"}, name="boulders_index")
      */
     public function index()
     {
+        $userId = $this->getUser()->getId();
         $boulders = $this->boulderRepository->getByStatus($this->contextService->getLocation()->getId());
+        $scoring = new DefaultScoring();
+
+        /**
+         * @var Boulder $boulder
+         */
+        foreach ($boulders as $boulder) {
+            $scoring->calculateScore($boulder);
+            $boulder->setUserAscent($userId);
+        }
 
         return $this->okResponse($boulders);
     }
 
     /**
-     * @Route("", methods={"POST"})
+     * @Route(methods={"POST"}, name="boulders_create")
      */
     public function create(Request $request)
     {
@@ -65,7 +76,7 @@ class BoulderController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", requirements={"id": "\d+"}, methods={"PUT"})
+     * @Route("/{id}", requirements={"id": "\d+"}, methods={"PUT"}, name="boulders_update")
      */
     public function update(Request $request, string $id)
     {
@@ -75,7 +86,7 @@ class BoulderController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", requirements={"id": "\d+"}, methods={"DELETE"})
+     * @Route("/{id}", requirements={"id": "\d+"}, methods={"DELETE"}, name="boulders_delete")
      */
     public function delete(string $id)
     {
@@ -85,7 +96,7 @@ class BoulderController extends AbstractController
     }
 
     /**
-     * @Route("/count", methods={"GET"})
+     * @Route("/count", methods={"GET"}, name="boulders_count")
      */
     public function count()
     {
@@ -97,10 +108,12 @@ class BoulderController extends AbstractController
     }
 
     /**
-     * @Route("/mass", methods={"PUT"})
+     * @Route("/mass", methods={"PUT"}, name="boulders_mass")
      */
     public function mass(Request $request)
     {
+        $this->denyUnlessLocationAdminOrSetter();
+
         $form = $this->handleForm($request, null, MassOperationType::class);
 
         if (!$form->isValid()) {

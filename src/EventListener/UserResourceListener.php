@@ -25,7 +25,7 @@ class UserResourceListener implements EventSubscriber
             return;
         }
 
-        $user = $subject->getOwner();
+        $user = $subject->getUser();
 
         if (!$user) {
             return;

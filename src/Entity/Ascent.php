@@ -74,7 +74,7 @@ class Ascent implements LocationResourceInterface, TimestampableInterface, UserR
         $this->boulder = $boulder;
     }
 
-    public function getOwner(): ?User
+    public function getUser(): ?User
     {
         return $this->user;
     }

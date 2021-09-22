@@ -67,7 +67,7 @@ class ReservationRepository extends ServiceEntityRepository
 
         $query->execute([
             "dateTime" => Carbon::now()->startOfDay()->format(TimeHelper::DATE_FORMAT_DATETIME),
-            "userId" => $reservation->getOwner()->getId(),
+            "userId" => $reservation->getUser()->getId(),
             "roomId" => $reservation->getRoom()->getId()
         ]);
 
@@ -81,7 +81,7 @@ class ReservationRepository extends ServiceEntityRepository
 
         $query->execute([
             "dateTime" => $reservation->getDate()->format(TimeHelper::DATE_FORMAT_DATETIME),
-            "userId" => $reservation->getOwner()->getId(),
+            "userId" => $reservation->getUser()->getId(),
             "roomId" => $reservation->getRoom()->getId()
         ]);
 
@@ -95,7 +95,7 @@ class ReservationRepository extends ServiceEntityRepository
 
         $query->execute([
             "hashId" => $reservation->getHashId(),
-            "userId" => $reservation->getOwner()->getId(),
+            "userId" => $reservation->getUser()->getId(),
         ]);
 
         $result = $query->fetch();

@@ -14,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class RemoveRoleCommand extends Command
 {
-    protected static $defaultName = "blocbeta:user:remove-role";
+    protected static $defaultName = "boulderdb:user:remove-role";
 
     private EntityManagerInterface $entityManager;
 

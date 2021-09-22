@@ -14,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class AddRoleCommand extends Command
 {
-    protected static $defaultName = "blocbeta:user:add-role";
+    protected static $defaultName = "boulderdb:user:add-role";
 
     private EntityManagerInterface $entityManager;
 

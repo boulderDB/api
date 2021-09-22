@@ -14,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class FixRolesCommand extends Command
 {
-    protected static $defaultName = "blocbeta:user:fix-roles";
+    protected static $defaultName = "boulderdb:user:fix-roles";
 
     private EntityManagerInterface $entityManager;
 

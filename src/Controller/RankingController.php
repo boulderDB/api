@@ -2,12 +2,12 @@
 
 namespace App\Controller;
 
-use App\Command\IndexCurrentCommand;
+use App\Entity\Ascent;
 use App\Factory\RedisConnectionFactory;
+use App\Repository\AscentRepository;
 use App\Repository\BoulderRepository;
-use App\Service\CacheService;
+use App\Scoring\DefaultScoring;
 use App\Service\ContextService;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -16,17 +16,22 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class RankingController extends AbstractController
 {
+    use ResponseTrait;
+
     private ContextService $contextService;
     private BoulderRepository $boulderRepository;
     private \Redis $redis;
+    private AscentRepository $ascentRepository;
 
     public function __construct(
         ContextService $contextService,
-        BoulderRepository $boulderRepository
+        BoulderRepository $boulderRepository,
+        AscentRepository $ascentRepository
     )
     {
         $this->contextService = $contextService;
         $this->boulderRepository = $boulderRepository;
+        $this->ascentRepository = $ascentRepository;
         $this->redis = RedisConnectionFactory::create();
     }
 
@@ -37,19 +42,62 @@ class RankingController extends AbstractController
     {
         $locationId = $this->contextService->getLocation()->getId();
 
-        $cacheKey = CacheService::getCurrentRankingKey($locationId);
-        $timestampCacheKey = CacheService::getCurrentRankingTimestampKey($locationId);
+        $scoring = new DefaultScoring();
+        $boulders = $this->boulderRepository->getWithAscents($locationId);
 
-        if (!$this->redis->exists($cacheKey)) {
-            $data = [];
-        } else {
-            $data = json_decode($this->redis->get($cacheKey));
+        $data = [];
+
+        /**
+         * @var \App\Entity\Boulder $boulder
+         */
+        foreach ($boulders as $boulder) {
+            $scoring->calculateScore($boulder);
+
+            /**
+             * @var \App\Entity\Ascent $ascent
+             */
+            foreach ($boulder->getAscents() as $ascent) {
+                if (!in_array($ascent->getType(), $scoring->getScoredAscentTypes())) {
+                    continue;
+                }
+
+                $userId = $ascent->getUser()->getId();
+
+                if (!array_key_exists($userId, $data)) {
+                    $data[$userId] = [
+                        "user" => $ascent->getUser(),
+                        Ascent::ASCENT_TOP => [
+                            "count" => 0,
+                            "rate" => 0
+                        ],
+                        Ascent::ASCENT_FLASH => [
+                            "count" => 0,
+                            "rate" => 0
+                        ],
+                        "total" => [
+                            "count" => 0,
+                            "rate" => 0
+                        ],
+                    ];
+                }
+
+                $data[$userId][$ascent->getType()]["count"]++;
+                $data[$userId]["total"]["count"]++;
+            }
         }
 
-        return $this->json([
-            "list" => $data,
-            "updated" => $this->redis->get($timestampCacheKey)
-        ]);
+        foreach ($data as &$rank) {
+            $rank[Ascent::ASCENT_TOP]["rate"] = round(($rank[Ascent::ASCENT_TOP]["count"] / $rank["total"]["count"]) * 100);
+            $rank[Ascent::ASCENT_FLASH]["rate"] = round(($rank[Ascent::ASCENT_FLASH]["count"] / $rank["total"]["count"]) * 100);
+
+            $rank["total"]["rate"] = round(($rank["total"]["count"] / count($boulders)) * 100);
+        }
+
+        usort($data, function ($a, $b) {
+            return ($a["total"]["count"] < $b["total"]["count"]) ? 1 : -1;
+        });
+
+        return $this->okResponse(array_values($data));
     }
 
     /**
@@ -57,11 +105,9 @@ class RankingController extends AbstractController
      */
     public function allTime()
     {
-        $ranking = $this->redis->get(CacheService::getAllTimeRankingKey($this->contextService->getLocation()->getId()));
+        $locationId = $this->contextService->getLocation()->getId();
 
-        return $this->json([
-            "list" => json_decode($ranking),
-            "updated" => null
-        ]);
+        return $this->okResponse($this->ascentRepository->countByUser($locationId));
+
     }
 }

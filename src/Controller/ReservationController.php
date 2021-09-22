@@ -290,11 +290,11 @@ class ReservationController extends AbstractController
             return $this->resourceNotFoundResponse("Reservation", $id);
         }
 
-        if (!$reservation->getOwner() && !$this->isLocationAdmin()) {
+        if (!$reservation->getUser() && !$this->isLocationAdmin()) {
             return $this->unauthorizedResponse();
         }
 
-        if ($reservation->getOwner() && $reservation->getOwner()->getId() !== $this->getUser()->getId() && !$this->isLocationAdmin()) {
+        if ($reservation->getUser() && $reservation->getUser()->getId() !== $this->getUser()->getId() && !$this->isLocationAdmin()) {
             return $this->unauthorizedResponse();
         }
 

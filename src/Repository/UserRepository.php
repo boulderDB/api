@@ -7,6 +7,7 @@ use App\Service\ContextService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserRepository extends ServiceEntityRepository implements UserLoaderInterface
 {
@@ -72,5 +73,10 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->setMaxResults(20)
             ->getQuery()
             ->getResult();
+    }
+
+    public function loadUserByIdentifier(string $identifier)
+    {
+       return $this->loadUserByUsername($identifier);
     }
 }

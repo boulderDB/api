@@ -17,7 +17,7 @@ if ($_SERVER['APP_DEBUG']) {
 
 $kernel = new Kernel($_SERVER['APP_ENV'], (bool)$_SERVER['APP_DEBUG']);
 
-if ('dev' === $kernel->getEnvironment()) {
+if ('prod' === $kernel->getEnvironment()) {
     $kernel = new \App\CacheKernel($kernel);
 }
 

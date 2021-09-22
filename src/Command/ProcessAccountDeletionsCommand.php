@@ -12,7 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ProcessAccountDeletionsCommand extends Command
 {
-    protected static $defaultName = 'blocbeta:user:process-account-deletions';
+    protected static $defaultName = 'boulderdb:user:process-account-deletions';
 
     private EntityManagerInterface $entityManager;
     private \Redis $redis;

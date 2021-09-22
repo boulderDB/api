@@ -79,7 +79,7 @@ trait CrudTrait
                 throw new AccessDeniedHttpException("Access denied");
             }
 
-            if ($this->getUser() !== $object->getOwner()) {
+            if ($this->getUser() !== $object->getUser()) {
                 throw new AccessDeniedHttpException("Access denied");
             }
         }
@@ -106,6 +106,20 @@ trait CrudTrait
 
         if (!$object) {
             return $this->resourceNotFoundResponse($resource::RESOURCE_NAME, $id);
+        }
+
+        if ($object instanceof UserResourceInterface) {
+            if (!method_exists($this, "getUser")) {
+                throw new AccessDeniedHttpException("Access denied");
+            }
+
+            if (!$this->getUser() instanceof UserInterface) {
+                throw new AccessDeniedHttpException("Access denied");
+            }
+
+            if ($this->getUser() !== $object->getUser()) {
+                throw new AccessDeniedHttpException("Access denied");
+            }
         }
 
         if ($deactivate && !$object instanceof DeactivatableInterface) {

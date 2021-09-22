@@ -19,7 +19,7 @@ class AscentSerializer implements SerializerInterface
             "me" => [
                 "id" => $class->getId(),
                 "type" => $class->getType(),
-                "userId" => $class->getOwner()->getId()
+                "userId" => $class->getUser()->getId()
             ]
         ];
     }

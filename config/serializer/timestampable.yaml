@@ -1,0 +1,4 @@
+App\Entity\TimestampableInterface:
+  attributes:
+    createdAt:
+      groups: [ "default" ]

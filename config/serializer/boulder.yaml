@@ -14,7 +14,13 @@ App\Entity\Boulder:
       groups: [ "default" ]
     endWall:
       groups: [ "default" ]
-    createdAt:
-      groups: [ "default" ]
     setters:
+      groups: [ "default" ]
+    userAscent:
+      groups: [ "default" ]
+    currentPoints:
+      groups: [ "default" ]
+    points:
+      groups: [ "default" ]
+    tags:
       groups: [ "default" ]

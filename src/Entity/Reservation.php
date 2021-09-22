@@ -124,7 +124,7 @@ class Reservation implements UserResourceInterface
         return md5($roomId . $locationId . $startTime . $endTime . $dateYMD);
     }
 
-    public function getOwner(): ?User
+    public function getUser(): ?User
     {
         return $this->user;
     }

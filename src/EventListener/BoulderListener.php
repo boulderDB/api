@@ -3,9 +3,6 @@
 namespace App\EventListener;
 
 use App\Entity\Boulder;
-use App\Factory\RedisConnectionFactory;
-use App\Service\CacheService;
-use App\Service\ContextService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
@@ -13,15 +10,6 @@ use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 class BoulderListener implements EventSubscriber
 {
-    private \Redis $redis;
-    private ContextService $contextService;
-
-    public function __construct(ContextService $contextService)
-    {
-        $this->redis = RedisConnectionFactory::create();
-        $this->contextService = $contextService;
-    }
-
     public function getSubscribedEvents()
     {
         return [
@@ -38,8 +26,6 @@ class BoulderListener implements EventSubscriber
             return;
         }
 
-        $this->redis->del(CacheService::getBoulderCacheKey($this->contextService->getLocation()->getId()));
-
         if (!$subject->getInternalGrade()) {
             $subject->setInternalGrade($subject->getGrade());
         }
@@ -52,8 +38,6 @@ class BoulderListener implements EventSubscriber
         if (!$subject instanceof Boulder) {
             return;
         }
-
-        $this->redis->del(CacheService::getBoulderCacheKey($this->contextService->getLocation()->getId()));
 
         if (!$subject->getInternalGrade()) {
             $subject->setInternalGrade($subject->getGrade());

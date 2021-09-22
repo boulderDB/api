@@ -1,0 +1,8 @@
+App\Entity\Ascent:
+  attributes:
+    id:
+      groups: [ "default" ]
+    type:
+      groups: [ "default" ]
+    score:
+      groups: [ "default" ]

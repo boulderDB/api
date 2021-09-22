@@ -15,6 +15,18 @@ class BoulderRepository extends ServiceEntityRepository
         parent::__construct($registry, Boulder::class);
     }
 
+    public function countByLocation(int $locationId)
+    {
+        $result = $this->createQueryBuilder('boulder')
+            ->select("count(boulder.id)")
+            ->where("boulder.location = :location")
+            ->setParameter("location", $locationId)
+            ->getQuery()
+            ->getSingleResult();
+
+        return $result ? $result[1] : 0;
+    }
+
     public function getOne(int $id): ?Boulder
     {
         return $this->createQueryBuilder("boulder")
@@ -67,21 +79,17 @@ class BoulderRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getWithAscents(string $locationId): array
+    public function getWithAscents(string $locationId, string $status = Boulder::STATUS_ACTIVE): array
     {
         return $this->createQueryBuilder('boulder')
-            ->select('
-                partial boulder.{id, points},
-                partial ascent.{id, type},
-                partial user.{id, username, gender, lastActivity, image, visible}
-            ')
+            ->select("boulder", "ascent")
             ->innerJoin('boulder.ascents', 'ascent')
             ->innerJoin('ascent.user', 'user')
             ->where('boulder.location = :location')
             ->andWhere('boulder.status = :status')
             ->andWhere('user.visible = :visible')
             ->setParameter('location', $locationId)
-            ->setParameter('status', Boulder::STATUS_ACTIVE)
+            ->setParameter('status', $status)
             ->setParameter('visible', true)
             ->getQuery()
             ->getResult();

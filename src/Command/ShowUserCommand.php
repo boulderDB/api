@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ShowUserCommand extends Command
 {
-    protected static $defaultName = "blocbeta:user:show";
+    protected static $defaultName = "boulderdb:user:show";
 
     private UserRepository $userRepository;
 
