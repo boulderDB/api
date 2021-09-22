@@ -2,7 +2,7 @@
     "type": "project",
     "license": "proprietary",
     "require": {
-        "php": "^7.4",
+        "php": "^8.0",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
@@ -16,7 +16,7 @@
         "lexik/jwt-authentication-bundle": "v2.12.6",
         "nesbot/carbon": "^2.41",
         "sensio/framework-extra-bundle": "^6.2",
-        "sentry/sentry-symfony": "^3.5",
+        "sentry/sentry-symfony": "^4.2",
         "symfony/console": "5.3.*",
         "symfony/dotenv": "5.3.*",
         "symfony/expression-language": "5.3.*",
@@ -43,7 +43,10 @@
         "preferred-install": {
             "*": "dist"
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "php": "8.0"
+        }
     },
     "autoload": {
         "psr-4": {
