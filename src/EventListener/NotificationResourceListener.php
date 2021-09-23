@@ -16,6 +16,7 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class NotificationResourceListener implements EventSubscriber
 {
@@ -27,7 +28,7 @@ class NotificationResourceListener implements EventSubscriber
     public function __construct(
         UserRepository $userRepository,
         NotificationRepository $notificationRepository,
-        Serializer $serializer
+        SerializerInterface $serializer
     )
     {
         $this->redis = RedisConnectionFactory::create();
