@@ -12,20 +12,23 @@ use App\Factory\RedisConnectionFactory;
 use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Service\ContextService;
-use App\Service\Serializer;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Serializer;
 
 class NotificationResourceListener implements EventSubscriber
 {
     private \Redis $redis;
     private UserRepository $userRepository;
     private NotificationRepository $notificationRepository;
-    private SerializerInterface $serializer;
+    private Serializer $serializer;
 
-    public function __construct(UserRepository $userRepository, NotificationRepository $notificationRepository, SerializerInterface $serializer)
+    public function __construct(
+        UserRepository $userRepository,
+        NotificationRepository $notificationRepository,
+        Serializer $serializer
+    )
     {
         $this->redis = RedisConnectionFactory::create();
         $this->userRepository = $userRepository;
@@ -68,7 +71,7 @@ class NotificationResourceListener implements EventSubscriber
                     "type" => $subject->getType(),
                     "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/doubts"
                 ],
-                "json",
+                null,
                 ["groups" => "default"]
             );
 
@@ -86,25 +89,37 @@ class NotificationResourceListener implements EventSubscriber
         );
 
         if ($subject instanceof BoulderError) {
-            $this->queueAdminNotifications([...$admins, ...$setters], $locationId, $type, [
-                "location" => Serializer::serialize($subject->getLocation()),
-                "boulder" => Serializer::serialize($subject->getBoulder()),
-                "boulderError" => Serializer::serialize($subject),
-                "type" => $subject->getType(),
-                "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/admin/errors?focus=$id"
-            ]);
+            $payload = $this->serializer->normalize(
+                [
+                    "location" => $subject->getLocation(),
+                    "boulder" => $subject->getBoulder(),
+                    "boulderError" => $subject,
+                    "type" => $subject->getType(),
+                    "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/admin/errors?focus=$id"
+                ],
+                null,
+                ["groups" => "default"]
+            );
+
+            $this->queueAdminNotifications([...$admins, ...$setters], $locationId, $type, $payload);
 
             return;
         }
 
         if ($subject instanceof BoulderComment) {
-            $this->queueAdminNotifications([...$admins, ...$setters], $locationId, $type, [
-                "location" => Serializer::serialize($subject->getLocation()),
-                "boulder" => Serializer::serialize($subject->getBoulder()),
-                "boulderComment" => Serializer::serialize($subject),
-                "type" => $subject->getType(),
-                "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/admin/comments?focus=$id"
-            ]);
+            $payload = $this->serializer->normalize(
+                [
+                    "location" => $subject->getLocation(),
+                    "boulder" => $subject->getBoulder(),
+                    "boulderComment" => $subject,
+                    "type" => $subject->getType(),
+                    "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/admin/comments?focus=$id"
+                ],
+                null,
+                ["groups" => "default"]
+            );
+
+            $this->queueAdminNotifications([...$admins, ...$setters], $locationId, $type, $payload);
         }
     }
 
