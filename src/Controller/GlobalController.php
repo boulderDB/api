@@ -15,8 +15,6 @@ use App\Repository\UserRepository;
 use App\Service\NotificationService;
 use App\Service\StorageClient;
 use App\Service\ContextService;
-use App\Service\Serializer;
-use App\Service\SerializerInterface;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
@@ -30,6 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -50,7 +49,7 @@ class GlobalController extends AbstractController
     private EntityManagerInterface $entityManager;
     private \Redis $redis;
     private UserRepository $userRepository;
-    private UserPasswordEncoderInterface $passwordEncoder;
+    private UserPasswordHasherInterface $passwordEncoder;
     private MailerInterface $mailer;
     private ContextService $contextService;
     private TokenStorageInterface $tokenStorage;
@@ -64,7 +63,7 @@ class GlobalController extends AbstractController
     public function __construct(
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
-        UserPasswordEncoderInterface $passwordEncoder,
+        UserPasswordHasherInterface $passwordEncoder,
         MailerInterface $mailer,
         ContextService $contextService,
         TokenStorageInterface $tokenStorage,

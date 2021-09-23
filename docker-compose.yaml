@@ -30,11 +30,3 @@ services:
 
   redis:
     image: redis:alpine
-
-  varnish:
-    image: varnish:alpine
-    volumes:
-      - ./_docker/varnish/default.vcl:/etc/varnish/default.vcl
-      - ./_docker/varnish/fos_ban.vcl:/etc/varnish/fos_ban.vcl
-    ports:
-      - "8080:80"

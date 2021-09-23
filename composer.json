@@ -13,7 +13,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.1",
         "doctrine/orm": "^2.9",
         "friendsofsymfony/http-cache-bundle": "^2.10",
-        "lexik/jwt-authentication-bundle": "v2.12.6",
+        "lexik/jwt-authentication-bundle": "v2.13.0",
         "nesbot/carbon": "^2.41",
         "sensio/framework-extra-bundle": "^6.2",
         "sentry/sentry-symfony": "^4.2",

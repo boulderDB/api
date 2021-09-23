@@ -1,4 +1,6 @@
 security:
+  enable_authenticator_manager: true
+
   encoders:
     App\Entity\User:
       algorithm: md5
@@ -16,34 +18,25 @@ security:
       security: false
 
     login:
-      pattern:  ^/api/login
+      pattern: ^/api/login
       stateless: true
-      anonymous: true
       json_login:
         check_path: /api/login
         success_handler: lexik_jwt_authentication.handler.authentication_success
         failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-    public:
-      request_matcher: App\RequestMatcher\PublicRequestMatcher
-      anonymous: true
-
     api:
+      pattern: ^/api
       stateless: true
-      guard:
-        authenticators:
-          - lexik_jwt_authentication.jwt_token_authenticator
+      jwt: ~
 
   # Easy way to control access for large sections of your site
   # Note: Only the *first* access control that matches will be used
   access_control:
-#    - { path: '^/api', roles: IS_AUTHENTICATED_FULLY }
-#    - { path: '^/api/flashh/schedule/allocation', roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#    - { path: '^/api/request-reset', roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#    - { path: '^/api/reset', roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#    - { path: '^/api/register', roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#    - { path: '^/api/cancel-reservation', roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#    - { path: '^/api/login', roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#    - { path: '^/api/location', roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: '^/api/cancel-reservation', roles: PUBLIC_ACCESS }
+    - { path: '^/api/password-reset', roles: PUBLIC_ACCESS }
+    - { path: '^/api/register', roles: PUBLIC_ACCESS }
+    - { path: '^/api/login', roles: PUBLIC_ACCESS }
+    - { path: '^/api', roles: IS_AUTHENTICATED_FULLY }
 
 

@@ -41,7 +41,7 @@ class RequestListener implements EventSubscriberInterface
     private function accountDisabled(): bool
     {
         if (!$this->tokenStorage->getToken()) {
-            return true;
+            return false;
         }
 
         /**
@@ -49,11 +49,11 @@ class RequestListener implements EventSubscriberInterface
          */
         $user = $this->tokenStorage->getToken()->getUser();
 
-        if (!$user instanceof User) {
-            return false;
+        if (!$user instanceof User && !$user->isActive()) {
+            return true;
         }
 
-        return !$user->isActive();
+        return false;
     }
 
     public function onKernelRequest(RequestEvent $event)

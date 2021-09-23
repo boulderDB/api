@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Collection\AscentCollection;
 use App\Entity\Ascent;
 use App\Entity\User;
 use App\Repository\AscentRepository;
@@ -67,8 +68,8 @@ class CompareController extends AbstractController
         $locationId = $this->contextService->getLocation()->getId();
         $boulders = $this->boulderRepository->getByStatus($locationId);
 
-        $ascentsA = $this->ascentRepository->getByUserAndLocation($userIdA, $locationId);
-        $ascentsB = $this->ascentRepository->getByUserAndLocation($userIdB, $locationId);
+        $ascentACollection = new AscentCollection($this->ascentRepository->getByUserAndLocation($userIdA, $locationId));
+        $ascentBCollection = new AscentCollection($this->ascentRepository->getByUserAndLocation($userIdB, $locationId));
 
         if (!$boulders) {
             return $this->noContentResponse();
@@ -79,26 +80,35 @@ class CompareController extends AbstractController
          */
         $comparisons = [];
 
-        foreach ($boulders as $boulderId) {
-            $a = $ascentsA[$boulderId] ?? $ascentsA[$boulderId] ?? null;
-            $b = $ascentsB[$boulderId] ?? $ascentsB[$boulderId] ?? null;
+        foreach ($boulders as $boulder) {
+            $a = $ascentACollection->findForBoulder($boulder)->first();
+            $b = $ascentBCollection->findForBoulder($boulder)->first();
 
-            $comparisons[] = new ComparisonStruct($boulderId, $a, $b);
+            $comparisons[] = new ComparisonStruct($boulder, $a, $b);
         }
 
         foreach ($comparisons as $comparison) {
-            if ($comparison->getA() === Ascent::ASCENT_FLASH) {
-                $comparison->setPositionA(2);
-            } else if ($comparison->getA() === Ascent::ASCENT_TOP) {
-                $comparison->setPositionA(1);
+            /* @var Ascent $a */
+            $a = $comparison->getA();
+            /* @var Ascent $b */
+            $b = $comparison->getB();
+
+            if ($a) {
+                if ($a->getType() === Ascent::ASCENT_FLASH) {
+                    $comparison->setPositionA(2);
+                } else if ($a->getType() === Ascent::ASCENT_TOP) {
+                    $comparison->setPositionA(1);
+                }
             } else {
                 $comparison->setPositionA(0);
             }
 
-            if ($comparison->getB() === Ascent::ASCENT_FLASH) {
-                $comparison->setPositionB(2);
-            } else if ($comparison->getB() === Ascent::ASCENT_TOP) {
-                $comparison->setPositionB(1);
+            if ($b) {
+                if ($b->getType() === Ascent::ASCENT_FLASH) {
+                    $comparison->setPositionB(2);
+                } else if ($b->getType() === Ascent::ASCENT_TOP) {
+                    $comparison->setPositionB(1);
+                }
             } else {
                 $comparison->setPositionB(0);
             }

@@ -1,0 +1,12 @@
+App\Struct\ComparisonStruct:
+  attributes:
+    subject:
+      groups: [ "default" ]
+    a:
+      groups: [ "default" ]
+    b:
+      groups: [ "default" ]
+    positionA:
+      groups: [ "default" ]
+    positionB:
+      groups: [ "default" ]

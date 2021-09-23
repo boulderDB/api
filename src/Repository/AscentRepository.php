@@ -90,7 +90,7 @@ class AscentRepository extends ServiceEntityRepository
     /**
      * @return Ascent[]
      */
-    public function getByUserAndLocation(int $locationId, int $userId)
+    public function getByUserAndLocation(int $userId, int $locationId)
     {
         return $this->createQueryBuilder("ascent")
             ->innerJoin("ascent.boulder", "boulder")
