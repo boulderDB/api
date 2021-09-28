@@ -46,6 +46,7 @@ class BoulderController extends AbstractController
         $boulders = $this->boulderRepository->getByStatus($this->contextService->getLocation()->getId());
         $scoring = new DefaultScoring();
 
+        /* todo: add postload listener */
         /**
          * @var Boulder $boulder
          */
