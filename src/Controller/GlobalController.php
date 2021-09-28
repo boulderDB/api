@@ -291,7 +291,7 @@ class GlobalController extends AbstractController
             return $this->badFormRequestResponse($form);
         }
 
-        $password = $this->passwordEncoder->encodePassword($user, $form->getData()['password']);
+        $password = $this->passwordEncoder->hashPassword($user, $form->getData()['password']);
         $user->setPassword($password);
         $this->redis->del($hash);
 
