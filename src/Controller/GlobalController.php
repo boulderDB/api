@@ -33,7 +33,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class GlobalController extends AbstractController
@@ -422,10 +421,6 @@ class GlobalController extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
         }
-
-        $hash = hash('sha256', $this->tokenStorage->getToken()->getCredentials());
-        $this->redis->select(RedisConnectionFactory::DB_TRACKING);
-        $this->redis->incr("session={$hash}:user={$user->getId()}:location={$location->getId()}");
 
         return $this->noContentResponse();
     }

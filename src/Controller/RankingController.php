@@ -83,6 +83,7 @@ class RankingController extends AbstractController
 
                 $data[$userId][$ascent->getType()]["count"]++;
                 $data[$userId]["total"]["count"]++;
+                $data[$userId]["points"] = $ascent->getScore();
             }
         }
 
