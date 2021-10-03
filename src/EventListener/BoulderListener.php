@@ -45,7 +45,7 @@ class BoulderListener implements EventSubscriber
          */
         $user = $this->tokenStorage->getToken()->getUser();
 
-        if ($user) {
+        if (!$user) {
             return;
         }
 
