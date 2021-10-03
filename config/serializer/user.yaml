@@ -18,3 +18,5 @@ App\Entity\User:
       groups: [ "detail" ]
     roles:
       groups: [ "admin" ]
+    lastActivity:
+      groups: [ "default" ]
