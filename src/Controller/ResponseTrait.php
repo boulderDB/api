@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 trait ResponseTrait
 {
+    use ContextualizedControllerTrait;
+
     protected function resourceNotFoundResponse(string $name = null, string $id = null)
     {
         $message = "Resource not found";
@@ -29,9 +31,9 @@ trait ResponseTrait
         ], Response::HTTP_NOT_FOUND);
     }
 
-    protected function okResponse($data, array $groups = ["default"])
+    protected function okResponse($data, array $groups = [])
     {
-        return $this->json($data, Response::HTTP_OK, [], ["groups" => $groups]);
+        return $this->json($data, Response::HTTP_OK, [], $this->getSerializerContext($groups));
     }
 
 
@@ -102,5 +104,22 @@ trait ResponseTrait
             "message" => $message,
             "code" => Response::HTTP_CONFLICT
         ], Response::HTTP_CONFLICT);
+    }
+
+    private function getSerializerContext(array $groups): array
+    {
+        $context = [
+            "groups" => ["default", ...$groups]
+        ];
+
+        if ($this->isLocationAdmin()) {
+            $context["groups"][] = "admin";
+        }
+
+        if ($this->isLocationSetter()) {
+            $context["groups"][] = "setter";
+        }
+
+        return $context;
     }
 }
