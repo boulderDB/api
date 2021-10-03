@@ -82,7 +82,7 @@ class BoulderRepository extends ServiceEntityRepository
     public function getWithAscents(string $locationId, string $status = Boulder::STATUS_ACTIVE): array
     {
         return $this->createQueryBuilder('boulder')
-            ->select("boulder", "ascent")
+            ->select("boulder", "ascent", "user")
             ->innerJoin('boulder.ascents', 'ascent')
             ->innerJoin('ascent.user', 'user')
             ->where('boulder.location = :location')

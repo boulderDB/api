@@ -99,7 +99,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private ?\DateTime $lastActivity = null;
+    private ?\DateTimeInterface $lastActivity = null;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -257,7 +257,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->lastVisitedLocation = $lastVisitedLocation;
     }
 
-    public function getLastActivity(): ?\DateTime
+    public function getLastActivity(): \DateTimeInterface
     {
         return $this->lastActivity;
     }
