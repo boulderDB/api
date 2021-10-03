@@ -273,7 +273,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
             return $ascent->getUser()->getId() === $userId;
         })->first();
 
-        $this->userAscent = $match ? $match : null;
+        $this->userAscent = $match ?: null;
     }
 
     public function getUserAscent(): ?Ascent
