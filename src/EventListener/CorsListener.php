@@ -14,7 +14,7 @@ class CorsListener implements EventSubscriberInterface
 {
     public function onKernelRequest(RequestEvent $event)
     {
-        if ($_ENV["APP_DEBUG"]) {
+        if ($_ENV["APP_DEBUG"] === "1") {
             return;
         }
 
