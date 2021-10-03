@@ -92,6 +92,7 @@ class RankingController extends AbstractController
             $rank[Ascent::ASCENT_FLASH]["rate"] = round(($rank[Ascent::ASCENT_FLASH]["count"] / $rank["total"]["count"]) * 100);
 
             $rank["total"]["rate"] = round(($rank["total"]["count"] / count($boulders)) * 100);
+            $data["advance"] = 0;
         }
 
         usort($data, function ($a, $b) {

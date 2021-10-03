@@ -20,3 +20,5 @@ App\Entity\User:
       groups: [ "admin" ]
     lastActivity:
       groups: [ "default" ]
+    gender:
+      groups: [ "default" ]
