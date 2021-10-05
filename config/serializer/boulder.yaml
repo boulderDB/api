@@ -23,6 +23,6 @@ App\Entity\Boulder:
     points:
       groups: [ "default" ]
     tags:
-      groups: [ "default" ]
+      groups: [ "detail" ]
     ascents:
       groups: [ "detail" ]
