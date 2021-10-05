@@ -73,7 +73,7 @@ class BoulderController extends AbstractController
      */
     public function read(string $id)
     {
-        return $this->readEntity(Boulder::class, $id, ["default", "detail"]);
+        return $this->readEntity(Boulder::class, $id, ["detail"]);
     }
 
     /**

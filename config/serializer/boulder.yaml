@@ -26,3 +26,5 @@ App\Entity\Boulder:
       groups: [ "detail" ]
     ascents:
       groups: [ "detail" ]
+    comments:
+      groups: [ "detail" ]
