@@ -55,7 +55,7 @@ class BoulderController extends AbstractController
             $boulder->setUserAscent($userId);
         }
 
-        return $this->okResponse($boulders, ["detail"]);
+        return $this->okResponse($boulders);
     }
 
     /**
