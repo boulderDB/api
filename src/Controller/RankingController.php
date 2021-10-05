@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
- * @Route("/ranking")
+ * @Route("/rankings")
  */
 class RankingController extends AbstractController
 {
@@ -83,7 +83,7 @@ class RankingController extends AbstractController
 
                 $data[$userId][$ascent->getType()]["count"]++;
                 $data[$userId]["total"]["count"]++;
-                $data[$userId]["points"] = $ascent->getScore();
+                $data[$userId]["points"] += $ascent->getScore();
             }
         }
 

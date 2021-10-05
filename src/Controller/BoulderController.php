@@ -69,7 +69,7 @@ class BoulderController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", requirements={"id": "\d+"}, methods={"GET"})
+     * @Route("/{id}", requirements={"id": "\d+"}, methods={"GET"}, name="boulders_read")
      */
     public function read(string $id)
     {

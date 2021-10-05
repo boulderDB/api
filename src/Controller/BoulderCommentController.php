@@ -2,18 +2,15 @@
 
 namespace App\Controller;
 
-use App\Entity\Ascent;
 use App\Entity\BoulderComment;
-use App\Entity\BoulderError;
 use App\Form\BoulderCommentType;
 use App\Repository\BoulderCommentRepository;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use function Clue\StreamFilter\fun;
+use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 
 /**
  * @Route("/boulder-comments")
@@ -50,6 +47,8 @@ class BoulderCommentController extends AbstractController
 
     /**
      * @Route(methods={"POST"}, name="boulder_comments_create")
+     *
+     * @InvalidateRoute("boulders_index", params={"id" = {"expression"="id"}})")
      */
     public function create(Request $request)
     {
@@ -68,6 +67,8 @@ class BoulderCommentController extends AbstractController
 
     /**
      * @Route("/{id}", methods={"DELETE"}, name="boulder_comments_delete")
+     *
+     * @InvalidateRoute("boulders_index", params={"id" = {"expression"="id"}})")
      */
     public function delete(int $id)
     {

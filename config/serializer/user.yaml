@@ -7,7 +7,7 @@ App\Entity\User:
     email:
       groups: [ "detail" ]
     image:
-      groups: [ "detail" ]
+      groups: [ "default" ]
     visible:
       groups: [ "detail" ]
     firstName:
