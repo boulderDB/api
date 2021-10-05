@@ -15,19 +15,20 @@ class AscentDoubtRepository extends ServiceEntityRepository
         parent::__construct($registry, AscentDoubt::class);
     }
 
-    public function getByStatus(int $userId, string $status = AscentDoubt::STATUS_UNRESOLVED)
+    public function getByStatus(int $userId, int $locationId, string $status = AscentDoubt::STATUS_UNRESOLVED)
     {
-        $queryBuilder = $this->createQueryBuilder("ascentDoubt");
-        $queryBuilder
+        return $this->createQueryBuilder("ascentDoubt")
+            ->select(["ascentDoubt", "recipient", "boulder"])
             ->innerJoin("ascentDoubt.recipient", "recipient")
+            ->innerJoin("ascentDoubt.boulder", "boulder")
             ->where("recipient.id = :recipientId")
             ->andWhere("ascentDoubt.status <= :status")
+            ->andWhere("boulder.location = :locationId")
             ->setParameters([
                 "recipientId" => $userId,
-                "status" => $status
-            ]);
-
-        return $queryBuilder
+                "status" => $status,
+                "locationId" => $locationId
+            ])
             ->getQuery()
             ->getResult();
     }

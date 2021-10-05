@@ -6,3 +6,7 @@ App\Entity\Wall:
       groups: [ "default" ]
     active:
       groups: [ "detail" ]
+    media:
+      groups: [ "detail" ]
+    description:
+      groups: [ "detail" ]

@@ -4,15 +4,14 @@ App\Entity\User:
       groups: [ "default" ]
     username:
       groups: [ "default" ]
-    email:
-      groups: [ "detail" ]
     image:
       groups: [ "default" ]
     lastActivity:
       groups: [ "default" ]
     gender:
       groups: [ "default" ]
-
+    email:
+      groups: [ "self" ]
     visible:
       groups: [ "self" ]
     firstName:
