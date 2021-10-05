@@ -24,3 +24,5 @@ App\Entity\Boulder:
       groups: [ "default" ]
     tags:
       groups: [ "default" ]
+    ascents:
+      groups: [ "detail" ]

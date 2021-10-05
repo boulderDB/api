@@ -88,15 +88,14 @@ class RankingController extends AbstractController
         }
 
         foreach ($data as &$rank) {
-            $rank[Ascent::ASCENT_TOP]["rate"] = round(($rank[Ascent::ASCENT_TOP]["count"] / $rank["total"]["count"]) * 100);
-            $rank[Ascent::ASCENT_FLASH]["rate"] = round(($rank[Ascent::ASCENT_FLASH]["count"] / $rank["total"]["count"]) * 100);
-
-            $rank["total"]["rate"] = round(($rank["total"]["count"] / count($boulders)) * 100);
-            $data["advance"] = 0;
+            $rank["total"]["count"] = $rank[Ascent::ASCENT_TOP]["count"] + $rank[Ascent::ASCENT_FLASH]["count"];
+            $rank[Ascent::ASCENT_TOP]["rate"] = DefaultScoring::calculateRate(count($boulders), $rank[Ascent::ASCENT_TOP]["count"]);
+            $rank[Ascent::ASCENT_FLASH]["rate"] = DefaultScoring::calculateRate(count($boulders), $rank[Ascent::ASCENT_FLASH]["count"]);
+            $rank["total"]["rate"] = DefaultScoring::calculateRate(count($boulders), $rank["total"]["count"]);
         }
 
         usort($data, function ($a, $b) {
-            return ($a["total"]["count"] < $b["total"]["count"]) ? 1 : -1;
+            return $a["total"] > $b["total"] ? -1 : 1;
         });
 
         return $this->okResponse(array_values($data));
@@ -109,7 +108,7 @@ class RankingController extends AbstractController
     {
         $locationId = $this->contextService->getLocation()->getId();
 
-        return $this->okResponse($this->ascentRepository->countByUser($locationId));
+        return $this->okResponse([]);
 
     }
 }

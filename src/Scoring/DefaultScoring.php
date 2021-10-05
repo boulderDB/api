@@ -48,7 +48,7 @@ class DefaultScoring implements ScoringInterface
         return [Ascent::ASCENT_TOP, Ascent::ASCENT_FLASH];
     }
 
-    public static function calculateRate(int $total, int $partial)
+    public static function calculateRate(int $total, int $partial): float|int
     {
         if (!$total || !$partial) {
             return 0;
