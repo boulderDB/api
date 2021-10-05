@@ -6,3 +6,5 @@ App\Entity\Ascent:
       groups: [ "default" ]
     score:
       groups: [ "default" ]
+    user:
+      groups: [ "default" ]

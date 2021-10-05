@@ -8,17 +8,18 @@ App\Entity\User:
       groups: [ "detail" ]
     image:
       groups: [ "default" ]
-    visible:
-      groups: [ "detail" ]
-    firstName:
-      groups: [ "detail" ]
-    lastName:
-      groups: [ "detail" ]
-    notifications:
-      groups: [ "detail" ]
-    roles:
-      groups: [ "admin" ]
     lastActivity:
       groups: [ "default" ]
     gender:
       groups: [ "default" ]
+
+    visible:
+      groups: [ "self" ]
+    firstName:
+      groups: [ "self" ]
+    lastName:
+      groups: [ "self" ]
+    notifications:
+      groups: [ "self" ]
+    roles:
+      groups: [ "admin", "self" ]

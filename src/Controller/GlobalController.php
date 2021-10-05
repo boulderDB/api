@@ -136,7 +136,7 @@ class GlobalController extends AbstractController
          */
         $user = $this->getUser();
 
-        return $this->okResponse($user, ["default", "detail"]);
+        return $this->okResponse($user, ["self"]);
     }
 
     /**
