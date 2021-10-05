@@ -8,7 +8,7 @@ return [
     Sentry\SentryBundle\SentryBundle::class => ['prod' => true],
     Doctrine\Bundle\DoctrineBundle\DoctrineBundle::class => ['all' => true],
     Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle::class => ['all' => true],
-    Symfony\Bundle\MonologBundle\MonologBundle::class => ['dev' => true],
+    Symfony\Bundle\MonologBundle\MonologBundle::class => ['all' => true],
     FOS\HttpCacheBundle\FOSHttpCacheBundle::class => ['all' => true],
     Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle::class => ['all' => true],
 ];
