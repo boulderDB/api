@@ -193,7 +193,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
 
     public function getEndWall(): ?Wall
     {
-        return $this->endWall;
+        return $this->endWall ?: $this->startWall;
     }
 
     public function setEndWall(?Wall $endWall): void
