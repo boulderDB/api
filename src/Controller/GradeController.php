@@ -61,7 +61,7 @@ class GradeController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->readEntity(Grade::class, $id);
+        return $this->readEntity(Grade::class, $id, ["detail"]);
     }
 
     /**

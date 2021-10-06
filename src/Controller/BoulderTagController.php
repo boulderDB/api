@@ -42,8 +42,6 @@ class BoulderTagController extends AbstractController
         $filters = $request->get("filter");
 
         if ($filters) {
-            $this->denyUnlessLocationAdmin();
-
             return $this->okResponse($this->boulderTagRepository->queryWhere(
                 $this->getLocationId(),
                 ["active" => "bool"],
@@ -63,7 +61,7 @@ class BoulderTagController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->readEntity(BoulderTag::class, $id, ["default", "detail"]);
+        return $this->readEntity(BoulderTag::class, $id, ["detail"]);
     }
 
     /**

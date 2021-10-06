@@ -61,7 +61,7 @@ class HoldTypeController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->readEntity(HoldType::class, $id);
+        return $this->readEntity(HoldType::class, $id, ["detail"]);
     }
 
     /**

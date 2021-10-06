@@ -62,7 +62,7 @@ class AreaController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->readEntity(Area::class, $id, ["default", "detail"]);
+        return $this->readEntity(Area::class, $id, ["detail"]);
     }
 
     /**
