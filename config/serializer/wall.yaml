@@ -5,7 +5,7 @@ App\Entity\Wall:
     name:
       groups: [ "default" ]
     active:
-      groups: [ "detail" ]
+      groups: [ "default" ]
     media:
       groups: [ "detail" ]
     description:

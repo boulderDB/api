@@ -6,6 +6,7 @@ use App\Service\ContextService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -112,11 +113,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Collection $ascents = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="participants", fetch="LAZY")
-     */
-    private ?Collection $events = null;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Notification", mappedBy="user", fetch="LAZY")
      * @var \App\Entity\Notification[]
      */
@@ -124,10 +120,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private ?string $plainPassword = null;
 
-    public function __construct()
+    #[Pure] public function __construct()
     {
         $this->ascents = new ArrayCollection();
-        $this->events = new ArrayCollection();
 
         $this->visible = true;
         $this->active = true;
@@ -275,16 +270,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAscents($ascents): void
     {
         $this->ascents = $ascents;
-    }
-
-    public function getEvents()
-    {
-        return $this->events;
-    }
-
-    public function setEvents($events): void
-    {
-        $this->events = $events;
     }
 
     public function getPlainPassword(): ?string

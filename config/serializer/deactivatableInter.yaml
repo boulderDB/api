@@ -1,0 +1,4 @@
+App\Entity\DeactivatableInterface:
+  attributes:
+    active:
+      groups: [ "default" ]

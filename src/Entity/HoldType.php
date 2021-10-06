@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="hold_color")
  * @ORM\Entity()
  */
-class HoldType implements LocationResourceInterface
+class HoldType implements LocationResourceInterface, DeactivatableInterface
 {
     public const RESOURCE_NAME = "HoldType";
 
