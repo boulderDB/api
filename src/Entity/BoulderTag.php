@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\Table(name="tag")
  */
-class BoulderTag implements LocationResourceInterface, DeactivatableInterface
+class BoulderTag implements LocationResourceInterface, DeactivatableInterface, CacheableInterface
 {
     public const RESOURCE_NAME = "BoulderTag";
 
@@ -69,5 +69,13 @@ class BoulderTag implements LocationResourceInterface, DeactivatableInterface
     public function setActive(bool $active): void
     {
         $this->active = $active;
+    }
+
+    public function invalidates(): array
+    {
+       return [
+           "/boulders",
+           "/boulder-tags"
+       ];
     }
 }

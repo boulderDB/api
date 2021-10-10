@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="hold_color")
  * @ORM\Entity()
  */
-class HoldType implements LocationResourceInterface, DeactivatableInterface
+class HoldType implements LocationResourceInterface, DeactivatableInterface, CacheableInterface
 {
     public const RESOURCE_NAME = "HoldType";
 
@@ -69,5 +69,13 @@ class HoldType implements LocationResourceInterface, DeactivatableInterface
     public function setActive(bool $active): void
     {
         $this->active = $active;
+    }
+
+    public function invalidates(): array
+    {
+        return [
+            "/holdtypes",
+            "/boulders"
+        ];
     }
 }

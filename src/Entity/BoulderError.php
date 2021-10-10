@@ -7,7 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class BoulderError implements LocationResourceInterface, TimestampableInterface, NotificationResourceInterface
+class BoulderError implements
+    LocationResourceInterface,
+    TimestampableInterface,
+    NotificationResourceInterface,
+    CacheableInterface
 {
     public const RESOURCE_NAME = "BoulderError";
 
@@ -99,5 +103,12 @@ class BoulderError implements LocationResourceInterface, TimestampableInterface,
     public function getType(): string
     {
        return Notification::TYPE_ERROR;
+    }
+
+    public function invalidates(): array
+    {
+        return [
+            "/boulder-errors"
+        ];
     }
 }

@@ -100,12 +100,6 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
-    "friendsofsymfony/http-cache": {
-        "version": "2.10.1"
-    },
-    "friendsofsymfony/http-cache-bundle": {
-        "version": "2.10.3"
-    },
     "guzzlehttp/guzzle": {
         "version": "7.2.0"
     },

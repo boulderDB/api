@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\Table(indexes={@ORM\Index(name="status", columns={"status"})})
  */
-class Boulder implements LocationResourceInterface, TimestampableInterface
+class Boulder implements LocationResourceInterface, TimestampableInterface, CacheableInterface
 {
     use TimestampTrait;
     use LocationTrait;
@@ -325,5 +325,13 @@ class Boulder implements LocationResourceInterface, TimestampableInterface
     public function setRatings($ratings): void
     {
         $this->ratings = $ratings;
+    }
+
+    public function invalidates(): array
+    {
+        return [
+            "/boulders",
+            "/rankings"
+        ];
     }
 }

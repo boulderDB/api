@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class BoulderComment implements LocationResourceInterface, TimestampableInterface, NotificationResourceInterface
+class BoulderComment implements LocationResourceInterface, TimestampableInterface, NotificationResourceInterface, CacheableInterface
 {
     public const RESOURCE_NAME = "BoulderComment";
 
@@ -76,5 +76,12 @@ class BoulderComment implements LocationResourceInterface, TimestampableInterfac
     public function getType(): string
     {
         return Notification::TYPE_COMMENT;
+    }
+
+    public function invalidates(): array
+    {
+        return [
+            "/boulder-comments"
+        ];
     }
 }

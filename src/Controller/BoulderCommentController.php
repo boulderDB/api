@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 
 /**
  * @Route("/boulder-comments")
@@ -47,8 +46,6 @@ class BoulderCommentController extends AbstractController
 
     /**
      * @Route(methods={"POST"}, name="boulder_comments_create")
-     *
-     * @InvalidateRoute("boulders_index", params={"id" = {"expression"="id"}})")
      */
     public function create(Request $request)
     {
@@ -67,8 +64,6 @@ class BoulderCommentController extends AbstractController
 
     /**
      * @Route("/{id}", methods={"DELETE"}, name="boulder_comments_delete")
-     *
-     * @InvalidateRoute("boulders_index", params={"id" = {"expression"="id"}})")
      */
     public function delete(int $id)
     {

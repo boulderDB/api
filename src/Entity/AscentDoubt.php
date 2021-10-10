@@ -8,7 +8,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\Table(name="boulder_doubt")
  */
-class AscentDoubt implements LocationResourceInterface, TimestampableInterface, NotificationResourceInterface, UserResourceInterface
+class AscentDoubt implements
+    LocationResourceInterface,
+    TimestampableInterface,
+    NotificationResourceInterface,
+    UserResourceInterface,
+    CacheableInterface
 {
     public const RESOURCE_NAME = "AscentDoubt";
 
@@ -147,5 +152,13 @@ class AscentDoubt implements LocationResourceInterface, TimestampableInterface, 
     public function getUser(): ?User
     {
        return $this->getRecipient();
+    }
+
+    public function invalidates(): array
+    {
+       return [
+           "/ascent-doubts",
+           "/boulders"
+       ];
     }
 }

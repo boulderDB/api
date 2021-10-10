@@ -33,7 +33,12 @@ trait ResponseTrait
 
     protected function okResponse($data, array $groups = [])
     {
-        return $this->json($data, Response::HTTP_OK, [], $this->getSerializerContext($groups));
+        $response = $this->json($data, Response::HTTP_OK, [], $this->getSerializerContext($groups));
+
+        $response->setPublic();
+        $response->setMaxAge(60 * 60 * 7);
+
+        return $response;
     }
 
 

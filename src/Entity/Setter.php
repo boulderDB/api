@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class Setter implements TimestampableInterface, DeactivatableInterface
+class Setter implements TimestampableInterface, DeactivatableInterface, CacheableInterface
 {
     public const RESOURCE_NAME = "Setter";
 
@@ -121,5 +121,13 @@ class Setter implements TimestampableInterface, DeactivatableInterface
     public function setName(?string $name): void
     {
         $this->username = $name;
+    }
+
+    public function invalidates(): array
+    {
+       return [
+           "/setters",
+           "/boulders"
+       ];
     }
 }

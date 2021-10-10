@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="tenant")
  */
-class Location
+class Location implements CacheableInterface
 {
     public const RESOURCE_NAME = "Location";
 
@@ -217,5 +217,12 @@ class Location
     public function setTwitter(?string $twitter): void
     {
         $this->twitter = $twitter;
+    }
+
+    public function invalidates(): array
+    {
+        return [
+            "/locations"
+        ];
     }
 }

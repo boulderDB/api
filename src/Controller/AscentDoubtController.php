@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 
 /**
  * @Route("/ascent-doubts")
@@ -60,11 +59,6 @@ class AscentDoubtController extends AbstractController
 
     /**
      * @Route(methods={"POST"}, name="ascent_doubts_create")
-     *
-     * @InvalidateRoute("ascent_doubts_index")
-     * @InvalidateRoute("ascent_doubts_count")
-     * @InvalidateRoute("boulders_index")
-     * @InvalidateRoute("boulders_index", params={"id" = {"expression"="id"}})")
      */
     public function create(Request $request)
     {
@@ -87,11 +81,6 @@ class AscentDoubtController extends AbstractController
 
     /**
      * @Route("/{id}", methods={"PUT"}, name="ascent_doubts_update")
-     *
-     * @InvalidateRoute("ascent_doubts_index")
-     * @InvalidateRoute("ascent_doubts_count")
-     * @InvalidateRoute("boulders_index")
-     * @InvalidateRoute("boulders_index", params={"id" = {"expression"="id"}})")
      */
     public function update(Request $request, string $id)
     {

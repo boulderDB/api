@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class Grade implements LocationResourceInterface, DeactivatableInterface
+class Grade implements LocationResourceInterface, DeactivatableInterface, CacheableInterface
 {
     public const RESOURCE_NAME = "Grade";
 
@@ -98,5 +98,13 @@ class Grade implements LocationResourceInterface, DeactivatableInterface
     public function setActive(bool $active): void
     {
         $this->active = $active;
+    }
+
+    public function invalidates(): array
+    {
+       return [
+           "/grades",
+           "/boulders"
+       ];
     }
 }

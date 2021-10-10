@@ -10,7 +10,6 @@ use App\Repository\ReservationRepository;
 use App\Repository\RoomRepository;
 use App\Repository\TimeSlotExclusionRepository;
 use App\Repository\TimeSlotRepository;
-use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
 use App\Service\ContextService;
 use Carbon\Carbon;

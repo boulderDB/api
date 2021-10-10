@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class Area implements LocationResourceInterface, DeactivatableInterface
+class Area implements LocationResourceInterface, DeactivatableInterface, CacheableInterface
 {
     public const RESOURCE_NAME = "Area";
 
@@ -76,5 +76,14 @@ class Area implements LocationResourceInterface, DeactivatableInterface
     public function setActive(bool $active): void
     {
         $this->active = $active;
+    }
+
+    public function invalidates(): array
+    {
+        return [
+            "/areas",
+            "/boulders",
+            "/walls"
+        ];
     }
 }

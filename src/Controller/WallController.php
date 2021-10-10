@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 
 /**
  * @Route("/walls")
@@ -67,9 +66,6 @@ class WallController extends AbstractController
 
     /**
      * @Route(methods={"POST"}, name="walls_create")
-     *
-     * @InvalidateRoute("walls_index")
-     * @InvalidateRoute("walls_read", params={"id" = {"expression"="id"}})")
      */
     public function create(Request $request)
     {
@@ -80,9 +76,6 @@ class WallController extends AbstractController
 
     /**
      * @Route("/{id}", methods={"PUT"}, name="walls_update")
-     *
-     * @InvalidateRoute("walls_index")
-     * @InvalidateRoute("walls_read", params={"id" = {"expression"="id"}})")
      */
     public function update(Request $request, string $id)
     {
@@ -93,9 +86,6 @@ class WallController extends AbstractController
 
     /**
      * @Route("/{id}", methods={"DELETE"}, name="walls_delete")
-     *
-     * @InvalidateRoute("walls_index")
-     * @InvalidateRoute("walls_read", params={"id" = {"expression"="id"}})")
      */
     public function delete(string $id)
     {

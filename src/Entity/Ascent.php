@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\Table(indexes={@ORM\Index(name="user", columns={"user_id"})})
  */
-class Ascent implements LocationResourceInterface, TimestampableInterface, UserResourceInterface
+class Ascent implements LocationResourceInterface, TimestampableInterface, UserResourceInterface, CacheableInterface
 {
     public const RESOURCE_NAME = "Ascent";
 
@@ -122,5 +122,12 @@ class Ascent implements LocationResourceInterface, TimestampableInterface, UserR
     public function setChecksum(): void
     {
         $this->checksum = md5($this->boulder->getId() . $this->user->getId());
+    }
+
+    public function invalidates(): array
+    {
+        return [
+            "/boulders"
+        ];
     }
 }

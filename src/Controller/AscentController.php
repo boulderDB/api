@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 
 /**
  * @Route("/ascents")
@@ -38,8 +37,6 @@ class AscentController extends AbstractController
 
     /**
      * @Route(methods={"POST"}, name="ascents_create")
-     *
-     * @InvalidateRoute("boulders_index", params={"id" = {"expression"="id"}})")
      */
     public function create(Request $request)
     {
@@ -48,8 +45,6 @@ class AscentController extends AbstractController
 
     /**
      * @Route("/{id}", methods={"DELETE"}, name="ascents_delete")
-     *
-     * @InvalidateRoute("areas_read", params={"id" = {"expression"="id"}})")
      */
     public function delete(string $id)
     {
