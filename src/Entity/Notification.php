@@ -92,4 +92,9 @@ class Notification implements LocationResourceInterface
     {
         return [self::TYPE_DOUBT];
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }

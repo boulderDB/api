@@ -334,4 +334,9 @@ class Boulder implements LocationResourceInterface, TimestampableInterface, Cach
             "/rankings"
         ];
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }

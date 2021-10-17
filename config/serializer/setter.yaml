@@ -4,3 +4,5 @@ App\Entity\Setter:
       groups: [ "default" ]
     username:
       groups: [ "default" ]
+    behaviours:
+      groups: [ "admin" ]

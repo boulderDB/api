@@ -130,4 +130,9 @@ class Setter implements TimestampableInterface, DeactivatableInterface, Cacheabl
            "/boulders"
        ];
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }

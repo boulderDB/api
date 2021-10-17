@@ -84,4 +84,9 @@ class BoulderComment implements LocationResourceInterface, TimestampableInterfac
             "/boulder-comments"
         ];
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }

@@ -2,3 +2,5 @@ App\Entity\DeactivatableInterface:
   attributes:
     active:
       groups: [ "default" ]
+    behaviours:
+      groups: [ "admin" ]

@@ -225,4 +225,9 @@ class Location implements CacheableInterface
             "/locations"
         ];
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }

@@ -111,4 +111,9 @@ class BoulderError implements
             "/boulder-errors"
         ];
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }

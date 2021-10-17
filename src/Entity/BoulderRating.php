@@ -84,4 +84,9 @@ class BoulderRating
     {
         $this->checksum = md5($this->boulder->getId() . $this->author->getId());;
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }

@@ -107,4 +107,9 @@ class Grade implements LocationResourceInterface, DeactivatableInterface, Cachea
            "/boulders"
        ];
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }

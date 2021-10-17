@@ -22,3 +22,5 @@ App\Entity\User:
       groups: [ "self" ]
     roles:
       groups: [ "admin", "self" ]
+    behaviours:
+      groups: [ "admin" ]

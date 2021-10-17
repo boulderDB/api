@@ -8,3 +8,5 @@ App\Entity\BoulderComment:
       groups: [ "default" ]
     author:
       groups: [ "default" ]
+    behaviours:
+      groups: [ "admin" ]

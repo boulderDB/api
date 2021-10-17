@@ -161,4 +161,9 @@ class AscentDoubt implements
            "/boulders"
        ];
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }

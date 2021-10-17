@@ -78,4 +78,9 @@ class BoulderTag implements LocationResourceInterface, DeactivatableInterface, C
            "/boulder-tags"
        ];
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }

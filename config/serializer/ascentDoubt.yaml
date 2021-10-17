@@ -8,3 +8,5 @@ App\Entity\AscentDoubt:
       groups: [ "default" ]
     boulder:
       groups: [ "default" ]
+    behaviours:
+      groups: [ "admin" ]

@@ -86,4 +86,9 @@ class Area implements LocationResourceInterface, DeactivatableInterface, Cacheab
             "/walls"
         ];
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }

@@ -10,3 +10,5 @@ App\Entity\BoulderError:
       groups: [ "default" ]
     author:
       groups: [ "default" ]
+    behaviours:
+      groups: [ "admin" ]

@@ -10,3 +10,5 @@ App\Struct\ComparisonStruct:
       groups: [ "default" ]
     positionB:
       groups: [ "default" ]
+    behaviours:
+      groups: [ "admin" ]

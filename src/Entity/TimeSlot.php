@@ -325,4 +325,5 @@ class TimeSlot
     {
         $this->disableAfter = $disableAfter;
     }
+
 }

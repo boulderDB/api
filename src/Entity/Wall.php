@@ -92,4 +92,9 @@ class Wall implements LocationResourceInterface, DeactivatableInterface, Cacheab
             "/boulders"
         ];
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }

@@ -116,7 +116,7 @@ class Ascent implements LocationResourceInterface, TimestampableInterface, UserR
 
     public function isDoubted(): bool
     {
-        return strpos($this->type, Ascent::PENDING_DOUBT_FLAG) !== false;
+        return str_contains($this->type, Ascent::PENDING_DOUBT_FLAG);
     }
 
     public function setChecksum(): void
@@ -129,5 +129,10 @@ class Ascent implements LocationResourceInterface, TimestampableInterface, UserR
         return [
             "/boulders"
         ];
+    }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
     }
 }

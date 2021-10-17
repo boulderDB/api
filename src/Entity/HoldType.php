@@ -78,4 +78,9 @@ class HoldType implements LocationResourceInterface, DeactivatableInterface, Cac
             "/boulders"
         ];
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }

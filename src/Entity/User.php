@@ -326,4 +326,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->username;
     }
+
+    public function getBehaviours(): array
+    {
+        return behaviours($this);
+    }
 }
