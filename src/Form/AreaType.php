@@ -26,7 +26,7 @@ class AreaType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $locationId = $this->contextService->getLocation()->getId();
+        $locationId = $this->contextService->getLocation()?->getId();
 
         $builder
             ->add("name", TextType::class, [

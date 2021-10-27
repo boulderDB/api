@@ -34,6 +34,6 @@ trait ContextualizedControllerTrait
 
     protected function getLocationId(): int
     {
-        return $this->contextService->getLocation()->getId();
+        return $this->contextService->getLocation()?->getId();
     }
 }

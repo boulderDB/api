@@ -31,14 +31,14 @@ class BoulderType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $locationId = $this->contextService->getLocation()->getId();
+        $locationId = $this->contextService->getLocation()?->getId();
 
         $setterQuery = function (EntityRepository $entityRepository) {
 
             return $entityRepository->createQueryBuilder("setter")
                 ->innerJoin("setter.locations", "location")
                 ->where("location.id = :locationId")
-                ->setParameter("locationId", $this->contextService->getLocation()->getId())
+                ->setParameter("locationId", $this->contextService->getLocation()?->getId())
                 ->orderBy("lower(setter.username)", "ASC");
         };
 

@@ -26,7 +26,7 @@ class UserRoleType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $locationId = $this->contextService->getLocation()->getId();
+        $locationId = $this->contextService->getLocation()?->getId();
 
         $options = array_map(function (string $role) use ($locationId) {
             return ContextService::getLocationRoleName($role, $locationId, true);

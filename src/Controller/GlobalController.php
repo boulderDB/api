@@ -426,31 +426,6 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/cancel-reservation/{hash}", methods={"get"})
-     */
-    public function cancel(Request $request, string $hash)
-    {
-        self::rateLimit($request, "cancel-reservation", 10, 60);
-
-        $id = $this->redis->get($hash);
-
-        if (!$id) {
-            return $this->resourceNotFoundResponse("Cancellation hash", $hash);
-        }
-
-        $statement = "DELETE FROM reservation WHERE id = :reservationId";
-        $query = $this->entityManager->getConnection()->prepare($statement);
-
-        $query->execute([
-            "reservationId" => $id,
-        ]);
-
-        $this->redis->del($hash);
-
-        return $this->noContentResponse();
-    }
-
-    /**
      * @Route("/upload", methods={"POST"}, name="upload")
      */
     public function upload(Request $request)

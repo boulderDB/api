@@ -40,7 +40,7 @@ class RankingController extends AbstractController
      */
     public function current()
     {
-        $locationId = $this->contextService->getLocation()->getId();
+        $locationId = $this->contextService->getLocation()?->getId();
 
         $scoring = new DefaultScoring();
         $boulders = $this->boulderRepository->getWithAscents($locationId);
@@ -106,7 +106,7 @@ class RankingController extends AbstractController
      */
     public function allTime()
     {
-        $locationId = $this->contextService->getLocation()->getId();
+        $locationId = $this->contextService->getLocation()?->getId();
 
         return $this->okResponse([]);
 

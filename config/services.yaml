@@ -50,10 +50,6 @@ services:
     tags:
       - { name: 'doctrine.event_subscriber' }
 
-  App\EventListener\ReservationListener:
-    tags:
-      - { name: 'doctrine.event_subscriber' }
-
   App\EventListener\UserListener:
     tags:
       - { name: 'doctrine.event_subscriber' }

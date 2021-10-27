@@ -43,7 +43,7 @@ class BoulderController extends AbstractController
     public function index()
     {
         $userId = $this->getUser()->getId();
-        $boulders = $this->boulderRepository->getByStatus($this->contextService->getLocation()->getId());
+        $boulders = $this->boulderRepository->getByStatus($this->contextService->getLocation()?->getId());
         $scoring = new DefaultScoring();
 
         /* todo: add postload listener */
@@ -102,7 +102,7 @@ class BoulderController extends AbstractController
     public function count()
     {
         $count = $this->boulderRepository->countByStatus(
-            $this->contextService->getLocation()->getId()
+            $this->contextService->getLocation()?->getId()
         );
 
         return $this->okResponse($count);

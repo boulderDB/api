@@ -98,7 +98,7 @@ class AscentDoubtController extends AbstractController
     public function count()
     {
         $doubtCount = $this->ascentDoubtRepository->countDoubts(
-            $this->contextService->getLocation()->getId(),
+            $this->contextService->getLocation()?->getId(),
             $this->getUser()->getId()
         );
 

@@ -58,7 +58,7 @@ class NotificationResourceListener implements EventSubscriber
 
         $id = $subject->getId();
         $type = $subject->getType();
-        $locationId = $subject->getLocation()->getId();
+        $locationId = $subject->getLocation()?->getId();
 
         if ($subject instanceof AscentDoubt) {
             $userId = $subject->getRecipient()->getId();
@@ -70,7 +70,7 @@ class NotificationResourceListener implements EventSubscriber
                     "ascent" => $subject->getAscent(),
                     "user" => $subject->getRecipient()->getId(),
                     "type" => $subject->getType(),
-                    "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/doubts"
+                    "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()?->getUrl() . "/doubts"
                 ],
                 null,
                 ["groups" => "default"]
@@ -96,7 +96,7 @@ class NotificationResourceListener implements EventSubscriber
                     "boulder" => $subject->getBoulder(),
                     "boulderError" => $subject,
                     "type" => $subject->getType(),
-                    "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/admin/errors?focus=$id"
+                    "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()?->getUrl() . "/admin/errors?focus=$id"
                 ],
                 null,
                 ["groups" => "default"]
@@ -114,7 +114,7 @@ class NotificationResourceListener implements EventSubscriber
                     "boulder" => $subject->getBoulder(),
                     "boulderComment" => $subject,
                     "type" => $subject->getType(),
-                    "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()->getUrl() . "/admin/comments?focus=$id"
+                    "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()?->getUrl() . "/admin/comments?focus=$id"
                 ],
                 null,
                 ["groups" => "default"]

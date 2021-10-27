@@ -39,7 +39,7 @@ class LocationController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        $locationId = $this->contextService->getLocation()->getId();
+        $locationId = $this->contextService->getLocation()?->getId();
 
         $admins = $this->userRepository->getByRole(
             ContextService::getLocationRoleName(User::ADMIN, $locationId, true)
@@ -69,7 +69,7 @@ class LocationController extends AbstractController
     public function updateUser(Request $request, int $id)
     {
         $this->denyUnlessLocationAdmin();
-        $locationId = $this->contextService->getLocation()->getId();
+        $locationId = $this->contextService->getLocation()?->getId();
 
         /**
          * @var User $user

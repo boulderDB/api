@@ -47,6 +47,6 @@ class ContextService
             return null;
         }
 
-        return self::getLocationRoleName($role, $this->getLocation()->getId());
+        return self::getLocationRoleName($role, $this->getLocation()?->getId());
     }
 }

@@ -68,7 +68,7 @@ class CacheableResourceListener implements EventSubscriber
         $request = $this->requestStack->getCurrentRequest();
 
         foreach ($invalidations as $invalidation) {
-            $url = "{$request->getSchemeAndHttpHost()}/api/{$this->contextService->getLocation()->getUrl()}{$invalidation}";
+            $url = "{$request->getSchemeAndHttpHost()}/api/{$this->contextService->getLocation()?->getUrl()}{$invalidation}";
             $this->store->purge($url);
 
             $this->logger->error($url);

@@ -53,7 +53,7 @@ class BoulderErrorController extends AbstractController
         }
 
         return $this->okResponse(
-            $this->boulderErrorRepository->findByStatus($this->contextService->getLocation()->getId())
+            $this->boulderErrorRepository->findByStatus($this->contextService->getLocation()?->getId())
         );
     }
 
@@ -81,7 +81,7 @@ class BoulderErrorController extends AbstractController
     public function count()
     {
         $this->denyUnlessLocationAdminOrSetter();
-        $count = $this->boulderErrorRepository->countByStatus($this->contextService->getLocation()->getId());
+        $count = $this->boulderErrorRepository->countByStatus($this->contextService->getLocation()?->getId());
 
         return $this->okResponse($count);
     }

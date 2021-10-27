@@ -42,7 +42,7 @@ class SetterController extends AbstractController
      */
     public function index(Request $request)
     {
-        $locationId = $this->contextService->getLocation()->getId();
+        $locationId = $this->contextService->getLocation()?->getId();
         $filters = $request->get("filter");
 
         if ($filters) {
@@ -62,7 +62,7 @@ class SetterController extends AbstractController
     public function create(Request $request)
     {
         $this->denyUnlessLocationAdmin();
-        $locationId = $this->contextService->getLocation()->getId();
+        $locationId = $this->contextService->getLocation()?->getId();
 
         $setter = new Setter();
 
@@ -98,7 +98,7 @@ class SetterController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        $locationId = $this->contextService->getLocation()->getId();
+        $locationId = $this->contextService->getLocation()?->getId();
 
         $setter = $this->setterRepository->find($id);
 

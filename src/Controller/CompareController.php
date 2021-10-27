@@ -65,7 +65,7 @@ class CompareController extends AbstractController
             return $this->badRequestResponse("User is not comparable");
         }
 
-        $locationId = $this->contextService->getLocation()->getId();
+        $locationId = $this->contextService->getLocation()?->getId();
         $boulders = $this->boulderRepository->getByStatus($locationId);
 
         $ascentACollection = new AscentCollection($this->ascentRepository->getByUserAndLocation($userIdA, $locationId));
