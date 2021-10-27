@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helper\Behaviours;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -133,6 +134,6 @@ class Ascent implements LocationResourceInterface, TimestampableInterface, UserR
 
     public function getBehaviours(): array
     {
-        return behaviours($this);
+        return Behaviours::getInterfaces($this);
     }
 }

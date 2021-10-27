@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helper\Behaviours;
 use App\Service\ContextService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -329,6 +330,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getBehaviours(): array
     {
-        return behaviours($this);
+        return Behaviours::getInterfaces($this);
     }
 }

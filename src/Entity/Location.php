@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helper\Behaviours;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -228,6 +229,6 @@ class Location implements CacheableInterface
 
     public function getBehaviours(): array
     {
-        return behaviours($this);
+        return Behaviours::getInterfaces($this);
     }
 }

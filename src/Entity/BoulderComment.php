@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helper\Behaviours;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -87,6 +88,6 @@ class BoulderComment implements LocationResourceInterface, TimestampableInterfac
 
     public function getBehaviours(): array
     {
-        return behaviours($this);
+        return Behaviours::getInterfaces($this);
     }
 }

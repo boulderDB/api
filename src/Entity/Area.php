@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helper\Behaviours;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -89,6 +90,6 @@ class Area implements LocationResourceInterface, DeactivatableInterface, Cacheab
 
     public function getBehaviours(): array
     {
-        return behaviours($this);
+        return Behaviours::getInterfaces($this);
     }
 }
