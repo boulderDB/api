@@ -65,12 +65,10 @@ class CacheableResourceListener implements EventSubscriber
 
     private function invalidate(array $invalidations)
     {
-        $request = $this->requestStack->getCurrentRequest();
-
         foreach ($invalidations as $invalidation) {
-            $url = "{$request->getSchemeAndHttpHost()}/api/{$this->contextService->getLocation()?->getUrl()}{$invalidation}";
-            $this->store->purge($url);
+            $url = "{$_ENV["APP_HOST"]}/api/{$this->contextService->getLocation()?->getUrl()}{$invalidation}";
 
+            $this->store->purge($url);
             $this->logger->error($url);
         }
     }
