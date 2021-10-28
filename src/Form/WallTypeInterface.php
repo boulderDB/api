@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
-class WallType extends AbstractType implements SchemaType
+class WallTypeInterface extends AbstractType implements SchemaTypeInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

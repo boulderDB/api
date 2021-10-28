@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-interface SchemaType
+interface SchemaTypeInterface
 {
     public function getSchema(): array;
 }

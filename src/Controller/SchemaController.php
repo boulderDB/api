@@ -25,11 +25,13 @@ use App\Form\BoulderTagType;
 use App\Form\BoulderType;
 use App\Form\GradeType;
 use App\Form\HoldTypeType;
+use App\Form\SchemaTypeInterface;
 use App\Form\SetterType;
 use App\Form\UserType;
-use App\Form\WallType;
+use App\Form\WallTypeInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -52,7 +54,7 @@ class SchemaController extends AbstractController
         HoldType::RESOURCE_NAME => HoldTypeType::class,
         Setter::RESOURCE_NAME => SetterType::class,
         User::RESOURCE_NAME => UserType::class,
-        Wall::RESOURCE_NAME => WallType::class,
+        Wall::RESOURCE_NAME => WallTypeInterface::class,
     ];
 
     /**
@@ -64,10 +66,13 @@ class SchemaController extends AbstractController
             return $this->resourceNotFoundResponse($name);
         }
 
-        /**
-         * @var \App\Form\SchemaType $form
-         */
-        $form = $this->createForm(self::MAP[$name]);
+        $class = self::MAP[$name];
+
+        $form = new $class;
+
+        if (!$form instanceof SchemaTypeInterface) {
+            return $this->json(null, Response::HTTP_NOT_IMPLEMENTED);
+        }
 
         return $this->json($form->getSchema());
     }

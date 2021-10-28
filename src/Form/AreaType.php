@@ -15,11 +15,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
-class AreaType extends AbstractType implements SchemaType
+class AreaType extends AbstractType implements SchemaTypeInterface
 {
-    private ContextService $contextService;
+    private ?ContextService $contextService;
 
-    public function __construct(ContextService $contextService)
+    public function __construct(ContextService $contextService = null)
     {
         $this->contextService = $contextService;
     }

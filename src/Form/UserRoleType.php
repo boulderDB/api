@@ -17,9 +17,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class UserRoleType extends AbstractType
 {
-    private ContextService $contextService;
+    private ?ContextService $contextService;
 
-    public function __construct(ContextService $contextService)
+    public function __construct(ContextService $contextService = null)
     {
         $this->contextService = $contextService;
     }

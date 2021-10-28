@@ -22,9 +22,9 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class BoulderType extends AbstractType
 {
-    private ContextService $contextService;
+    private ?ContextService $contextService;
 
-    public function __construct(ContextService $contextService)
+    public function __construct(ContextService $contextService = null)
     {
         $this->contextService = $contextService;
     }
