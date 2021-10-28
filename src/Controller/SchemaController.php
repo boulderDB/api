@@ -12,8 +12,6 @@ use App\Entity\BoulderRating;
 use App\Entity\BoulderTag;
 use App\Entity\Grade;
 use App\Entity\HoldType;
-use App\Entity\Location;
-use App\Entity\Notification;
 use App\Entity\Setter;
 use App\Entity\User;
 use App\Entity\Wall;
@@ -32,7 +30,6 @@ use App\Form\UserType;
 use App\Form\WallType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -67,21 +64,12 @@ class SchemaController extends AbstractController
             return $this->resourceNotFoundResponse($name);
         }
 
+        /**
+         * @var \App\Form\SchemaType $form
+         */
         $form = $this->createForm(self::MAP[$name]);
 
-        /**
-         * @var \Symfony\Component\Form\Form $form
-         */
-        foreach ($form->all() as $field) {
-            $inner = $field->getConfig()->getType()->getInnerType();
-
-            $data[] = [
-                "name" => $field->getName(),
-                "type" => $inner->getBlockPrefix()
-            ];
-        }
-
-        return $this->json($data);
+        return $this->json($form->getSchema());
     }
 
 }

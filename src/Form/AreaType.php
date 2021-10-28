@@ -15,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
-class AreaType extends AbstractType
+class AreaType extends AbstractType implements SchemaType
 {
     private ContextService $contextService;
 
@@ -54,5 +54,28 @@ class AreaType extends AbstractType
             'csrf_protection' => false,
             'data_class' => Area::class,
         ]);
+    }
+
+    public function getSchema(): array
+    {
+        return [
+            [
+                "name" => "name",
+                "type" => "TextType",
+                "constraints" => ["NotBlank"]
+            ],
+            [
+                "name" => "walls",
+                "type" => "EntityType",
+                "class" => "Wall",
+                "multiple" => true,
+                "resource" => "/walls"
+            ],
+            [
+                "name" => "active",
+                "type" => "CheckboxType",
+                "constraints" => ["NotBlank"]
+            ]
+        ];
     }
 }

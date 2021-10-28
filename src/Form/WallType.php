@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
-class WallType extends AbstractType
+class WallType extends AbstractType implements SchemaType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -36,4 +36,28 @@ class WallType extends AbstractType
         ]);
     }
 
+    public function getSchema(): array
+    {
+        return [
+            [
+                "name" => "name",
+                "type" => "TextType",
+                "constraints" => ["NotBlank"]
+            ],
+            [
+                "name" => "description",
+                "type" => "TextType",
+                "constraints" => ["NotBlank"]
+            ],
+            [
+                "name" => "media",
+                "type" => "TextType",
+            ],
+            [
+                "name" => "active",
+                "type" => "CheckboxType",
+                "constraints" => ["NotBlank"]
+            ]
+        ];
+    }
 }
