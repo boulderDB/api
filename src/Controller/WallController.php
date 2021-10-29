@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Wall;
-use App\Form\WallTypeInterface;
+use App\Form\WallType;
 use App\Repository\WallRepository;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -71,7 +71,7 @@ class WallController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->createEntity($request, Wall::class, WallTypeInterface::class);
+        return $this->createEntity($request, Wall::class, WallType::class);
     }
 
     /**
@@ -81,7 +81,7 @@ class WallController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        return $this->updateEntity($request, Wall::class, WallTypeInterface::class, $id);
+        return $this->updateEntity($request, Wall::class, WallType::class, $id);
     }
 
     /**

@@ -11,20 +11,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
 
-class SetterType extends AbstractType
+class SetterType extends AbstractType implements SchemaTypeInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add("active", CheckboxType::class, [
-                "constraints" => [new NotNull()]
-            ])
-            ->add("username")
-            ->add("user", EntityType::class, [
-                "class" => User::class,
-            ]);
+        foreach ($this->getSchema() as $field) {
+            $builder->add($field["name"], $field["type"], $field["options"]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -33,5 +27,36 @@ class SetterType extends AbstractType
             "data_class" => Setter::class,
             "csrf_protection" => false,
         ]);
+    }
+
+    public function getSchema(): array
+    {
+        return [
+            [
+                "name" => "active",
+                "type" => CheckboxType::class,
+                "options" => [
+                    "constraints" => []
+                ],
+            ],
+            [
+                "name" => "username",
+                "type" => TextType::class,
+                "options" => [
+                    "constraints" => [new NotBlank()]
+                ],
+            ],
+            [
+                "name" => "user",
+                "type" => EntityType::class,
+                "options" => [
+                    "constraints" => [new NotBlank()],
+                    "class" => User::class,
+                ],
+                "schemaOptions" => [
+                    "resource" => "/users/search"
+                ]
+            ],
+        ];
     }
 }

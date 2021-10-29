@@ -9,22 +9,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
 
-class BoulderTagType extends AbstractType
+class BoulderTagType extends AbstractType implements SchemaTypeInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add("name", TextType::class, [
-                "constraints" => [new NotBlank()]
-            ])
-            ->add("emoji", TextType::class, [
-                "constraints" => [new NotBlank()]
-            ])
-            ->add("active", CheckboxType::class, [
-                "constraints" => [new NotNull()]
-            ]);
+        foreach ($this->getSchema() as $field) {
+            $builder->add($field["name"], $field["type"], $field["options"]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -35,4 +27,26 @@ class BoulderTagType extends AbstractType
         ]);
     }
 
+    public function getSchema(): array
+    {
+        return [
+            [
+                "name" => "name",
+                "type" => TextType::class,
+                "constraints" => [new NotBlank()]
+            ],
+            [
+                "name" => "emoji",
+                "type" => TextType::class,
+                "constraints" => [new NotBlank()]
+            ],
+            [
+                "name" => "active",
+                "type" => CheckboxType::class,
+                "options" => [
+                    "constraints" => []
+                ],
+            ],
+        ];
+    }
 }

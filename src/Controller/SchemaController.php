@@ -16,7 +16,7 @@ use App\Form\GradeType;
 use App\Form\HoldTypeType;
 use App\Form\SchemaTypeInterface;
 use App\Form\SetterType;
-use App\Form\WallTypeInterface;
+use App\Form\WallType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,7 +36,7 @@ class SchemaController extends AbstractController
         Grade::RESOURCE_NAME => GradeType::class,
         HoldType::RESOURCE_NAME => HoldTypeType::class,
         Setter::RESOURCE_NAME => SetterType::class,
-        Wall::RESOURCE_NAME => WallTypeInterface::class,
+        Wall::RESOURCE_NAME => WallType::class,
     ];
 
     /**

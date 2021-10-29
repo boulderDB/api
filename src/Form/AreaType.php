@@ -70,7 +70,7 @@ class AreaType extends AbstractType implements SchemaTypeInterface
                 "name" => "active",
                 "type" => CheckboxType::class,
                 "options" => [
-                    "constraints" => [new NotBlank()]
+                    "constraints" => []
                 ]
             ]
         ];

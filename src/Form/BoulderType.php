@@ -31,79 +31,9 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $locationId = $this->contextService->getLocation()?->getId();
-
-        $setterQuery = function (EntityRepository $entityRepository) {
-
-            return $entityRepository->createQueryBuilder("setter")
-                ->innerJoin("setter.locations", "location")
-                ->where("location.id = :locationId")
-                ->setParameter("locationId", $this->contextService->getLocation()?->getId())
-                ->orderBy("lower(setter.username)", "ASC");
-        };
-
-        $locationQuery = function (EntityRepository $entityRepository) use ($locationId) {
-
-            return $entityRepository->createQueryBuilder("locationResource")
-                ->where("locationResource.location = :location")
-                ->setParameter("location", $locationId);
-        };
-
-        $builder
-            ->add("name", TextType::class, [])
-            ->add("holdType", EntityType::class, [
-                "class" => HoldType::class,
-                "constraints" => [new NotBlank()],
-                "query_builder" => $locationQuery
-            ])
-            ->add("grade", EntityType::class,
-                [
-                    "class" => Grade::class,
-                    "constraints" => [new NotBlank()],
-                    "query_builder" => $locationQuery
-                ]
-            )
-            ->add("internalGrade", EntityType::class,
-                [
-                    "class" => Grade::class,
-                    "query_builder" => $locationQuery
-                ]
-            )
-            ->add("startWall", EntityType::class, [
-                "class" => Wall::class,
-                "constraints" => [new NotBlank()],
-                "query_builder" => $locationQuery
-            ])
-            ->add("endWall", EntityType::class, [
-                "class" => Wall::class,
-                "query_builder" => $locationQuery
-
-            ])
-            ->add("setters", EntityType::class,
-                [
-                    "class" => Setter::class,
-                    "multiple" => true,
-                    "constraints" => [new NotNull()],
-                    "query_builder" => $setterQuery
-                ]
-            )
-            ->add("tags", EntityType::class, [
-                "class" => BoulderTag::class,
-                "multiple" => true,
-                "constraints" => [new NotNull()],
-                "query_builder" => $locationQuery
-            ])
-            ->add("points", IntegerType::class, [
-                "constraints" => [new NotBlank()]
-            ])
-            ->add("status", ChoiceType::class, [
-                    "constraints" => [new NotBlank()],
-                    "choices" => [
-                        "active" => Boulder::STATUS_ACTIVE,
-                        "removed" => Boulder::STATUS_INACTIVE
-                    ]
-                ]
-            );
+        foreach ($this->getSchema() as $field) {
+            $builder->add($field["name"], $field["type"], $field["options"]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -116,57 +46,132 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
 
     public function getSchema(): array
     {
+        $locationId = $this->contextService->getLocation()?->getId();
+
+        $setterQuery = function (EntityRepository $entityRepository) {
+            return $entityRepository->createQueryBuilder("setter")
+                ->innerJoin("setter.locations", "location")
+                ->where("location.id = :locationId")
+                ->setParameter("locationId", $this->contextService->getLocation()?->getId())
+                ->orderBy("lower(setter.username)", "ASC");
+        };
+
+        $locationQuery = function (EntityRepository $entityRepository) use ($locationId) {
+            return $entityRepository->createQueryBuilder("locationResource")
+                ->where("locationResource.location = :location")
+                ->setParameter("location", $locationId);
+        };
+
         return [
             [
                 "name" => "name",
-                "type" => "TextType",
-                "constraints" => ["NotBlank"]
+                "type" => TextType::class,
+                "constraints" => [new NotBlank()]
             ],
             [
                 "name" => "holdType",
-                "type" => "EntityType",
-                "class" => "HoldType",
-                "multiple" => false,
-                "resource" => "/holdtypes",
-                "constraints" => ["NotBlank"]
+                "type" => EntityType::class,
+                "options" => [
+                    "class" => HoldType::class,
+                    "constraints" => [new NotBlank()],
+                    "query_builder" => $locationQuery
+                ],
+                "schemaOptions" => [
+                    "resource" => "/holdtypes"
+                ]
             ],
             [
                 "name" => "grade",
-                "type" => "EntityType",
-                "class" => "Grade",
-                "multiple" => false,
-                "resource" => "/grades",
-                "constraints" => ["NotBlank"]
+                "type" => EntityType::class,
+                "options" => [
+                    "class" => Grade::class,
+                    "constraints" => [new NotBlank()],
+                    "query_builder" => $locationQuery
+                ],
+                "schemaOptions" => [
+                    "resource" => "/grades"
+                ]
             ],
             [
                 "name" => "internalGrade",
-                "type" => "EntityType",
-                "class" => "Grade",
-                "multiple" => false,
-                "resource" => "/grades",
-                "constraints" => []
+                "type" => EntityType::class,
+                "options" => [
+                    "class" => Grade::class,
+                    "constraints" => [],
+                    "query_builder" => $locationQuery
+                ],
+                "schemaOptions" => [
+                    "resource" => "/grades"
+                ]
             ],
             [
                 "name" => "startWall",
-                "type" => "EntityType",
-                "class" => "Wall",
-                "multiple" => false,
-                "resource" => "/walls",
-                "constraints" => ["NotBlank"]
+                "type" => EntityType::class,
+                "options" => [
+                    "class" => Wall::class,
+                    "constraints" => [new NotBlank()],
+                    "query_builder" => $locationQuery
+                ],
+                "schemaOptions" => [
+                    "resource" => "/walls"
+                ]
             ],
             [
                 "name" => "endWall",
-                "type" => "EntityType",
-                "class" => "Wall",
-                "multiple" => false,
-                "resource" => "/walls",
-                "constraints" => ["NotBlank"]
+                "type" => EntityType::class,
+                "options" => [
+                    "class" => Wall::class,
+                    "constraints" => [],
+                    "query_builder" => $locationQuery
+                ],
+                "schemaOptions" => [
+                    "resource" => "/walls"
+                ]
             ],
             [
-                "name" => "active",
-                "type" => "CheckboxType",
-                "constraints" => ["NotBlank"]
-            ]
+                "name" => "setters",
+                "type" => EntityType::class,
+                "options" => [
+                    "class" => Setter::class,
+                    "multiple" => true,
+                    "constraints" => [new NotNull()],
+                    "query_builder" => $setterQuery
+                ],
+                "schemaOptions" => [
+                    "resource" => "/setters"
+                ]
+            ],
+            [
+                "name" => "tags",
+                "type" => EntityType::class,
+                "options" => [
+                    "class" => BoulderTag::class,
+                    "multiple" => true,
+                    "constraints" => [new NotNull()],
+                    "query_builder" => $locationQuery
+                ],
+                "schemaOptions" => [
+                    "resource" => "/boulder-tags"
+                ]
+            ],
+            [
+                "name" => "points",
+                "type" => IntegerType::class,
+                "options" => [
+                    "constraints" => [new NotBlank()]
+                ]
+            ],
+            [
+                "name" => "status",
+                "type" => ChoiceType::class,
+                "options" => [
+                    "constraints" => [new NotBlank()]
+                ],
+                "choices" => [
+                    "active" => Boulder::STATUS_ACTIVE,
+                    "removed" => Boulder::STATUS_INACTIVE
+                ]
+            ],
         ];
     }
 }

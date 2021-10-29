@@ -9,23 +9,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
 
-class WallTypeInterface extends AbstractType implements SchemaTypeInterface
+class WallType extends AbstractType implements SchemaTypeInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add("name", TextType::class, [
-                "constraints" => [new NotBlank()]
-            ])
-            ->add("description", TextType::class, [
-                "constraints" => [new NotBlank()]
-            ])
-            ->add("media", TextType::class)
-            ->add("active", CheckboxType::class, [
-                "constraints" => [new NotNull()]
-            ]);
+        foreach ($this->getSchema() as $field) {
+            $builder->add($field["name"], $field["type"], $field["options"]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -41,23 +32,25 @@ class WallTypeInterface extends AbstractType implements SchemaTypeInterface
         return [
             [
                 "name" => "name",
-                "type" => "TextType",
-                "constraints" => ["NotBlank"]
+                "type" => TextType::class,
+                "constraints" => [new NotBlank()]
             ],
             [
                 "name" => "description",
-                "type" => "TextType",
-                "constraints" => ["NotBlank"]
+                "type" => TextType::class,
+                "constraints" => [new NotBlank()]
             ],
             [
                 "name" => "media",
-                "type" => "TextType",
+                "type" => TextType::class,
             ],
             [
                 "name" => "active",
-                "type" => "CheckboxType",
-                "constraints" => ["NotBlank"]
-            ]
+                "type" => CheckboxType::class,
+                "options" => [
+                    "constraints" => []
+                ],
+            ],
         ];
     }
 }
