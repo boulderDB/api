@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
-class BoulderType extends AbstractType
+class BoulderType extends AbstractType implements SchemaTypeInterface
 {
     private ?ContextService $contextService;
 
@@ -51,7 +51,7 @@ class BoulderType extends AbstractType
 
         $builder
             ->add("name", TextType::class, [])
-            ->add("hold_type", EntityType::class, [
+            ->add("holdType", EntityType::class, [
                 "class" => HoldType::class,
                 "constraints" => [new NotBlank()],
                 "query_builder" => $locationQuery
@@ -63,18 +63,18 @@ class BoulderType extends AbstractType
                     "query_builder" => $locationQuery
                 ]
             )
-            ->add("internal_grade", EntityType::class,
+            ->add("internalGrade", EntityType::class,
                 [
                     "class" => Grade::class,
                     "query_builder" => $locationQuery
                 ]
             )
-            ->add("start_wall", EntityType::class, [
+            ->add("startWall", EntityType::class, [
                 "class" => Wall::class,
                 "constraints" => [new NotBlank()],
                 "query_builder" => $locationQuery
             ])
-            ->add("end_wall", EntityType::class, [
+            ->add("endWall", EntityType::class, [
                 "class" => Wall::class,
                 "query_builder" => $locationQuery
 
@@ -112,5 +112,61 @@ class BoulderType extends AbstractType
             "csrf_protection" => false,
             "data_class" => Boulder::class,
         ]);
+    }
+
+    public function getSchema(): array
+    {
+        return [
+            [
+                "name" => "name",
+                "type" => "TextType",
+                "constraints" => ["NotBlank"]
+            ],
+            [
+                "name" => "holdType",
+                "type" => "EntityType",
+                "class" => "HoldType",
+                "multiple" => false,
+                "resource" => "/holdtypes",
+                "constraints" => ["NotBlank"]
+            ],
+            [
+                "name" => "grade",
+                "type" => "EntityType",
+                "class" => "Grade",
+                "multiple" => false,
+                "resource" => "/grades",
+                "constraints" => ["NotBlank"]
+            ],
+            [
+                "name" => "internalGrade",
+                "type" => "EntityType",
+                "class" => "Grade",
+                "multiple" => false,
+                "resource" => "/grades",
+                "constraints" => []
+            ],
+            [
+                "name" => "startWall",
+                "type" => "EntityType",
+                "class" => "Wall",
+                "multiple" => false,
+                "resource" => "/walls",
+                "constraints" => ["NotBlank"]
+            ],
+            [
+                "name" => "endWall",
+                "type" => "EntityType",
+                "class" => "Wall",
+                "multiple" => false,
+                "resource" => "/walls",
+                "constraints" => ["NotBlank"]
+            ],
+            [
+                "name" => "active",
+                "type" => "CheckboxType",
+                "constraints" => ["NotBlank"]
+            ]
+        ];
     }
 }
