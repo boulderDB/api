@@ -58,7 +58,10 @@ class SchemaController extends AbstractController
         $data = $form->getSchema();
 
         foreach ($data as &$field) {
-            $field["type"] = substr($field["type"], strrpos($field["type"], '/') + 1);
+            $elements = explode("\\", $field["type"]);
+            $key = array_key_last($elements);
+
+            $field["type"] = $elements[$key];
         }
 
         return $this->json($data);
