@@ -76,7 +76,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "constraints" => [new NotBlank()],
                     "query_builder" => $locationQuery
                 ],
-                "schemaOptions" => [
+                "schema" => [
                     "resource" => "/holdtypes"
                 ]
             ],
@@ -88,7 +88,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "constraints" => [new NotBlank()],
                     "query_builder" => $locationQuery
                 ],
-                "schemaOptions" => [
+                "schema" => [
                     "resource" => "/grades"
                 ]
             ],
@@ -100,7 +100,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "constraints" => [],
                     "query_builder" => $locationQuery
                 ],
-                "schemaOptions" => [
+                "schema" => [
                     "resource" => "/grades"
                 ]
             ],
@@ -112,7 +112,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "constraints" => [new NotBlank()],
                     "query_builder" => $locationQuery
                 ],
-                "schemaOptions" => [
+                "schema" => [
                     "resource" => "/walls"
                 ]
             ],
@@ -124,7 +124,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "constraints" => [],
                     "query_builder" => $locationQuery
                 ],
-                "schemaOptions" => [
+                "schema" => [
                     "resource" => "/walls"
                 ]
             ],
@@ -137,7 +137,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "constraints" => [new NotNull()],
                     "query_builder" => $setterQuery
                 ],
-                "schemaOptions" => [
+                "schema" => [
                     "resource" => "/setters"
                 ]
             ],
@@ -150,7 +150,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "constraints" => [new NotNull()],
                     "query_builder" => $locationQuery
                 ],
-                "schemaOptions" => [
+                "schema" => [
                     "resource" => "/boulder-tags"
                 ]
             ],

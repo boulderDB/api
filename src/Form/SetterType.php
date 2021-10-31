@@ -53,7 +53,7 @@ class SetterType extends AbstractType implements SchemaTypeInterface
                     "constraints" => [new NotBlank()],
                     "class" => User::class,
                 ],
-                "schemaOptions" => [
+                "schema" => [
                     "resource" => "/users/search"
                 ]
             ],

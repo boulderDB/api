@@ -62,7 +62,7 @@ class AreaType extends AbstractType implements SchemaTypeInterface
                             ->setParameter("location", $locationId);
                     }
                 ],
-                "schemaOptions" => [
+                "schema" => [
                     "resource" => "/walls"
                 ]
             ],

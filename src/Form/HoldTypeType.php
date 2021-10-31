@@ -43,6 +43,10 @@ class HoldTypeType extends AbstractType implements SchemaTypeInterface
                 "options" => [
                     "constraints" => [new NotBlank()]
                 ],
+                "schema" => [
+                    "type" => "upload",
+                    "resource" => "/upload"
+                ]
             ],
             [
                 "name" => "active",
