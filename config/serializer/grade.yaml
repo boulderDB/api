@@ -10,3 +10,5 @@ App\Entity\Grade:
       groups: [ "detail" ]
     behaviours:
       groups: [ "admin" ]
+    position:
+      groups: [ "default" ]
