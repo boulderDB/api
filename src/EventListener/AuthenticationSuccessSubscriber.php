@@ -31,7 +31,7 @@ class AuthenticationSuccessSubscriber implements EventSubscriberInterface
          */
         $user = $event->getUser();
         $payload = $event->getData();
-        $serializerGroups = ["groups" => "default"];
+        $serializerGroups = ["groups" => ["default", "self"]];
 
         $lastVisitedLocation = $this->locationRepository->find($user->getLastVisitedLocation());
 
