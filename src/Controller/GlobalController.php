@@ -6,6 +6,7 @@ use App\Command\ProcessAccountDeletionsCommand;
 use App\Entity\Location;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
+use App\Form\PasswordChangeType;
 use App\Form\PasswordResetRequestType;
 use App\Form\PasswordResetType;
 use App\Form\UserType;
@@ -71,7 +72,8 @@ class GlobalController extends AbstractController
         StorageClient $storageClient,
         ParameterBagInterface $parameterBag,
         NotificationRepository $notificationRepository,
-        NotificationService $notificationService
+        NotificationService $notificationService,
+
     )
     {
         $this->entityManager = $entityManager;
@@ -193,10 +195,45 @@ class GlobalController extends AbstractController
             $current->getTimestamp()
         );
 
-        return $this->json([
+        return $this->okResponse([
             "message" => "Your account was scheduled for deletion and will be removed on {$current->format('c')}",
             "time" => $current->format('c')
-        ], Response::HTTP_OK);
+        ]);
+    }
+
+    /**
+     * @Route("/me/change-password", methods={"PUT"}, name="change_password")
+     */
+    public function changePassword(Request $request)
+    {
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+
+        $form = $this->createForm(PasswordChangeType::class);
+        $form->submit(json_decode($request->getContent(), true));
+        $data = $form->getData();
+
+        if (!$form->isValid()) {
+            return $this->badFormRequestResponse($form);
+        }
+
+        $isValid = $this->passwordEncoder->isPasswordValid($user, $data["oldPassword"]);
+
+        if (!$isValid) {
+            return $this->unauthorizedResponse("Invalid credentials");
+        }
+
+        $password = $this->passwordEncoder->hashPassword($user, $data["newPassword"]);
+        $user->setPassword($password);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $this->okResponse([
+            "message" => "Your password was updated"
+        ]);
     }
 
     /**

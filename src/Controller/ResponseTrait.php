@@ -79,11 +79,11 @@ trait ResponseTrait
         ], Response::HTTP_BAD_REQUEST);
     }
 
-    protected function unauthorizedResponse()
+    protected function unauthorizedResponse(string $message = "Access denied")
     {
         return $this->json([
             "type" => "unauthorized",
-            "message" => "Access denied.",
+            "message" => $message,
             "code" => Response::HTTP_FORBIDDEN,
         ], Response::HTTP_FORBIDDEN);
     }
