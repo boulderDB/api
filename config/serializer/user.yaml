@@ -10,9 +10,9 @@ App\Entity\User:
       groups: [ "default" ]
     gender:
       groups: [ "default" ]
-    email:
-      groups: [ "self" ]
     visible:
+      groups: [ "default" ]
+    email:
       groups: [ "self" ]
     firstName:
       groups: [ "self" ]
