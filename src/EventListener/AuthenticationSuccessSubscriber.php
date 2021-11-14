@@ -37,7 +37,6 @@ class AuthenticationSuccessSubscriber implements EventSubscriberInterface
 
         $payload = array_merge($payload, [
             "target" => Request::createFromGlobals()->query->get("target"),
-            "location" => null,
             "user" => $this->serializer->normalize($user, null, $serializerGroups),
             "lastVisitedLocation" => $this->serializer->normalize($lastVisitedLocation, null, $serializerGroups)
         ]);
