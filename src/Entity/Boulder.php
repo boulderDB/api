@@ -16,7 +16,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface, Cach
     use TimestampTrait;
     use LocationTrait;
 
-    public const RESOURCE_NAME = "Boulder";
+    public const RESOURCE_NAME = "boulder";
     public const DEFAULT_SCORE = 1000;
     public const STATUS_ACTIVE = "active";
     public const STATUS_INACTIVE = "inactive";

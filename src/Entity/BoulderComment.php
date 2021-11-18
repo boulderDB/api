@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class BoulderComment implements LocationResourceInterface, TimestampableInterface, NotificationResourceInterface, CacheableInterface
 {
-    public const RESOURCE_NAME = "BoulderComment";
+    public const RESOURCE_NAME = "boulderComment";
 
     use TimestampTrait;
     use LocationTrait;

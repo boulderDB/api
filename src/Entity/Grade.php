@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Grade implements LocationResourceInterface, DeactivatableInterface, CacheableInterface
 {
-    public const RESOURCE_NAME = "Grade";
+    public const RESOURCE_NAME = "grade";
 
     use LocationTrait;
 

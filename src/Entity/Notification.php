@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Notification implements LocationResourceInterface
 {
-    public const RESOURCE_NAME = "Notification";
+    public const RESOURCE_NAME = "notification";
 
     use LocationTrait;
 

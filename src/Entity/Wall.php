@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Wall implements LocationResourceInterface, DeactivatableInterface, CacheableInterface
 {
-    public const RESOURCE_NAME = "Wall";
+    public const RESOURCE_NAME = "wall";
 
     use LocationTrait;
 

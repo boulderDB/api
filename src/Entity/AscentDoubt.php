@@ -16,7 +16,7 @@ class AscentDoubt implements
     UserResourceInterface,
     CacheableInterface
 {
-    public const RESOURCE_NAME = "AscentDoubt";
+    public const RESOURCE_NAME = "ascentDoubt";
 
     use TimestampTrait;
     use LocationTrait;

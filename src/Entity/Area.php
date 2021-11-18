@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Area implements LocationResourceInterface, DeactivatableInterface, CacheableInterface
 {
-    public const RESOURCE_NAME = "Area";
+    public const RESOURCE_NAME = "area";
 
     use LocationTrait;
 

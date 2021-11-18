@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class HoldType implements LocationResourceInterface, DeactivatableInterface, CacheableInterface
 {
-    public const RESOURCE_NAME = "HoldType";
+    public const RESOURCE_NAME = "holdType";
 
     use LocationTrait;
 

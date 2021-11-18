@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class BoulderRating
 {
-    public const RESOURCE_NAME = "BoulderRating";
+    public const RESOURCE_NAME = "roulderRating";
 
     /**
      * @ORM\Id()

@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class BoulderTag implements LocationResourceInterface, DeactivatableInterface, CacheableInterface
 {
-    public const RESOURCE_NAME = "BoulderTag";
+    public const RESOURCE_NAME = "boulderTag";
 
     use LocationTrait;
 

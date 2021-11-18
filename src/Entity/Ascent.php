@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Ascent implements LocationResourceInterface, TimestampableInterface, UserResourceInterface, CacheableInterface
 {
-    public const RESOURCE_NAME = "Ascent";
+    public const RESOURCE_NAME = "ascent";
 
     public const ASCENT_TOP = 'top';
     public const ASCENT_FLASH = 'flash';

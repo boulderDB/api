@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Setter implements TimestampableInterface, DeactivatableInterface, CacheableInterface
 {
-    public const RESOURCE_NAME = "Setter";
+    public const RESOURCE_NAME = "setter";
 
     use TimestampTrait;
 

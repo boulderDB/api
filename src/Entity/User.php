@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    public const RESOURCE_NAME = "User";
+    public const RESOURCE_NAME = "user";
     
     public const USER = "USER";
     public const SETTER = "SETTER";

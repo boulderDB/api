@@ -14,7 +14,7 @@ class BoulderError implements
     NotificationResourceInterface,
     CacheableInterface
 {
-    public const RESOURCE_NAME = "BoulderError";
+    public const RESOURCE_NAME = "boulderError";
 
     use TimestampTrait;
     use LocationTrait;

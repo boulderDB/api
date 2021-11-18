@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Location implements CacheableInterface
 {
-    public const RESOURCE_NAME = "Location";
+    public const RESOURCE_NAME = "location";
 
     /**
      * @ORM\Id()
