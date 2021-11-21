@@ -32,10 +32,12 @@ class AuthenticationSuccessSubscriber implements EventSubscriberInterface
         $user = $event->getUser();
         $payload = $event->getData();
         $serializerGroups = ["groups" => ["default", "self"]];
+        $expiration = new \DateTime("+" . $_ENV["JWT_TOKEN_EXPIRATION"] . "seconds");
 
         $lastVisitedLocation = $this->locationRepository->find($user->getLastVisitedLocation());
 
         $payload = array_merge($payload, [
+            "expiration" => $expiration->getTimestamp(),
             "target" => Request::createFromGlobals()->query->get("target"),
             "user" => $this->serializer->normalize($user, null, $serializerGroups),
             "lastVisitedLocation" => $this->serializer->normalize($lastVisitedLocation, null, $serializerGroups)
