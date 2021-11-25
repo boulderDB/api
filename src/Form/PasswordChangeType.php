@@ -19,7 +19,7 @@ class PasswordChangeType extends AbstractType
                 new Length(["min" => 6, "max" => 50])
             ]
         ])
-            ->add("oldPassword", TextType::class, [
+            ->add("currentPassword", TextType::class, [
                 "constraints" => [
                     new NotBlank()
                 ]

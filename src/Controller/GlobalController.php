@@ -202,7 +202,7 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/me/change-password", methods={"PUT"}, name="change_password")
+     * @Route("/me/password", methods={"PUT"}, name="change_password")
      */
     public function changePassword(Request $request)
     {
