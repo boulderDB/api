@@ -48,11 +48,11 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
     {
         $locationId = $this->contextService->getLocation()?->getId();
 
-        $setterQuery = function (EntityRepository $entityRepository) {
+        $setterQuery = function (EntityRepository $entityRepository) use ($locationId) {
             return $entityRepository->createQueryBuilder("setter")
                 ->innerJoin("setter.locations", "location")
                 ->where("location.id = :locationId")
-                ->setParameter("locationId", $this->contextService->getLocation()?->getId())
+                ->setParameter("locationId", $locationId)
                 ->orderBy("lower(setter.username)", "ASC");
         };
 
