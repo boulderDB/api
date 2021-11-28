@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Helper\Behaviours;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -44,7 +46,12 @@ class Wall implements LocationResourceInterface, DeactivatableInterface, Cacheab
     /**
      * @ORM\ManyToMany(targetEntity="Area", mappedBy="walls")
      */
-    private ?Area $area;
+    private ?Collection $areas;
+
+    public function __construct()
+    {
+        $this->areas = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -91,14 +98,14 @@ class Wall implements LocationResourceInterface, DeactivatableInterface, Cacheab
         $this->active = $active;
     }
 
-    public function getArea(): ?Area
+    public function getAreas(): ArrayCollection|Collection|null
     {
-        return $this->area;
+        return $this->areas;
     }
 
-    public function setArea(?Area $area): void
+    public function setAreas(ArrayCollection|Collection|null $areas): void
     {
-        $this->area = $area;
+        $this->areas = $areas;
     }
 
     public function invalidates(): array
