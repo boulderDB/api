@@ -62,15 +62,14 @@ class BoulderRepository extends ServiceEntityRepository
 
     public function getByStatus(int $locationId, string $status = Boulder::STATUS_ACTIVE): ?array
     {
-        $queryBuilder = $this->createQueryBuilder("boulder")
+        return $this->createQueryBuilder("boulder")
             ->leftJoin("boulder.setters", "setter")
             ->leftJoin("boulder.startWall", "startWall")
             ->leftJoin("boulder.endWall", "endWall")
-            ->innerJoin("boulder.grade", "grade")
             ->leftJoin("boulder.internalGrade", "internalGrade")
-            ->innerJoin("boulder.holdType", "holdType");
-
-        return $queryBuilder
+            ->innerJoin("boulder.grade", "grade")
+            ->innerJoin("boulder.holdType", "holdType")
+            ->innerJoin("startWall.area", "area")
             ->where("boulder.location = :location")
             ->andWhere("boulder.status = :status")
             ->setParameter("location", $locationId)

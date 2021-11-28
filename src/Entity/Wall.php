@@ -41,6 +41,11 @@ class Wall implements LocationResourceInterface, DeactivatableInterface, Cacheab
      */
     private bool $active = true;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Area", mappedBy="walls")
+     */
+    private ?Area $area;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -84,6 +89,16 @@ class Wall implements LocationResourceInterface, DeactivatableInterface, Cacheab
     public function setActive(bool $active): void
     {
         $this->active = $active;
+    }
+
+    public function getArea(): ?Area
+    {
+        return $this->area;
+    }
+
+    public function setArea(?Area $area): void
+    {
+        $this->area = $area;
     }
 
     public function invalidates(): array

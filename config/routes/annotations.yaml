@@ -87,3 +87,8 @@ schema:
   resource: ../../src/Controller/SchemaController.php
   type: annotation
   prefix: /api/
+
+event:
+  resource: ../../src/Controller/EventController.php
+  type: annotation
+  prefix: /api/{location}/
