@@ -1,0 +1,6 @@
+App\Entity\ReadableIdentifier:
+  attributes:
+    id:
+      groups: [ "admin" ]
+    value:
+      groups: [ "default" ]

@@ -119,6 +119,11 @@ class Boulder implements LocationResourceInterface, TimestampableInterface, Cach
      */
     private ?Collection $ratings = null;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\ReadableIdentifier")
+     */
+    private ?ReadableIdentifier $readableIdentifier;
+
     private ?Ascent $userAscent = null;
 
     private ?int $currentPoints = null;
@@ -326,6 +331,16 @@ class Boulder implements LocationResourceInterface, TimestampableInterface, Cach
     public function setRatings($ratings): void
     {
         $this->ratings = $ratings;
+    }
+
+    public function getReadableIdentifier(): ?ReadableIdentifier
+    {
+        return $this->readableIdentifier;
+    }
+
+    public function setReadableIdentifier(?ReadableIdentifier $readableIdentifier): void
+    {
+        $this->readableIdentifier = $readableIdentifier;
     }
 
     public function invalidates(): array
