@@ -69,7 +69,7 @@ class BoulderRepository extends ServiceEntityRepository
             ->leftJoin("boulder.internalGrade", "internalGrade")
             ->innerJoin("boulder.grade", "grade")
             ->innerJoin("boulder.holdType", "holdType")
-            ->innerJoin("startWall.area", "area")
+            ->innerJoin("startWall.areas", "area")
             ->where("boulder.location = :location")
             ->andWhere("boulder.status = :status")
             ->setParameter("location", $locationId)
