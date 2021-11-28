@@ -109,22 +109,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTime $lastLogin = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Ascent", mappedBy="user", fetch="LAZY")
-     */
-    private ?Collection $ascents = null;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Notification", mappedBy="user", fetch="LAZY")
-     * @var \App\Entity\Notification[]
      */
     private ?Collection $notifications = null;
 
     private ?string $plainPassword = null;
 
-    #[Pure] public function __construct()
+    public function __construct()
     {
-        $this->ascents = new ArrayCollection();
-
         $this->visible = true;
         $this->active = true;
         $this->roles = [self::ROLE_USER];
@@ -253,7 +245,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->lastVisitedLocation = $lastVisitedLocation;
     }
 
-    public function getLastActivity(): \DateTimeInterface
+    public function getLastActivity(): ?\DateTimeInterface
     {
         return $this->lastActivity;
     }
@@ -261,16 +253,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastActivity(?\DateTime $lastActivity): void
     {
         $this->lastActivity = $lastActivity;
-    }
-
-    public function getAscents()
-    {
-        return $this->ascents;
-    }
-
-    public function setAscents($ascents): void
-    {
-        $this->ascents = $ascents;
     }
 
     public function getPlainPassword(): ?string

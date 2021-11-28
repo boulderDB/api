@@ -45,10 +45,6 @@ class LocationController extends AbstractController
             ContextService::getLocationRoleName(User::ADMIN, $locationId, true)
         );
 
-        $counters = $this->userRepository->getByRole(
-            ContextService::getLocationRoleName(User::COUNTER, $locationId, true)
-        );
-
         $setters = $this->userRepository->getByRole(
             ContextService::getLocationRoleName(User::SETTER, $locationId, true)
         );
@@ -57,7 +53,6 @@ class LocationController extends AbstractController
             [
                 "setters" => $setters,
                 "admins" => $admins,
-                "counters" => $counters
             ],
             ["default", "admin"]
         );
