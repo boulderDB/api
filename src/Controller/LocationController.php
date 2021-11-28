@@ -49,13 +49,7 @@ class LocationController extends AbstractController
             ContextService::getLocationRoleName(User::SETTER, $locationId, true)
         );
 
-        return $this->okResponse(
-            [
-                "setters" => $setters,
-                "admins" => $admins,
-            ],
-            ["default", "admin"]
-        );
+        return $this->okResponse(array_merge($setters, $admins), ["default", "admin"]);
     }
 
     /**

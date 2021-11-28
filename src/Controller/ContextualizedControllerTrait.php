@@ -19,17 +19,18 @@ trait ContextualizedControllerTrait
 
     protected function denyUnlessLocationAdmin()
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $this->denyAccessUnlessGranted($this->contextService->getLocationRole(User::ROLE_ADMIN));
     }
 
     protected function isLocationAdmin(): bool
     {
-        return $this->isGranted($this->contextService->getLocationRole(User::ROLE_ADMIN));
+        return $this->isGranted($this->contextService->getLocationRole(User::ROLE_ADMIN)) && $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');;
     }
 
     protected function isLocationSetter(): bool
     {
-        return $this->isGranted($this->contextService->getLocationRole(User::ROLE_SETTER));
+        return $this->isGranted($this->contextService->getLocationRole(User::ROLE_SETTER)) && $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');;
     }
 
     protected function getLocationId(): int
