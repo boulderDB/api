@@ -32,6 +32,21 @@ class ContextService
         return (int)explode("@", $role)[1];
     }
 
+    public static function filterLocationRoles(array $roles, int $locationId): array
+    {
+        return array_filter($roles, function ($role) use ($locationId) {
+            return self::isLocationRole($role, $locationId);
+        });
+    }
+
+    public static function getPlainRoleName(string $role): ?string
+    {
+        $role = explode("@", $role)[0];
+        $role = str_replace("ROLE_", "", $role);
+
+        return strtolower($role);
+    }
+
     public static function getLocationRoleName(string $role, int $locationId, bool $prefix = false): string
     {
         if ($prefix) {
