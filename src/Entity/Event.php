@@ -34,6 +34,17 @@ class Event implements LocationResourceInterface, CacheableInterface
     private ?Collection $boulders;
 
     /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", fetch="LAZY", inversedBy="events")
+     * @ORM\JoinTable(name="event_user")
+     */
+    private ?Collection $participants;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+    private bool $public = false;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private ?\DateTime $startDate = null;
@@ -66,6 +77,26 @@ class Event implements LocationResourceInterface, CacheableInterface
     public function setBoulders(?Collection $boulders): void
     {
         $this->boulders = $boulders;
+    }
+
+    public function getParticipants(): ?Collection
+    {
+        return $this->participants;
+    }
+
+    public function setParticipants(?Collection $participants): void
+    {
+        $this->participants = $participants;
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->public;
+    }
+
+    public function setPublic(bool $public): void
+    {
+        $this->public = $public;
     }
 
     public function getStartDate(): ?\DateTime
