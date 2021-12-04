@@ -200,10 +200,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        // filter out default role
-        return array_values(array_filter($this->roles, function (string $role) {
+        $roles = $this->roles;
+        $roles = array_filter($roles, function (string $role) {
             return $role !== "ROLE_USER";
-        }));
+        });
+        $roles = array_unique($roles);
+
+        return array_values($roles);
     }
 
     public function setRoles(array $roles): void
