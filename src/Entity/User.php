@@ -94,9 +94,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $image = null;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Location")
+     * @ORM\JoinColumn(name="last_visited_location", referencedColumnName="id")
      */
-    private ?int $lastVisitedLocation = null;
+    private ?Location $lastVisitedLocation = null;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -235,12 +236,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->image = $image;
     }
 
-    public function getLastVisitedLocation(): ?int
+    public function getLastVisitedLocation(): ?Location
     {
         return $this->lastVisitedLocation;
     }
 
-    public function setLastVisitedLocation(?int $lastVisitedLocation): void
+    public function setLastVisitedLocation(?Location $lastVisitedLocation): void
     {
         $this->lastVisitedLocation = $lastVisitedLocation;
     }

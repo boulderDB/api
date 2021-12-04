@@ -92,43 +92,6 @@ class GlobalController extends AbstractController
     }
 
     /**
-     * @Route("/context", methods={"GET"}, name="context")
-     */
-    public function context()
-    {
-        /**
-         * @var JWTUserToken $token
-         */
-        $token = $this->tokenStorage->getToken();
-        $user = $this->getUser();
-
-        /**
-         * @var Location $location
-         */
-        $location = $this->locationRepository->find($user->getLastVisitedLocation());
-
-        $jws = JWS::load($token->getCredentials());
-
-        return $this->okResponse([
-            "expiration" => $jws->getPayload()['exp'],
-            "target" => Request::createFromGlobals()->query->get("target"),
-            "targetLocation" => $location->getUrl(),
-            "location" => [
-                "id" => $location->getId(),
-                "name" => $location->getName(),
-                "url" => $location->getUrl()
-            ],
-            "fullRegistration" => $user->getLastName() && $user->getLastName(),
-            "user" => [
-                "id" => $user->getId(),
-                "username" => $user->getUsername(),
-                "roles" => $user->getRoles(),
-                "visible" => $user->isVisible(),
-            ],
-        ]);
-    }
-
-    /**
      * @Route("/me", methods={"GET"}, name="me_read")
      */
     public function readMe()
@@ -452,8 +415,8 @@ class GlobalController extends AbstractController
 
         $location = $this->contextService->getLocation();
 
-        if ($user->getLastVisitedLocation() !== $location->getId()) {
-            $user->setLastVisitedLocation($location->getId());
+        if ($user->getLastVisitedLocation()->getId() !== $location->getId()) {
+            $user->setLastVisitedLocation($location);
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();
