@@ -317,16 +317,6 @@ class GlobalController extends AbstractController
                 new NotBlank()
             ]
         ]);
-        $form->add('firstName', TextType::class, [
-            'constraints' => [
-                new NotBlank()
-            ]
-        ]);
-        $form->add('lastName', TextType::class, [
-            'constraints' => [
-                new NotBlank()
-            ]
-        ]);
 
         $form->add(...UserType::passWordField());
 

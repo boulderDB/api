@@ -41,16 +41,8 @@ class UserType extends AbstractType
                     new NotBlank()
                 ]
             ])
-            ->add("firstName", TextType::class, [
-                "constraints" => [
-                    new NotBlank()
-                ]
-            ])
-            ->add("lastName", TextType::class, [
-                "constraints" => [
-                    new NotBlank()
-                ]
-            ])
+            ->add("firstName", TextType::class)
+            ->add("lastName", TextType::class)
             ->add("image", TextType::class);
     }
 
