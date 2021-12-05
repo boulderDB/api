@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Area;
 use App\Entity\Boulder;
 use App\Entity\BoulderTag;
+use App\Entity\Event;
 use App\Entity\Grade;
 use App\Entity\HoldType;
 use App\Entity\Setter;
@@ -12,6 +13,7 @@ use App\Entity\Wall;
 use App\Form\AreaType;
 use App\Form\BoulderTagType;
 use App\Form\BoulderType;
+use App\Form\EventType;
 use App\Form\GradeType;
 use App\Form\HoldTypeType;
 use App\Form\SchemaTypeInterface;
@@ -37,6 +39,7 @@ class SchemaController extends AbstractController
         HoldType::RESOURCE_NAME => HoldTypeType::class,
         Setter::RESOURCE_NAME => SetterType::class,
         Wall::RESOURCE_NAME => WallType::class,
+        Event::RESOURCE_NAME => EventType::class
     ];
 
     /**
