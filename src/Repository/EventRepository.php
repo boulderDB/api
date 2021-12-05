@@ -15,19 +15,17 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    public function getActive(int $locationId, \DateTime $date = null)
+    public function getVisible(int $locationId, \DateTime $date = null)
     {
         $builder = $this->createQueryBuilder("event")
             ->where("event.location = :locationId")
-            ->andWhere("event.active = true")
-            ->andWhere("event.start > :current")
-            ->andWhere("event.end < :current")
+            ->andWhere("event.visible = true")
             ->setParameter("locationId", $locationId);
 
         if ($date) {
             $builder
-                ->andWhere("event.start > :current")
-                ->andWhere("event.end < :current")
+                ->andWhere("event.startDate > :current")
+                ->andWhere("event.endDate < :current")
                 ->setParameter("current", $date);
         }
 

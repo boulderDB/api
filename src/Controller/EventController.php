@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Form\EventType;
 use App\Repository\EventRepository;
+use App\Service\ContextService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,10 +19,12 @@ class EventController extends AbstractController
     use ContextualizedControllerTrait;
 
     private EventRepository $eventRepository;
+    private ContextService $contextService;
 
-    public function __construct(EventRepository $eventRepository)
+    public function __construct(EventRepository $eventRepository, ContextService $contextService)
     {
         $this->eventRepository = $eventRepository;
+        $this->contextService = $contextService;
     }
 
     /**
@@ -34,12 +37,12 @@ class EventController extends AbstractController
         if ($filters === "all") {
             $this->denyUnlessLocationAdmin();
 
-            return $this->okResponse($this->eventRepository->getActive(
+            return $this->okResponse($this->eventRepository->getVisible(
                 $this->getLocationId()
             ));
         }
 
-        return $this->okResponse($this->eventRepository->getActive(
+        return $this->okResponse($this->eventRepository->getVisible(
             $this->getLocationId(),
             new \DateTime()
         ));

@@ -28,6 +28,11 @@ class Event implements LocationResourceInterface, CacheableInterface
     private ?string $name = null;
 
     /**
+     * @ORM\Column(type="boolean", options={"default": true})
+     */
+    private ?string $visible = null;
+
+    /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Boulder", fetch="LAZY", inversedBy="events")
      * @ORM\JoinTable(name="event_boulder")
      */
@@ -52,7 +57,7 @@ class Event implements LocationResourceInterface, CacheableInterface
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private ?\DateTime $endData = null;
+    private ?\DateTime $endDate = null;
 
     public function getId(): ?int
     {
@@ -67,6 +72,16 @@ class Event implements LocationResourceInterface, CacheableInterface
     public function setName(?string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getVisible(): ?string
+    {
+        return $this->visible;
+    }
+
+    public function setVisible(?string $visible): void
+    {
+        $this->visible = $visible;
     }
 
     public function getBoulders(): ?Collection
@@ -109,14 +124,14 @@ class Event implements LocationResourceInterface, CacheableInterface
         $this->startDate = $startDate;
     }
 
-    public function getEndData(): ?\DateTime
+    public function getEndDate(): ?\DateTime
     {
-        return $this->endData;
+        return $this->endDate;
     }
 
-    public function setEndData(?\DateTime $endData): void
+    public function setEndData(?\DateTime $endDate): void
     {
-        $this->endData = $endData;
+        $this->endDate = $endDate;
     }
 
     public function invalidates(): array
