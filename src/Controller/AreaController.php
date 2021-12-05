@@ -18,6 +18,7 @@ class AreaController extends AbstractController
 {
     use CrudTrait;
     use ContextualizedControllerTrait;
+    use FilterTrait;
 
     private AreaRepository $areaRepository;
     private ContextService $contextService;
@@ -39,19 +40,13 @@ class AreaController extends AbstractController
      */
     public function index(Request $request)
     {
-        $filters = $request->get("filter");
-
-        if ($filters) {
-            return $this->okResponse($this->areaRepository->queryWhere(
-                $this->getLocationId(),
-                ["active" => "bool"],
-                $filters
-            ));
-        }
-
-        return $this->okResponse($this->areaRepository->getActive(
+        $matches = $this->handleFilters(
+            $request->get("filter"),
+            $this->areaRepository,
             $this->getLocationId()
-        ));
+        );
+
+        return $this->okResponse($matches);
     }
 
     /**

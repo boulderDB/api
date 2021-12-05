@@ -6,10 +6,10 @@ use App\Entity\BoulderTag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class BoulderTagRepository extends ServiceEntityRepository
+class BoulderTagRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface
 {
-    use FilterTrait;
-    use DeactivatableTrait;
+    use FilterableRepositoryTrait;
+    use DeactivatableRepositoryTrait;
 
     public function __construct(ManagerRegistry $registry)
     {

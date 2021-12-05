@@ -19,6 +19,7 @@ class BoulderErrorController extends AbstractController
 {
     use CrudTrait;
     use ContextualizedControllerTrait;
+    use FilterTrait;
 
     private EntityManagerInterface $entityManager;
     private ContextService $contextService;
@@ -42,19 +43,16 @@ class BoulderErrorController extends AbstractController
     {
         $this->denyUnlessLocationAdminOrSetter();
 
-        $filters = $request->get("filter");
-
-        if ($filters) {
-            return $this->okResponse($this->boulderErrorRepository->queryWhere(
-                $this->getLocationId(),
-                ["status" => "string"],
-                $filters
-            ));
-        }
-
-        return $this->okResponse(
-            $this->boulderErrorRepository->findByStatus($this->contextService->getLocation()?->getId())
+        $matches = $this->handleFilters(
+            $request->get("filter"),
+            $this->boulderErrorRepository,
+            $this->getLocationId(),
+            function ($filters, $repository, $locationId) {
+                return $repository->findByStatus($locationId);
+            }
         );
+
+        return $this->okResponse($matches);
     }
 
     /**

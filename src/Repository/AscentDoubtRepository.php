@@ -8,7 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class AscentDoubtRepository extends ServiceEntityRepository
 {
-    use FilterTrait;
+    use FilterableRepositoryTrait;
 
     public function __construct(ManagerRegistry $registry)
     {

@@ -18,6 +18,7 @@ class BoulderTagController extends AbstractController
 {
     use CrudTrait;
     use ContextualizedControllerTrait;
+    use FilterTrait;
 
     private ContextService $contextService;
     private EntityManagerInterface $entityManager;
@@ -39,19 +40,13 @@ class BoulderTagController extends AbstractController
      */
     public function index(Request $request)
     {
-        $filters = $request->get("filter");
-
-        if ($filters) {
-            return $this->okResponse($this->boulderTagRepository->queryWhere(
-                $this->getLocationId(),
-                ["active" => "bool"],
-                $filters
-            ));
-        }
-
-        return $this->okResponse($this->boulderTagRepository->getActive(
+        $matches = $this->handleFilters(
+            $request->get("filter"),
+            $this->boulderTagRepository,
             $this->getLocationId()
-        ));
+        );
+
+        return $this->okResponse($matches);
     }
 
     /**

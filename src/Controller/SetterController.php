@@ -21,6 +21,7 @@ class SetterController extends AbstractController
     use ContextualizedControllerTrait;
     use ResponseTrait;
     use RequestTrait;
+    use FilterTrait;
 
     private EntityManagerInterface $entityManager;
     private ContextService $contextService;
@@ -42,18 +43,16 @@ class SetterController extends AbstractController
      */
     public function index(Request $request)
     {
-        $locationId = $this->contextService->getLocation()?->getId();
-        $filters = $request->get("filter");
+        $matches = $this->handleFilters(
+            $request->get("filter"),
+            $this->setterRepository,
+            $this->getLocationId(),
+            function ($filters, $repository, $locationId) {
+                return $repository->getCurrent($locationId);
+            }
+        );
 
-        if ($filters) {
-            return $this->okResponse($this->setterRepository->queryWhere(
-                $this->getLocationId(),
-                ["active" => "bool"],
-                $filters
-            ));
-        }
-
-        return $this->okResponse($this->setterRepository->getCurrent($locationId));
+        return $this->okResponse($matches);
     }
 
     /**

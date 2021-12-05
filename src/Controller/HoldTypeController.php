@@ -18,6 +18,7 @@ class HoldTypeController extends AbstractController
 {
     use CrudTrait;
     use ContextualizedControllerTrait;
+    use FilterTrait;
 
     private EntityManagerInterface $entityManager;
     private ContextService $contextService;
@@ -39,19 +40,13 @@ class HoldTypeController extends AbstractController
      */
     public function index(Request $request)
     {
-        $filters = $request->get("filter");
-
-        if ($filters) {
-            return $this->okResponse($this->holdTypeRepository->queryWhere(
-                $this->getLocationId(),
-                ["active" => "bool"],
-                $filters
-            ));
-        }
-
-        return $this->okResponse($this->holdTypeRepository->getActive(
+        $matches = $this->handleFilters(
+            $request->get("filter"),
+            $this->holdTypeRepository,
             $this->getLocationId()
-        ));
+        );
+
+        return $this->okResponse($matches);
     }
 
     /**

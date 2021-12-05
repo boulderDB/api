@@ -6,10 +6,10 @@ use App\Entity\HoldType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class HoldTypeRepository extends ServiceEntityRepository
+class HoldTypeRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface
 {
-    use FilterTrait;
-    use DeactivatableTrait;
+    use FilterableRepositoryTrait;
+    use DeactivatableRepositoryTrait;
 
     public function __construct(ManagerRegistry $registry)
     {

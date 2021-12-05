@@ -17,6 +17,7 @@ class EventController extends AbstractController
 {
     use CrudTrait;
     use ContextualizedControllerTrait;
+    use FilterTrait;
 
     private EventRepository $eventRepository;
     private ContextService $contextService;
@@ -32,20 +33,16 @@ class EventController extends AbstractController
      */
     public function index(Request $request)
     {
-        $filters = $request->get("filter");
-
-        if ($filters === "all") {
-            $this->denyUnlessLocationAdmin();
-
-            return $this->okResponse($this->eventRepository->getVisible(
-                $this->getLocationId()
-            ));
-        }
-
-        return $this->okResponse($this->eventRepository->getVisible(
+        $matches = $this->handleFilters(
+            $request->get("filter"),
+            $this->eventRepository,
             $this->getLocationId(),
-            new \DateTime()
-        ));
+            function ($filters, $repository, $locationId) {
+                return $repository->getVisible($locationId, new \DateTime());
+            }
+        );
+
+        return $this->okResponse($matches);
     }
 
     /**

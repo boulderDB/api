@@ -6,10 +6,10 @@ use App\Entity\Area;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class AreaRepository extends ServiceEntityRepository
+class AreaRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface
 {
-    use FilterTrait;
-    use DeactivatableTrait;
+    use FilterableRepositoryTrait;
+    use DeactivatableRepositoryTrait;
 
     public function __construct(ManagerRegistry $registry)
     {

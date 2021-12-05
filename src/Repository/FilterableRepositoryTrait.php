@@ -6,7 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Validation;
 
-trait FilterTrait
+trait FilterableRepositoryTrait
 {
     /* https://symfony.com/doc/current/reference/constraints/Type.html#reference-constraint-type-type */
     public function addFilters(QueryBuilder $builder, string $alias, array $config, array $filters): void
