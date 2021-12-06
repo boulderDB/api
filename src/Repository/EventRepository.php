@@ -6,7 +6,7 @@ use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class EventRepository extends ServiceEntityRepository
+class EventRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface
 {
     use FilterableRepositoryTrait;
 
@@ -15,20 +15,28 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    public function getVisible(int $locationId, \DateTime $date = null)
+    public function getActive(int $locationId)
     {
-        $builder = $this->createQueryBuilder("event")
+        $date = new \DateTime();
+        $date->modify("+1hour"); # todo remove hardcoded modifier
+
+        return $this->createQueryBuilder("event")
             ->where("event.location = :locationId")
             ->andWhere("event.visible = true")
-            ->setParameter("locationId", $locationId);
+            ->andWhere("event.startDate > :current")
+            ->andWhere("event.endDate < :current")
+            ->setParameter("current", $date)
+            ->setParameter("locationId", $locationId)
+            ->getQuery()->getResult();
+    }
 
-        if ($date) {
-            $builder
-                ->andWhere("event.startDate > :current")
-                ->andWhere("event.endDate < :current")
-                ->setParameter("current", $date);
-        }
-
-        return $builder->getQuery()->getResult();
+    public function getAll(int $locationId)
+    {
+        return $this->createQueryBuilder("event")
+            ->where("event.location = :locationId")
+            ->andWhere("event.visible = true")
+            ->setParameter("locationId", $locationId)
+            ->getQuery()
+            ->getResult();
     }
 }

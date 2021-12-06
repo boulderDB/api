@@ -6,6 +6,7 @@ use App\Entity\Event;
 use App\Form\EventType;
 use App\Repository\EventRepository;
 use App\Service\ContextService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,11 +22,17 @@ class EventController extends AbstractController
 
     private EventRepository $eventRepository;
     private ContextService $contextService;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(EventRepository $eventRepository, ContextService $contextService)
+    public function __construct(
+        EventRepository $eventRepository,
+        ContextService $contextService,
+        EntityManagerInterface $entityManager
+    )
     {
         $this->eventRepository = $eventRepository;
         $this->contextService = $contextService;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -37,6 +44,7 @@ class EventController extends AbstractController
             $request->get("filter"),
             $this->eventRepository,
             $this->getLocationId(),
+
             function ($filters, $repository, $locationId) {
                 return $repository->getVisible($locationId, new \DateTime());
             }

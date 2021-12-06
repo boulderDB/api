@@ -25,12 +25,12 @@ trait ContextualizedControllerTrait
 
     protected function isLocationAdmin(): bool
     {
-        return $this->isGranted($this->contextService->getLocationRole(User::ROLE_ADMIN)) && $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');;
+        return $this->isGranted($this->contextService->getLocationRole(User::ROLE_ADMIN));
     }
 
     protected function isLocationSetter(): bool
     {
-        return $this->isGranted($this->contextService->getLocationRole(User::ROLE_SETTER)) && $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');;
+        return $this->isGranted($this->contextService->getLocationRole(User::ROLE_SETTER));
     }
 
     protected function getLocationId(): int

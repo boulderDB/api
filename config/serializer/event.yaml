@@ -1,0 +1,18 @@
+App\Entity\Event:
+  attributes:
+    id:
+      groups: [ "default" ]
+    name:
+      groups: [ "default" ]
+    visible:
+      groups: [ "default" ]
+    public:
+      groups: [ "default" ]
+    startDate:
+      groups: [ "default" ]
+    endDate:
+      groups: [ "default" ]
+    boulders:
+      groups: [ "detail" ]
+    participants:
+      groups: [ "admin" ]
