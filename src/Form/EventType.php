@@ -56,7 +56,9 @@ class EventType extends AbstractType implements SchemaTypeInterface
             [
                 "name" => "name",
                 "type" => TextType::class,
-                "constraints" => [new NotBlank()]
+                "options" => [
+                    "constraints" => [new NotBlank()]
+                ],
             ],
             [
                 "name" => "boulders",
@@ -74,12 +76,16 @@ class EventType extends AbstractType implements SchemaTypeInterface
             [
                 "name" => "start",
                 "type" => DateTimeType::class,
-                "constraints" => [new NotBlank()]
+                "options" => [
+                    "constraints" => [new NotBlank()]
+                ],
             ],
             [
                 "name" => "end",
                 "type" => DateTimeType::class,
-                "constraints" => [new NotBlank()]
+                "options" => [
+                    "constraints" => [new NotBlank()]
+                ],
             ]
         ];
     }
