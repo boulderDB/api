@@ -64,7 +64,8 @@ class EventType extends AbstractType implements SchemaTypeInterface
                 "options" => [
                     "class" => Boulder::class,
                     "constraints" => [new NotBlank()],
-                    "query_builder" => $boulderQuery
+                    "query_builder" => $boulderQuery,
+                    "multiple" => true,
                 ],
                 "schema" => [
                     "resource" => "/boulders"
