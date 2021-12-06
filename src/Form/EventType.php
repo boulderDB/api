@@ -48,8 +48,7 @@ class EventType extends AbstractType implements SchemaTypeInterface
                 ->where("location.id = :locationId")
                 ->andWhere("boulder.status = :status")
                 ->setParameter("locationId", $locationId)
-                ->setParameter("status", Boulder::STATUS_ACTIVE)
-                ->orderBy("lower(setter.username)", "ASC");
+                ->setParameter("status", Boulder::STATUS_ACTIVE);
         };
 
         return [
