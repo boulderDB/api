@@ -40,7 +40,10 @@ class AscentController extends AbstractController
      */
     public function create(Request $request)
     {
-        return $this->createEntity($request, Ascent::class, AscentType::class);
+        $ascent = new Ascent();
+        $ascent->setUser($this->getUser());
+        
+        return $this->createEntity($request, $ascent, AscentType::class);
     }
 
     /**
