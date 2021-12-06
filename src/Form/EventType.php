@@ -44,7 +44,7 @@ class EventType extends AbstractType implements SchemaTypeInterface
 
         $boulderQuery = function (EntityRepository $entityRepository) use ($locationId) {
             return $entityRepository->createQueryBuilder("boulder")
-                ->innerJoin("boulder.locations", "location")
+                ->innerJoin("boulder.location", "location")
                 ->where("location.id = :locationId")
                 ->andWhere("boulder.status = :status")
                 ->setParameter("locationId", $locationId)
