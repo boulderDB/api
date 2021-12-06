@@ -46,7 +46,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
 
     public function getSchema(): array
     {
-        $locationId = $this->contextService->getLocation()?->getId();
+        $locationId = $this->contextService?->getLocation()?->getId();
 
         $setterQuery = function (EntityRepository $entityRepository) use ($locationId) {
             return $entityRepository->createQueryBuilder("setter")

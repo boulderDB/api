@@ -40,7 +40,7 @@ class EventType extends AbstractType implements SchemaTypeInterface
 
     public function getSchema(): array
     {
-        $locationId = $this->contextService->getLocation()?->getId();
+        $locationId = $this->contextService?->getLocation()?->getId();
 
         $boulderQuery = function (EntityRepository $entityRepository) use ($locationId) {
             return $entityRepository->createQueryBuilder("boulder")
