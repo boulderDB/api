@@ -72,12 +72,12 @@ class EventType extends AbstractType implements SchemaTypeInterface
                 ]
             ],
             [
-                "nameDate" => "start",
+                "name" => "start",
                 "type" => DateTimeType::class,
                 "constraints" => [new NotBlank()]
             ],
             [
-                "nameDate" => "end",
+                "name" => "end",
                 "type" => DateTimeType::class,
                 "constraints" => [new NotBlank()]
             ]
