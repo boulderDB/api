@@ -35,7 +35,7 @@ class Ascent implements LocationResourceInterface, TimestampableInterface, UserR
     private ?Boulder $boulder = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="ascents")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private ?User $user = null;

@@ -78,6 +78,7 @@ class RankingController extends AbstractController
                             "count" => 0,
                             "rate" => 0
                         ],
+                        "points" => 0
                     ];
                 }
 
