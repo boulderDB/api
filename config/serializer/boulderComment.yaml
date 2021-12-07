@@ -4,8 +4,6 @@ App\Entity\BoulderComment:
       groups: [ "default" ]
     message:
       groups: [ "default" ]
-    boulder:
-      groups: [ "default" ]
     author:
       groups: [ "default" ]
     behaviours:
