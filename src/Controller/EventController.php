@@ -57,8 +57,6 @@ class EventController extends AbstractController
      */
     public function read(int $id)
     {
-        $this->denyUnlessLocationAdmin();
-
         return $this->readEntity(Event::class, $id, ["detail"]);
     }
 
