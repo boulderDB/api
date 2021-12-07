@@ -8,6 +8,7 @@ use App\Service\ContextService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -57,6 +58,20 @@ class EventType extends AbstractType implements SchemaTypeInterface
                 "type" => TextType::class,
                 "options" => [
                     "constraints" => [new NotBlank()]
+                ],
+            ],
+            [
+                "name" => "visible",
+                "type" => CheckboxType::class,
+                "options" => [
+                    "constraints" => []
+                ],
+            ],
+            [
+                "name" => "public",
+                "type" => CheckboxType::class,
+                "options" => [
+                    "constraints" => []
                 ],
             ],
             [
