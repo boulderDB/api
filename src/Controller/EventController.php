@@ -44,9 +44,8 @@ class EventController extends AbstractController
             $request->get("filter"),
             $this->eventRepository,
             $this->getLocationId(),
-
             function ($filters, $repository, $locationId) {
-                return $repository->getVisible($locationId, new \DateTime());
+                return $repository->getActive($locationId);
             }
         );
 
