@@ -37,7 +37,8 @@ class CacheableResourceListener implements EventSubscriber
     {
         return [
             Events::postUpdate,
-            Events::postPersist
+            Events::postPersist,
+            Events::postRemove
         ];
     }
 
@@ -53,6 +54,17 @@ class CacheableResourceListener implements EventSubscriber
     }
 
     public function postPersist(LifecycleEventArgs $eventArgs)
+    {
+        $subject = $eventArgs->getObject();
+
+        if (!$subject instanceof CacheableInterface) {
+            return;
+        }
+
+        $this->invalidate($subject->invalidates());
+    }
+
+    public function postRemove(LifecycleEventArgs $eventArgs)
     {
         $subject = $eventArgs->getObject();
 
