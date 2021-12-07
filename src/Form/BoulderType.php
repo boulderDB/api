@@ -176,11 +176,11 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                 "name" => "status",
                 "type" => ChoiceType::class,
                 "options" => [
-                    "constraints" => [new NotBlank()]
-                ],
-                "choices" => [
-                    "active" => Boulder::STATUS_ACTIVE,
-                    "removed" => Boulder::STATUS_INACTIVE
+                    "constraints" => [new NotBlank()],
+                    "choices" => [
+                        Boulder::STATUS_ACTIVE => Boulder::STATUS_ACTIVE,
+                        Boulder::STATUS_INACTIVE => Boulder::STATUS_INACTIVE
+                    ],
                 ],
                 "schema" => [
                     "default" => Boulder::STATUS_ACTIVE
