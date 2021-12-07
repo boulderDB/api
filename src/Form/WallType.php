@@ -33,12 +33,18 @@ class WallType extends AbstractType implements SchemaTypeInterface
             [
                 "name" => "name",
                 "type" => TextType::class,
-                "constraints" => [new NotBlank()]
+                "constraints" => [new NotBlank()],
+                "options" => [
+                    "constraints" => []
+                ],
             ],
             [
                 "name" => "description",
                 "type" => TextType::class,
-                "constraints" => [new NotBlank()]
+                "constraints" => [new NotBlank()],
+                "options" => [
+                    "constraints" => []
+                ],
             ],
             [
                 "name" => "media",
@@ -46,7 +52,10 @@ class WallType extends AbstractType implements SchemaTypeInterface
                 "schema" => [
                     "type" => "upload",
                     "resource" => "/upload"
-                ]
+                ],
+                "options" => [
+                    "constraints" => []
+                ],
             ],
             [
                 "name" => "active",
