@@ -30,7 +30,7 @@ class Event implements LocationResourceInterface, CacheableInterface
     /**
      * @ORM\Column(type="boolean", options={"default": true})
      */
-    private ?string $visible = null;
+    private ?bool $visible = true;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Boulder", fetch="LAZY", inversedBy="events")
@@ -74,12 +74,12 @@ class Event implements LocationResourceInterface, CacheableInterface
         $this->name = $name;
     }
 
-    public function getVisible(): ?string
+    public function getVisible(): ?bool
     {
         return $this->visible;
     }
 
-    public function setVisible(?string $visible): void
+    public function setVisible(?bool $visible): void
     {
         $this->visible = $visible;
     }
@@ -129,7 +129,7 @@ class Event implements LocationResourceInterface, CacheableInterface
         return $this->endDate;
     }
 
-    public function setEndData(?\DateTime $endDate): void
+    public function setEndDate(?\DateTime $endDate): void
     {
         $this->endDate = $endDate;
     }
