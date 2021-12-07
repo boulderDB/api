@@ -32,3 +32,5 @@ App\Entity\Boulder:
       groups: [ "admin" ]
     readableIdentifier:
       groups: [ "default" ]
+    status:
+      groups: [ "detail" ]

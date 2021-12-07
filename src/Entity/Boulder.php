@@ -287,7 +287,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface, Cach
         return $this->userAscent;
     }
 
-    public function getAscents()
+    public function getAscents(): Collection
     {
         return $this->ascents->filter(function ($ascent) {
 
