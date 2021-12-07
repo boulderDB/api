@@ -54,7 +54,8 @@ class SetterType extends AbstractType implements SchemaTypeInterface
                     "class" => User::class,
                 ],
                 "schema" => [
-                    "resource" => "/users/search"
+                    "resource" => "/users/search",
+                    "labelProperty" => "name"
                 ]
             ],
         ];

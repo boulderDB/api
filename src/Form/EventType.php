@@ -84,7 +84,8 @@ class EventType extends AbstractType implements SchemaTypeInterface
                     "multiple" => true,
                 ],
                 "schema" => [
-                    "resource" => "/boulders"
+                    "resource" => "/boulders",
+                    "labelProperty" => "name"
                 ]
             ],
             [

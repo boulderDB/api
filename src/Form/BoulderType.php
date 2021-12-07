@@ -77,7 +77,8 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "query_builder" => $locationQuery
                 ],
                 "schema" => [
-                    "resource" => "/holdtypes"
+                    "resource" => "/holdtypes",
+                    "labelProperty" => "name"
                 ]
             ],
             [
@@ -89,7 +90,8 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "query_builder" => $locationQuery
                 ],
                 "schema" => [
-                    "resource" => "/grades"
+                    "resource" => "/grades",
+                    "labelProperty" => "name"
                 ]
             ],
             [
@@ -101,7 +103,8 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "query_builder" => $locationQuery
                 ],
                 "schema" => [
-                    "resource" => "/grades"
+                    "resource" => "/grades",
+                    "labelProperty" => "name"
                 ]
             ],
             [
@@ -113,7 +116,8 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "query_builder" => $locationQuery
                 ],
                 "schema" => [
-                    "resource" => "/walls"
+                    "resource" => "/walls",
+                    "labelProperty" => "name"
                 ]
             ],
             [
@@ -125,7 +129,8 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "query_builder" => $locationQuery
                 ],
                 "schema" => [
-                    "resource" => "/walls"
+                    "resource" => "/walls",
+                    "labelProperty" => "name"
                 ]
             ],
             [
@@ -138,7 +143,8 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "query_builder" => $setterQuery
                 ],
                 "schema" => [
-                    "resource" => "/setters"
+                    "resource" => "/setters",
+                    "labelProperty" => "username"
                 ]
             ],
             [
@@ -151,7 +157,8 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "query_builder" => $locationQuery
                 ],
                 "schema" => [
-                    "resource" => "/boulder-tags"
+                    "resource" => "/boulder-tags",
+                    "labelProperty" => "name"
                 ]
             ],
             [

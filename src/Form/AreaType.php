@@ -63,7 +63,8 @@ class AreaType extends AbstractType implements SchemaTypeInterface
                     }
                 ],
                 "schema" => [
-                    "resource" => "/walls"
+                    "resource" => "/walls",
+                    "labelProperty" => "name"
                 ]
             ],
             [
