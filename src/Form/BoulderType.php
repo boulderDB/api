@@ -66,7 +66,8 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
             [
                 "name" => "name",
                 "type" => TextType::class,
-                "constraints" => [new NotBlank()]
+                "constraints" => [new NotBlank()],
+                "options" => []
             ],
             [
                 "name" => "holdType",
