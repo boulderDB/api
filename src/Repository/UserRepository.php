@@ -40,11 +40,10 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $statement = "select id from users where lower({$property}) = lower(:property)";
         $query = $connection->prepare($statement);
 
-        $query->execute([
+        $result = $query->executeQuery([
             "property" => strtolower($value)
-        ]);
+        ])->fetchAllAssociative();
 
-        $result = $query->fetch();
 
         return $result ? true : false;
     }
@@ -77,6 +76,6 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
     public function loadUserByIdentifier(string $identifier)
     {
-       return $this->loadUserByUsername($identifier);
+        return $this->loadUserByUsername($identifier);
     }
 }
