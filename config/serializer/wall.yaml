@@ -6,8 +6,6 @@ App\Entity\Wall:
       groups: [ "default" ]
     active:
       groups: [ "default" ]
-    areas:
-      groups: [ "withArea" ]
     media:
       groups: [ "detail" ]
     description:

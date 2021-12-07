@@ -343,6 +343,19 @@ class Boulder implements LocationResourceInterface, TimestampableInterface, Cach
         $this->readableIdentifier = $readableIdentifier;
     }
 
+    public function getAreas(): ArrayCollection
+    {
+        $collection = new ArrayCollection();
+
+        foreach ($this->startWall?->getAreas()->toArray() as $area) {
+            if (!$collection->contains($area)) {
+                $collection->add($area);
+            }
+        }
+        /* todo: add end wall */
+        return $collection;
+    }
+
     public function invalidates(): array
     {
         return [

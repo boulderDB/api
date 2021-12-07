@@ -34,3 +34,5 @@ App\Entity\Boulder:
       groups: [ "default" ]
     status:
       groups: [ "detail" ]
+    areas:
+      groups: [ "default" ]
