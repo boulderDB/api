@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Grade;
 use App\Entity\User;
 use App\Form\UserRoleType;
 use App\Repository\UserRepository;
@@ -16,6 +17,7 @@ class LocationController extends AbstractController
     use RequestTrait;
     use ResponseTrait;
     use ContextualizedControllerTrait;
+use CrudTrait;
 
     private EntityManagerInterface $entityManager;
     private UserRepository $userRepository;
@@ -50,6 +52,16 @@ class LocationController extends AbstractController
         );
 
         return $this->okResponse(array_merge($setters, $admins), ["default", "admin"]);
+    }
+
+    /**
+     * @Route("/users/{id}", methods={"GET"}, name="location_users_read")
+     */
+    public function read(int $id)
+    {
+        $this->denyUnlessLocationAdmin();
+
+       return $this->readEntity(User::class, $id, ["default", "admin"]);
     }
 
     /**
