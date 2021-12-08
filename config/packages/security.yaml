@@ -34,7 +34,8 @@ security:
   # Note: Only the *first* access control that matches will be used
   access_control:
     - { path: '^/api/locations', roles: PUBLIC_ACCESS }
-    - { path: '^/api/password-reset$', roles: PUBLIC_ACCESS }
+    - { path: '^/api/password-reset/', roles: PUBLIC_ACCESS }
+    - { path: '^/api/password-reset', roles: PUBLIC_ACCESS }
     - { path: '^/api/register', roles: PUBLIC_ACCESS }
     - { path: '^/api/login', roles: PUBLIC_ACCESS }
     - { path: '^/api', roles: IS_AUTHENTICATED_FULLY }
