@@ -19,7 +19,10 @@ class UserController extends AbstractController
     private UserRepository $userRepository;
     private EntityManagerInterface $entityManager;
 
-    public function __construct(UserRepository $userRepository, EntityManagerInterface $entityManager)
+    public function __construct(
+        UserRepository $userRepository,
+        EntityManagerInterface $entityManager,
+    )
     {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
@@ -38,7 +41,6 @@ class UserController extends AbstractController
      */
     public function search(Request $request)
     {
-        $this->denyAccessUnlessGranted(User::ROLE_ADMIN);
         $username = $request->query->get("username");
 
         if (!$username) {

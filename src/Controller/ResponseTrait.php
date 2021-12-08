@@ -117,6 +117,10 @@ trait ResponseTrait
             "groups" => ["default", ...$groups]
         ];
 
+        if (!property_exists($this, "contextService")) {
+            return $context;
+        }
+
         if ($this->isLocationAdmin()) {
             $context["groups"][] = "admin";
         }
