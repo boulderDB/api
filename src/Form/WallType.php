@@ -41,7 +41,7 @@ class WallType extends AbstractType implements SchemaTypeInterface
             [
                 "name" => "description",
                 "type" => TextType::class,
-                "constraints" => [new NotBlank()],
+                "constraints" => [],
                 "options" => [
                     "constraints" => []
                 ],
