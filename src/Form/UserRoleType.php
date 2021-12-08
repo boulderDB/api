@@ -34,7 +34,7 @@ class UserRoleType extends AbstractType
 
         $builder
             ->add("roles", ChoiceType::class, [
-                "constraints" => [new NotBlank()],
+                "constraints" => [],
                 "multiple" => true,
                 "choices" => array_combine($options, $options)
             ]);
