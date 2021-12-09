@@ -349,7 +349,7 @@ class GlobalController extends AbstractController
             return $this->badFormRequestResponse($form);
         }
 
-        $password = $this->passwordEncoder->encodePassword($user, $user->getPlainPassword());
+        $password = $this->passwordEncoder->hashPassword($user, $user->getPlainPassword());
 
         $user->setPassword($password);
         $user->setVisible(true);
