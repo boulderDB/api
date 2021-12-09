@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\DeactivatableInterface;
+use App\Entity\LocationResourceInterface;
 use App\Entity\UserResourceInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,7 +54,20 @@ trait CrudTrait
 
     private function readEntity(string $resource, string $id, array $groups = ["default"])
     {
-        $object = $this->entityManager->getRepository($resource)->find($id);
+        $entity = new $resource;
+
+        if ($entity instanceof LocationResourceInterface) {
+            if (!property_exists($this, "contextService")) {
+                throw new \LogicException("Cannot read resource '$resource' without location context");
+            }
+
+            $object = $this->entityManager->getRepository($resource)->findOneBy([
+                "id" => $id,
+                "location" => $this->contextService->getLocation()->getId()
+            ]);
+        } else {
+            $object = $this->entityManager->getRepository($resource)->find($id);
+        }
 
         if (!$object) {
             return $this->resourceNotFoundResponse($resource::RESOURCE_NAME, $id);
