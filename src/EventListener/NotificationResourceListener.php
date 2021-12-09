@@ -72,7 +72,7 @@ class NotificationResourceListener implements EventSubscriber
                     "type" => $subject->getType(),
                     "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()?->getUrl() . "/doubts"
                 ],
-                null,
+                "json",
                 ["groups" => "default"]
             );
 
@@ -98,7 +98,7 @@ class NotificationResourceListener implements EventSubscriber
                     "type" => $subject->getType(),
                     "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()?->getUrl() . "/admin/errors?focus=$id"
                 ],
-                "json",
+                null,
                 ["groups" => "default"]
             );
 
