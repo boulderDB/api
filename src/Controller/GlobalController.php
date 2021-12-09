@@ -410,7 +410,7 @@ class GlobalController extends AbstractController
 
         $location = $this->contextService->getLocation();
 
-        if ($user->getLastVisitedLocation()->getId() !== $location->getId()) {
+        if ($user->getLastVisitedLocation()?->getId() !== $location?->getId()) {
             $user->setLastVisitedLocation($location);
 
             $this->entityManager->persist($user);
