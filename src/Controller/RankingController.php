@@ -3,11 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Ascent;
+use App\Entity\Event;
 use App\Factory\RedisConnectionFactory;
 use App\Repository\AscentRepository;
 use App\Repository\BoulderRepository;
+use App\Repository\EventRepository;
 use App\Scoring\DefaultScoring;
 use App\Service\ContextService;
+use App\Service\RankingService;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -22,17 +25,23 @@ class RankingController extends AbstractController
     private BoulderRepository $boulderRepository;
     private \Redis $redis;
     private AscentRepository $ascentRepository;
+    private RankingService $rankingService;
+    private EventRepository $eventRepository;
 
     public function __construct(
         ContextService $contextService,
         BoulderRepository $boulderRepository,
-        AscentRepository $ascentRepository
+        AscentRepository $ascentRepository,
+        RankingService $rankingService,
+        EventRepository $eventRepository
     )
     {
         $this->contextService = $contextService;
         $this->boulderRepository = $boulderRepository;
         $this->ascentRepository = $ascentRepository;
         $this->redis = RedisConnectionFactory::create();
+        $this->rankingService = $rankingService;
+        $this->eventRepository = $eventRepository;
     }
 
     /**
@@ -41,65 +50,32 @@ class RankingController extends AbstractController
     public function current()
     {
         $locationId = $this->contextService->getLocation()?->getId();
-
-        $scoring = new DefaultScoring();
         $boulders = $this->boulderRepository->getWithAscents($locationId);
 
-        $data = [];
+        return $this->okResponse($this->rankingService->calculateRanking(
+            new DefaultScoring(),
+            $boulders
+        ));
+    }
 
+    /**
+     * @Route("/event/{eventId}", methods={"GET"})
+     */
+    public function event(int $eventId)
+    {
         /**
-         * @var \App\Entity\Boulder $boulder
+         * @var \App\Entity\Event $event
          */
-        foreach ($boulders as $boulder) {
-            $scoring->calculateScore($boulder);
+        $event = $this->eventRepository->find($eventId);
 
-            /**
-             * @var \App\Entity\Ascent $ascent
-             */
-            foreach ($boulder->getAscents() as $ascent) {
-                if (!in_array($ascent->getType(), $scoring->getScoredAscentTypes())) {
-                    continue;
-                }
-
-                $userId = $ascent->getUser()->getId();
-
-                if (!array_key_exists($userId, $data)) {
-                    $data[$userId] = [
-                        "user" => $ascent->getUser(),
-                        Ascent::ASCENT_TOP => [
-                            "count" => 0,
-                            "rate" => 0
-                        ],
-                        Ascent::ASCENT_FLASH => [
-                            "count" => 0,
-                            "rate" => 0
-                        ],
-                        "total" => [
-                            "count" => 0,
-                            "rate" => 0
-                        ],
-                        "points" => 0
-                    ];
-                }
-
-                $data[$userId][$ascent->getType()]["count"]++;
-                $data[$userId]["total"]["count"]++;
-                $data[$userId]["points"] += $ascent->getScore();
-            }
+        if (!$event) {
+            return $this->resourceNotFoundResponse(Event::RESOURCE_NAME, $eventId);
         }
 
-        foreach ($data as &$rank) {
-            $rank["total"]["count"] = $rank[Ascent::ASCENT_TOP]["count"] + $rank[Ascent::ASCENT_FLASH]["count"];
-            $rank[Ascent::ASCENT_TOP]["rate"] = DefaultScoring::calculateRate(count($boulders), $rank[Ascent::ASCENT_TOP]["count"]);
-            $rank[Ascent::ASCENT_FLASH]["rate"] = DefaultScoring::calculateRate(count($boulders), $rank[Ascent::ASCENT_FLASH]["count"]);
-            $rank["total"]["rate"] = DefaultScoring::calculateRate(count($boulders), $rank["total"]["count"]);
-        }
-
-        usort($data, function ($a, $b) {
-            return $a["total"] > $b["total"] ? -1 : 1;
-        });
-
-        return $this->okResponse(array_values($data));
+        return $this->okResponse($this->rankingService->calculateRanking(
+            new DefaultScoring(),
+            $event->getBoulders()->toArray()
+        ));
     }
 
     /**

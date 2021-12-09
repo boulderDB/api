@@ -5,6 +5,8 @@ namespace App\Form;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\Entity\Wall;
+use App\Repository\UserRepository;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\Entity;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -84,21 +86,18 @@ class UserType extends AbstractType
         ];
     }
 
-    public static function notificationsField(int $userId): array
+    public static function notificationsField(array $notifications): array
     {
+
         return [
             "notifications",
             EntityType::class,
             [
                 "class" => Notification::class,
                 "multiple" => true,
-                "constraints" => [new NotBlank()],
-                "by_reference"=>    false,
-                "query_builder" => function (EntityRepository $entityRepository) use ($userId) {
-                    return $entityRepository->createQueryBuilder("notification")
-                        ->where("notification.user = :userId")
-                        ->setParameter("userId", $userId);
-                }
+                "constraints" => [],
+                "by_reference" => false,
+                "choices" => $notifications
             ]
         ];
     }

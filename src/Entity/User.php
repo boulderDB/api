@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const RESOURCE_NAME = "user";
-    
+
     public const USER = "USER";
     public const SETTER = "SETTER";
     public const ADMIN = "ADMIN";
@@ -110,7 +110,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTime $lastLogin = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Notification", mappedBy="user", fetch="LAZY")
+     * @ORM\OneToMany(targetEntity="App\Entity\Notification", mappedBy="user", fetch="LAZY", cascade={"persist", "remove"})
      */
     private ?Collection $notifications = null;
 
@@ -296,17 +296,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setNotifications(?Collection $notifications): void
     {
-        $enabledIds = array_map(function ($notification) {
-            return $notification->getId();
-        }, $notifications->toArray());
-
-        foreach ($this->notifications as $notification) {
-            if (!in_array($notification->getId(), $enabledIds)) {
-                $notification->setActive(false);
-            } else {
-                $notification->setActive(true);
-            }
-        }
+        $this->notifications = $notifications;
     }
 
     public function getUserIdentifier(): string

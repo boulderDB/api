@@ -36,11 +36,6 @@ class Notification implements LocationResourceInterface
      */
     private ?string $type = null;
 
-    /**
-     * @ORM\Column(type="boolean", options={"default": true})
-     */
-    private bool $active = true;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -64,21 +59,6 @@ class Notification implements LocationResourceInterface
     public function setType(?string $type): void
     {
         $this->type = $type;
-    }
-
-    public function isActive(): bool
-    {
-        return $this->active;
-    }
-
-    public function setActive(bool $active): void
-    {
-        $this->active = $active;
-    }
-
-    public static function getNotificationId(string $type, string $location): string
-    {
-        return "$type@$location";
     }
 
     public static function getAdminTypes(): array

@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Command\ProcessAccountDeletionsCommand;
-use App\Entity\Location;
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
 use App\Form\PasswordChangeType;
@@ -17,16 +16,12 @@ use App\Service\NotificationService;
 use App\Service\StorageClient;
 use App\Service\ContextService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
-use Namshi\JOSE\JWS;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -57,7 +52,6 @@ class GlobalController extends AbstractController
     private LocationRepository $locationRepository;
     private StorageClient $storageClient;
     private ParameterBagInterface $parameterBag;
-    private NotificationRepository $notificationRepository;
     private NotificationService $notificationService;
 
     public function __construct(
@@ -71,7 +65,6 @@ class GlobalController extends AbstractController
         LocationRepository $locationRepository,
         StorageClient $storageClient,
         ParameterBagInterface $parameterBag,
-        NotificationRepository $notificationRepository,
         NotificationService $notificationService,
 
     )
@@ -87,8 +80,17 @@ class GlobalController extends AbstractController
         $this->locationRepository = $locationRepository;
         $this->storageClient = $storageClient;
         $this->parameterBag = $parameterBag;
-        $this->notificationRepository = $notificationRepository;
         $this->notificationService = $notificationService;
+    }
+
+    /**
+     * @Route("/me/notifications", methods={"GET"}, name="me_read_notifications")
+     */
+    public function readMeNotifications()
+    {
+        return $this->okResponse(
+            $this->notificationService->getUserNotifications($this->getUser())
+        );
     }
 
     /**
@@ -100,6 +102,7 @@ class GlobalController extends AbstractController
          * @var User $user
          */
         $user = $this->getUser();
+        $user->setNotifications($this->notificationService->getUserNotifications($user));
 
         return $this->okResponse($user, ["self"]);
     }
@@ -115,9 +118,11 @@ class GlobalController extends AbstractController
         $user = $this->getUser();
         $currentMail = $user->getEmail();
 
-        $form = $this->createForm(UserType::class, $user);
-        $form->add(...UserType::notificationsField($user->getId()));
+        $notifications = $this->notificationService->getUserNotifications($user);
 
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->add(...UserType::notificationsField($notifications->toArray()));
         $form->submit(self::decodePayLoad($request), false);
 
         if ($this->userRepository->userExists("email", $form->getData()->getEmail()) && $currentMail !== $form->getData()->getEmail()) {
