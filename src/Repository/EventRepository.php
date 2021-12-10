@@ -17,15 +17,14 @@ class EventRepository extends ServiceEntityRepository implements DeactivatableRe
 
     public function getActive(int $locationId)
     {
-        $date = new \DateTime();
-        $date->modify("+1hour"); # todo remove hardcoded modifier
+        $date = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
 
         return $this->createQueryBuilder("event")
             ->where("event.location = :locationId")
             ->andWhere("event.visible = true")
-            ->andWhere("event.startDate < :current")
-            ->andWhere("event.endDate > :current")
-            ->setParameter("current", $date->format("Y-m-d h:i:s"))
+            ->andWhere("event.startDate < :date")
+            ->andWhere("event.endDate > :date")
+            ->setParameter("date", $date)
             ->setParameter("locationId", $locationId)
             ->getQuery()
             ->getResult();
