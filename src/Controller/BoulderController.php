@@ -40,8 +40,21 @@ class BoulderController extends AbstractController
     /**
      * @Route(methods={"GET"}, name="boulders_index")
      */
-    public function index()
+    public function index(Request $request)
     {
+        $page = $request->get("page");
+
+        if ($page && $this->isLocationAdmin($this->getUser())) {
+            return $this->okResponse(
+                $this->boulderRepository->paginate(
+                    $page,
+                    [
+                        "location" => $this->contextService->getLocation()->getId()
+                    ]
+                )
+            );
+        }
+
         $userId = $this->getUser()->getId();
         $boulders = $this->boulderRepository->getByStatus($this->contextService->getLocation()?->getId());
         $scoring = new DefaultScoring();

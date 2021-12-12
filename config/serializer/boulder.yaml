@@ -33,6 +33,6 @@ App\Entity\Boulder:
     readableIdentifier:
       groups: [ "default" ]
     status:
-      groups: [ "detail" ]
+      groups: [ "detail", "admin" ]
     areas:
       groups: [ "default" ]

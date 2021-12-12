@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\DeactivatableRepositoryInterface;
+use App\Repository\FilterableRepositoryInterface;
 
 trait FilterTrait
 {
@@ -21,7 +22,7 @@ trait FilterTrait
             }
         }
 
-        if (!$defaultQuery) {
+        if (!$defaultQuery && $repository instanceof FilterableRepositoryInterface) {
             return $repository->queryWhere(
                 $locationId,
                 ["active" => "bool"],
