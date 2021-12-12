@@ -38,22 +38,41 @@ class BoulderController extends AbstractController
     }
 
     /**
+     * @Route("/archive", methods={"GET"}, name="boulders_archive")
+     */
+    public function archive(Request $request)
+    {
+        $this->denyUnlessLocationAdmin();
+
+        $page = (int)$request->get("page");
+        $size = (int)$request->get("size") ? $request->get("size") : 50;
+
+        $parameters = [
+            "location" => $this->contextService->getLocation()->getId()
+        ];
+
+        $total = $this->boulderRepository->getTotalItemsCount($parameters);
+
+        return $this->okResponse(
+            [
+                "items" => $this->boulderRepository->paginate(
+                    $page,
+                    $parameters,
+                    $size
+                ),
+                "total" => $total,
+                "page" => $page,
+                "size" => $size,
+                "pages" => ceil($total / $size)
+            ]
+        );
+    }
+
+    /**
      * @Route(methods={"GET"}, name="boulders_index")
      */
-    public function index(Request $request)
+    public function index()
     {
-        $page = $request->get("page");
-
-        if ($page && $this->isLocationAdmin($this->getUser())) {
-            return $this->okResponse(
-                $this->boulderRepository->paginate(
-                    $page,
-                    [
-                        "location" => $this->contextService->getLocation()->getId()
-                    ]
-                )
-            );
-        }
 
         $userId = $this->getUser()->getId();
         $boulders = $this->boulderRepository->getByStatus($this->contextService->getLocation()?->getId());
