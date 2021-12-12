@@ -33,12 +33,16 @@ class BoulderTagType extends AbstractType implements SchemaTypeInterface
             [
                 "name" => "name",
                 "type" => TextType::class,
-                "constraints" => [new NotBlank()]
+                "options" => [
+                    "constraints" => [new NotBlank()]
+                ],
             ],
             [
                 "name" => "emoji",
                 "type" => TextType::class,
-                "constraints" => [new NotBlank()]
+                "options" => [
+                    "constraints" => [new NotBlank()]
+                ],
             ],
             [
                 "name" => "active",
