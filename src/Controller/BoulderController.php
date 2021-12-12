@@ -65,7 +65,8 @@ class BoulderController extends AbstractController
                 "page" => $page,
                 "size" => $size,
                 "pages" => $pages,
-                "hasNextPage" => $page < $pages
+                "hasNextPage" => $page < $pages,
+                "hasPreviousPage" => $page > $pages,
             ]
         );
     }
