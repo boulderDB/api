@@ -44,14 +44,15 @@ class BoulderController extends AbstractController
     {
         $this->denyUnlessLocationAdmin();
 
-        $page = (int)$request->get("page");
-        $size = (int)$request->get("size") ? $request->get("size") : 50;
-
         $parameters = [
             "location" => $this->contextService->getLocation()->getId()
         ];
 
         $total = $this->boulderRepository->getTotalItemsCount($parameters);
+
+        $page = (int)$request->get("page");
+        $size = (int)$request->get("size") ? $request->get("size") : 50;
+        $pages = ceil($total / $size);
 
         return $this->okResponse(
             [
@@ -63,7 +64,8 @@ class BoulderController extends AbstractController
                 "total" => $total,
                 "page" => $page,
                 "size" => $size,
-                "pages" => ceil($total / $size)
+                "pages" => $pages,
+                "hasNextPage" => $page < $pages
             ]
         );
     }
