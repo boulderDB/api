@@ -167,6 +167,10 @@ class BoulderController extends AbstractController
                 $boulder->setStatus(Boulder::STATUS_INACTIVE);
             }
 
+            if ($operation === MassOperationType::OPERATION_REACTIVATE) {
+                $boulder->setStatus(Boulder::STATUS_ACTIVE);
+            }
+
             if ($operation === MassOperationType::OPERATION_PRUNE_ASCENTS) {
                 $boulder->setAscents(new ArrayCollection());
             }

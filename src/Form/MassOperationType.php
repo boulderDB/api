@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class MassOperationType extends AbstractType
 {
     public const OPERATION_DEACTIVATE = "deactivate";
+    public const OPERATION_REACTIVATE = "reactivate";
     public const OPERATION_PRUNE_ASCENTS = "prune-ascents";
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -25,6 +26,7 @@ class MassOperationType extends AbstractType
             ->add("operation", ChoiceType::class, [
                 "choices" => [
                     self::OPERATION_DEACTIVATE,
+                    self::OPERATION_REACTIVATE,
                     self::OPERATION_PRUNE_ASCENTS,
                 ],
                 "constraints" => [new NotBlank()],
