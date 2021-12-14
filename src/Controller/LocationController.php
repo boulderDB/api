@@ -51,7 +51,7 @@ use CrudTrait;
             ContextService::getLocationRoleName(User::SETTER, $locationId, true)
         );
 
-        return $this->okResponse(array_merge($setters, $admins), ["default", "admin"]);
+        return $this->okResponse(array_unique(array_merge($setters, $admins),SORT_REGULAR), ["default", "admin"]);
     }
 
     /**
