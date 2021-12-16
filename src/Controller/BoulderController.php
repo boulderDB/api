@@ -50,9 +50,14 @@ class BoulderController extends AbstractController
 
         $total = $this->boulderRepository->getTotalItemsCount($parameters);
 
+        /* add utility function */
         $page = (int)$request->get("page");
         $size = (int)$request->get("size") ? $request->get("size") : 50;
         $pages = ceil($total / $size);
+
+        if ($page < 0) {
+            return $this->badRequestResponse("Page '$page' is out of range");
+        }
 
         return $this->okResponse(
             [

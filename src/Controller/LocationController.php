@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Form\UserRoleType;
 use App\Repository\UserRepository;
 use App\Service\ContextService;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,7 @@ class LocationController extends AbstractController
     use RequestTrait;
     use ResponseTrait;
     use ContextualizedControllerTrait;
-use CrudTrait;
+    use CrudTrait;
 
     private EntityManagerInterface $entityManager;
     private UserRepository $userRepository;
@@ -51,7 +52,9 @@ use CrudTrait;
             ContextService::getLocationRoleName(User::SETTER, $locationId, true)
         );
 
-        return $this->okResponse(array_unique(array_merge($setters, $admins),SORT_REGULAR), ["default", "admin"]);
+        $collection = new ArrayCollection(array_unique(array_merge($setters, $admins), SORT_REGULAR));
+
+        return $this->okResponse($collection->toArray(), ["default", "admin"]);
     }
 
     /**
@@ -61,7 +64,7 @@ use CrudTrait;
     {
         $this->denyUnlessLocationAdmin();
 
-       return $this->readEntity(User::class, $id, ["default", "admin"]);
+        return $this->readEntity(User::class, $id, ["default", "admin"]);
     }
 
     /**
