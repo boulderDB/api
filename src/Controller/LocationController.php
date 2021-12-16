@@ -54,7 +54,7 @@ class LocationController extends AbstractController
 
         $collection = new ArrayCollection(array_unique(array_merge($setters, $admins), SORT_REGULAR));
 
-        return $this->okResponse($collection->toArray(), ["default", "admin"]);
+        return $this->okResponse(array_values($collection->toArray()), ["default", "admin"]);
     }
 
     /**
