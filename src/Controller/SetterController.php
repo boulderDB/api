@@ -56,6 +56,16 @@ class SetterController extends AbstractController
     }
 
     /**
+     * @Route("/{id}", methods={"GET"}, name="setters_read")
+     */
+    public function read(int $id)
+    {
+        $this->denyUnlessLocationAdmin();
+
+        return $this->readEntity(Setter::class, $id, ["detail"]);
+    }
+
+    /**
      * @Route(methods={"POST"}, name="setters_create")
      */
     public function create(Request $request)
