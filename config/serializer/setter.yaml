@@ -6,5 +6,7 @@ App\Entity\Setter:
       groups: [ "default" ]
     active:
       groups: [ "default" ]
+    user:
+      groups: [ "detail" ]
     behaviours:
       groups: [ "admin" ]
