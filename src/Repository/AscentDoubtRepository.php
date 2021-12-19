@@ -40,12 +40,10 @@ class AscentDoubtRepository extends ServiceEntityRepository
 
         $query = $connection->prepare($statement);
 
-        $query->executeQuery([
+        return $query->executeQuery([
             "locationId" => $locationId,
             "recipientId" => $userId,
             "status" => $statusSmallerThan
-        ]);
-
-        return $query->fetchOne();
+        ])->fetchOne();
     }
 }

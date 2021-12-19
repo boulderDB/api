@@ -57,12 +57,10 @@ class SetterRepository extends ServiceEntityRepository
 
         $query = $connection->prepare($statement);
 
-        $query->executeQuery([
+        $result = $query->executeQuery([
             "property" => strtolower($value),
             "locationId" => $locationId
-        ]);
-
-        $result = $query->fetchOne();
+        ])->fetchOne();
 
         return (bool)$result;
     }

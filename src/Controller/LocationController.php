@@ -58,7 +58,7 @@ class LocationController extends AbstractController
     }
 
     /**
-     * @Route("/users/{id}", methods={"GET"}, name="location_users_read")
+     * @Route("/users/{id}", requirements={"id": "\d+"}, methods={"GET"}, name="location_users_read")
      */
     public function read(int $id)
     {
