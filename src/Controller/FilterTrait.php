@@ -30,6 +30,11 @@ trait FilterTrait
             );
         }
 
+        if (!$defaultQuery) {
+            $class = get_class($this);
+            throw new \LogicException("No default query provided in $class");
+        }
+
         return $defaultQuery($filters, $repository, $locationId);
 
     }

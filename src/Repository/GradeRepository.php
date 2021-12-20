@@ -6,7 +6,7 @@ use App\Entity\Grade;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class GradeRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface
+class GradeRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface, FilterableRepositoryInterface
 {
     use FilterableRepositoryTrait;
     use DeactivatableRepositoryTrait;

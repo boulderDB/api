@@ -6,7 +6,7 @@ use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class EventRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface
+class EventRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface, FilterableRepositoryInterface
 {
     use FilterableRepositoryTrait;
 

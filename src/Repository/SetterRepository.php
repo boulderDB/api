@@ -6,11 +6,9 @@ use App\Entity\Setter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class SetterRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface
+class SetterRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface, FilterableRepositoryInterface
 {
     use FilterableRepositoryTrait;
-    use DeactivatableRepositoryTrait;
-
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -50,20 +48,35 @@ class SetterRepository extends ServiceEntityRepository implements DeactivatableR
     public function exists(string $property, string $value, int $locationId): bool
     {
         $connection = $this->getEntityManager()->getConnection();
-        $statement = "
-            SELECT id FROM setter 
-            INNER JOIN setter_locations on setter.id = setter_locations.setter_id 
-            WHERE lower({$property}) = lower(:property) 
-            AND setter_locations.location_id = :locationId
-        ";
+        $statement = "SELECT id FROM setter WHERE lower({$property}) = lower(:property)";
 
         $query = $connection->prepare($statement);
 
         $result = $query->executeQuery([
-            "property" => strtolower($value),
-            "locationId" => $locationId
+            "property" => strtolower($value)
         ])->fetchOne();
 
         return (bool)$result;
+    }
+
+    public function getActive(int $locationId)
+    {
+        return $this->createQueryBuilder("setter")
+            ->innerJoin("setter.locations", "location")
+            ->where("location = :locationId")
+            ->andWhere("setter.active = true")
+            ->setParameter("locationId", $locationId)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getAll(int $locationId)
+    {
+        return $this->createQueryBuilder("setter")
+            ->innerJoin("setter.locations", "location")
+            ->where("location = :locationId")
+            ->setParameter("locationId", $locationId)
+            ->getQuery()
+            ->getResult();
     }
 }

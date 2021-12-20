@@ -6,7 +6,7 @@ use App\Entity\Wall;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class WallRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface
+class WallRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface, FilterableRepositoryInterface
 {
     use FilterableRepositoryTrait;
     use DeactivatableRepositoryTrait;

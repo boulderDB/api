@@ -6,7 +6,7 @@ use App\Entity\HoldType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class HoldTypeRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface
+class HoldTypeRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface, FilterableRepositoryInterface
 {
     use FilterableRepositoryTrait;
     use DeactivatableRepositoryTrait;

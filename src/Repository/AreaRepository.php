@@ -6,7 +6,7 @@ use App\Entity\Area;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class AreaRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface
+class AreaRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface, FilterableRepositoryInterface
 {
     use FilterableRepositoryTrait;
     use DeactivatableRepositoryTrait;

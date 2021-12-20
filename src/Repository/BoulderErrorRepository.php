@@ -6,7 +6,7 @@ use App\Entity\BoulderError;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class BoulderErrorRepository extends ServiceEntityRepository
+class BoulderErrorRepository extends ServiceEntityRepository implements FilterableRepositoryInterface
 {
     use FilterableRepositoryTrait;
 

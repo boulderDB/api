@@ -6,7 +6,7 @@ use App\Entity\AscentDoubt;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class AscentDoubtRepository extends ServiceEntityRepository
+class AscentDoubtRepository extends ServiceEntityRepository implements FilterableRepositoryInterface
 {
     use FilterableRepositoryTrait;
 
