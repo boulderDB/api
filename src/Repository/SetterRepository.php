@@ -6,9 +6,11 @@ use App\Entity\Setter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class SetterRepository extends ServiceEntityRepository
+class SetterRepository extends ServiceEntityRepository implements DeactivatableRepositoryInterface
 {
     use FilterableRepositoryTrait;
+    use DeactivatableRepositoryTrait;
+
 
     public function __construct(ManagerRegistry $registry)
     {
