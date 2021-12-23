@@ -69,6 +69,11 @@ class Notification implements LocationResourceInterface
         ];
     }
 
+    public function getIdentifier(): string
+    {
+        return $this->getType() . "@" . $this->getLocation()->getId();
+    }
+
     public static function getDefaultTypes(): array
     {
         return [self::TYPE_DOUBT];

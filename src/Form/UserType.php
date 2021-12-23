@@ -4,11 +4,6 @@ namespace App\Form;
 
 use App\Entity\Notification;
 use App\Entity\User;
-use App\Entity\Wall;
-use App\Repository\UserRepository;
-use App\Service\NotificationService;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping\Entity;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -17,10 +12,8 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use function Clue\StreamFilter\fun;
 
 class UserType extends AbstractType
 {
@@ -96,8 +89,10 @@ class UserType extends AbstractType
                 "class" => Notification::class,
                 "multiple" => true,
                 "constraints" => [],
-                "by_reference" => false,
-                "choices" => $notifications
+                "choices" => $notifications,
+                'choice_value' => function (?Notification $entity) {
+                    return $entity ? $entity->getIdentifier() : '';
+                },
             ]
         ];
     }

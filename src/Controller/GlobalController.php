@@ -118,11 +118,11 @@ class GlobalController extends AbstractController
         $user = $this->getUser();
         $currentMail = $user->getEmail();
 
-       /* $notifications = $this->notificationService->getUserNotifications($user);*/
+        $notifications = $this->notificationService->getUserNotifications($user);
 
         $form = $this->createForm(UserType::class, $user);
 
-       /* $form->add(...UserType::notificationsField($notifications->toArray()));*/
+        $form->add(...UserType::notificationsField($notifications->toArray()));
         $form->submit(self::decodePayLoad($request), false);
 
         if ($this->userRepository->userExists("email", $form->getData()->getEmail()) && $currentMail !== $form->getData()->getEmail()) {
