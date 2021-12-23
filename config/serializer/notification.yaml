@@ -1,5 +1,7 @@
 App\Entity\Notification:
   attributes:
+    id:
+      groups: [ "default" ]
     type:
       groups: [ "default" ]
     location:
