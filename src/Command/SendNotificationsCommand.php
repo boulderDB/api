@@ -3,7 +3,6 @@
 namespace App\Command;
 
 use App\Factory\RedisConnectionFactory;
-use App\Mails;
 use App\Repository\UserRepository;
 use App\Service\NotificationService;
 use Symfony\Component\Console\Command\Command;
@@ -73,6 +72,19 @@ class SendNotificationsCommand extends Command
 
             if (!$type) {
                 $io->error("No type given");
+                continue;
+            }
+
+            $hasNotification = ($user->getNotifications()->filter(function ($notification) use ($type) {
+                /**
+                 * @var \App\Entity\Notification $notification
+                 */
+                return $notification->getType() === $type;
+            }))->first();
+
+            if (!$hasNotification) {
+                $this->redis->del($key);
+                $progress->advance();
                 continue;
             }
 

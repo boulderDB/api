@@ -3,11 +3,9 @@
 namespace App\Entity;
 
 use App\Helper\Behaviours;
-use App\Service\ContextService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -110,7 +108,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTime $lastLogin = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Notification", mappedBy="user", fetch="LAZY", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity="App\Entity\Notification", fetch="LAZY")
+     * @ORM\JoinTable(name="user_notifications",
+     *     joinColumns={
+     *         @ORM\JoinColumn(name="notification_id", referencedColumnName="id")
+     *      },
+     *     inverseJoinColumns={
+     *         @ORM\JoinColumn(name="user_id", referencedColumnName="id"),
+     *     }
+     * )
      */
     private ?Collection $notifications = null;
 
@@ -121,6 +127,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->visible = true;
         $this->active = true;
         $this->roles = [self::ROLE_USER];
+        $this->notifications = new ArrayCollection();
     }
 
     public function getId(): ?int

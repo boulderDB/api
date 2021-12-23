@@ -79,9 +79,8 @@ class UserType extends AbstractType
         ];
     }
 
-    public static function notificationsField(array $notifications): array
+    public static function notificationsField(): array
     {
-
         return [
             "notifications",
             EntityType::class,
@@ -89,10 +88,6 @@ class UserType extends AbstractType
                 "class" => Notification::class,
                 "multiple" => true,
                 "constraints" => [],
-                "choices" => $notifications,
-                'choice_value' => function (?Notification $entity) {
-                    return $entity ? $entity->getIdentifier() : '';
-                },
             ]
         ];
     }

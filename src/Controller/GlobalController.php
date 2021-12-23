@@ -12,7 +12,6 @@ use App\Form\UserType;
 use App\Repository\LocationRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
-use App\Service\NotificationService;
 use App\Service\StorageClient;
 use App\Service\ContextService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -52,7 +51,7 @@ class GlobalController extends AbstractController
     private LocationRepository $locationRepository;
     private StorageClient $storageClient;
     private ParameterBagInterface $parameterBag;
-    private NotificationService $notificationService;
+    private NotificationRepository $notificationRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -65,7 +64,7 @@ class GlobalController extends AbstractController
         LocationRepository $locationRepository,
         StorageClient $storageClient,
         ParameterBagInterface $parameterBag,
-        NotificationService $notificationService,
+        NotificationRepository $notificationRepository
 
     )
     {
@@ -80,17 +79,15 @@ class GlobalController extends AbstractController
         $this->locationRepository = $locationRepository;
         $this->storageClient = $storageClient;
         $this->parameterBag = $parameterBag;
-        $this->notificationService = $notificationService;
+        $this->notificationRepository = $notificationRepository;
     }
 
     /**
-     * @Route("/me/notifications", methods={"GET"}, name="me_read_notifications")
+     * @Route("/notifications", methods={"GET"}, name="me_read_notifications")
      */
-    public function readMeNotifications()
+    public function notifications()
     {
-        return $this->okResponse(
-            $this->notificationService->getUserNotifications($this->getUser())
-        );
+        return $this->okResponse($this->notificationRepository->findAll());
     }
 
     /**
@@ -102,7 +99,6 @@ class GlobalController extends AbstractController
          * @var User $user
          */
         $user = $this->getUser();
-        $user->setNotifications($this->notificationService->getUserNotifications($user));
 
         return $this->okResponse($user, ["self"]);
     }
@@ -118,11 +114,9 @@ class GlobalController extends AbstractController
         $user = $this->getUser();
         $currentMail = $user->getEmail();
 
-        $notifications = $this->notificationService->getUserNotifications($user);
-
         $form = $this->createForm(UserType::class, $user);
 
-        $form->add(...UserType::notificationsField($notifications->toArray()));
+        $form->add(...UserType::notificationsField());
         $form->submit(self::decodePayLoad($request), false);
 
         if ($this->userRepository->userExists("email", $form->getData()->getEmail()) && $currentMail !== $form->getData()->getEmail()) {

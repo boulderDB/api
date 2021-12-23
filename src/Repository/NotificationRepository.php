@@ -12,17 +12,4 @@ class NotificationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Notification::class);
     }
-
-    /**
-     * @return Notification[]
-     */
-    public function getByUser(int $userId):array
-    {
-        return $this->createQueryBuilder('notification')
-            ->where("notification.user = :userId")
-            ->setParameter("userId", $userId)
-            ->getQuery()
-            ->getResult();
-    }
-
 }

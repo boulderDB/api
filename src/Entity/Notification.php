@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Helper\Behaviours;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\Collection;
 
 /**
  * @ORM\Entity()
@@ -26,29 +27,15 @@ class Notification implements LocationResourceInterface
     private ?int $id = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="ascents")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-     */
-    private ?User $user = null;
-
-    /**
      * @ORM\Column(type="string")
      */
     private ?string $type = null;
 
+
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): void
-    {
-        $this->user = $user;
     }
 
     public function getType(): ?string
