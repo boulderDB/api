@@ -30,7 +30,7 @@ class NotificationRepository extends ServiceEntityRepository
                 $userNotificationChecksums[] = Notification::getChecksum(
                     ContextService::getLocationIdFromRoleName($role),
                     $type,
-                    $role
+                    ContextService::getPlainRoleName($role)
                 );
             }
         }
@@ -42,6 +42,7 @@ class NotificationRepository extends ServiceEntityRepository
          */
         foreach ($notifications as $notification) {
             if (!$notification->getRoles()) {
+                $matches[] = $notification;
                 continue;
             }
 

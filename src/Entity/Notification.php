@@ -37,7 +37,7 @@ class Notification implements LocationResourceInterface
     private ?string $type;
 
     /**
-     * @ORM\Column(type="array", nullable=true)
+     * @ORM\Column(type="simple_array", nullable=true)
      */
     private ?array $roles = [];
 
