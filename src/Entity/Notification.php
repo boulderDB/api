@@ -4,34 +4,42 @@ namespace App\Entity;
 
 use App\Helper\Behaviours;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\Collection;
 
 /**
  * @ORM\Entity()
  */
 class Notification implements LocationResourceInterface
 {
-    public const RESOURCE_NAME = "notification";
-
     use LocationTrait;
+
+    public const RESOURCE_NAME = "notification";
 
     public const TYPE_DOUBT = "doubt";
     public const TYPE_ERROR = "error";
     public const TYPE_COMMENT = "comment";
+
+    public const TYPES = [
+        self::TYPE_DOUBT,
+        self::TYPE_ERROR,
+        self::TYPE_COMMENT
+    ];
 
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private ?int $id = null;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string")
      */
-    private ?string $type = null;
+    private ?string $type;
 
-
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private ?array $roles = [];
 
     public function getId(): ?int
     {
@@ -48,22 +56,19 @@ class Notification implements LocationResourceInterface
         $this->type = $type;
     }
 
-    public static function getAdminTypes(): array
+    public function getRoles(): ?array
     {
-        return [
-            self::TYPE_ERROR,
-            self::TYPE_COMMENT
-        ];
+        return $this->roles;
     }
 
-    public function getIdentifier(): string
+    public function setRoles(array $roles): void
     {
-        return $this->getType() . "@" . $this->getLocation()->getId();
+        $this->roles = $roles;
     }
 
-    public static function getDefaultTypes(): array
+    public static function getChecksum(int $locationId, string $type, string $role): string
     {
-        return [self::TYPE_DOUBT];
+        return md5($locationId . $type . $role);
     }
 
     public function getBehaviours(): array

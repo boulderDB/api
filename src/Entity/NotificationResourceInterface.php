@@ -4,5 +4,5 @@ namespace App\Entity;
 
 interface NotificationResourceInterface
 {
-    public function getType(): string;
+    public function getNotificationId(): string;
 }

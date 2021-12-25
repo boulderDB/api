@@ -74,7 +74,7 @@ class BoulderComment implements LocationResourceInterface, TimestampableInterfac
         $this->message = $message;
     }
 
-    public function getType(): string
+    public function getNotificationId(): string
     {
         return Notification::TYPE_COMMENT;
     }

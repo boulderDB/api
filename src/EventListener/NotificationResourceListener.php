@@ -57,7 +57,7 @@ class NotificationResourceListener implements EventSubscriber
         }
 
         $id = $subject->getId();
-        $type = $subject->getType();
+        $type = $subject->getNotificationId();
         $locationId = $subject->getLocation()?->getId();
 
         if ($subject instanceof AscentDoubt) {
@@ -69,7 +69,7 @@ class NotificationResourceListener implements EventSubscriber
                     "boulder" => $subject->getBoulder(),
                     "ascent" => $subject->getAscent(),
                     "user" => $subject->getRecipient()->getId(),
-                    "type" => $subject->getType(),
+                    "type" => $subject->getNotificationId(),
                     "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()?->getUrl() . "/doubts"
                 ],
                 "json",
@@ -95,7 +95,7 @@ class NotificationResourceListener implements EventSubscriber
                     "location" => $subject->getLocation(),
                     "boulder" => $subject->getBoulder(),
                     "boulderError" => $subject,
-                    "type" => $subject->getType(),
+                    "type" => $subject->getNotificationId(),
                     "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()?->getUrl() . "/admin/errors?focus=$id"
                 ],
                 null,
@@ -113,7 +113,7 @@ class NotificationResourceListener implements EventSubscriber
                     "location" => $subject->getLocation(),
                     "boulder" => $subject->getBoulder(),
                     "boulderComment" => $subject,
-                    "type" => $subject->getType(),
+                    "type" => $subject->getNotificationId(),
                     "link" => $_ENV["CLIENT_HOSTNAME"] . "/" . $subject->getLocation()?->getUrl() . "/admin/comments?focus=$id"
                 ],
                 null,

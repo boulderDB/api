@@ -12,6 +12,7 @@ use App\Form\UserType;
 use App\Repository\LocationRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
+use App\Service\NotificationService;
 use App\Service\StorageClient;
 use App\Service\ContextService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -52,6 +53,7 @@ class GlobalController extends AbstractController
     private StorageClient $storageClient;
     private ParameterBagInterface $parameterBag;
     private NotificationRepository $notificationRepository;
+    private NotificationService $notificationService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -64,8 +66,8 @@ class GlobalController extends AbstractController
         LocationRepository $locationRepository,
         StorageClient $storageClient,
         ParameterBagInterface $parameterBag,
-        NotificationRepository $notificationRepository
-
+        NotificationRepository $notificationRepository,
+        NotificationService $notificationService
     )
     {
         $this->entityManager = $entityManager;
@@ -80,6 +82,7 @@ class GlobalController extends AbstractController
         $this->storageClient = $storageClient;
         $this->parameterBag = $parameterBag;
         $this->notificationRepository = $notificationRepository;
+        $this->notificationService = $notificationService;
     }
 
     /**
@@ -87,7 +90,7 @@ class GlobalController extends AbstractController
      */
     public function notifications()
     {
-        return $this->okResponse($this->notificationRepository->findAll());
+        return $this->okResponse($this->notificationRepository->findUserNotifications($this->getUser()));
     }
 
     /**
@@ -423,6 +426,11 @@ class GlobalController extends AbstractController
          * @var UploadedFile $file
          */
         $file = $request->files->get("file");
+
+        if (!$file) {
+            return $this->badRequestResponse("No file provided");
+        }
+
         $resource = $this->storageClient->upload($file);
 
         return $this->okResponse([

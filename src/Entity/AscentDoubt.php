@@ -145,7 +145,7 @@ class AscentDoubt implements
         $this->boulder = $ascent->getBoulder();
     }
 
-    public function getType(): string
+    public function getNotificationId(): string
     {
         return Notification::TYPE_DOUBT;
     }

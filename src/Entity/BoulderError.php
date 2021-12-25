@@ -101,7 +101,7 @@ class BoulderError implements
         $this->status = $status;
     }
 
-    public function getType(): string
+    public function getNotificationId(): string
     {
        return Notification::TYPE_ERROR;
     }
