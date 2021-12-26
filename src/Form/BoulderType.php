@@ -65,14 +65,14 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
         };
 
         $data = [
-            [
+            1 => [
                 "name" => "name",
                 "type" => TextType::class,
                 "options" => [
                     "constraints" => [new NotBlank()],
                 ]
             ],
-            [
+            2 => [
                 "name" => "holdType",
                 "type" => EntityType::class,
                 "options" => [
@@ -85,7 +85,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "labelProperty" => "name"
                 ]
             ],
-            [
+            3 => [
                 "name" => "grade",
                 "type" => EntityType::class,
                 "options" => [
@@ -98,7 +98,8 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "labelProperty" => "name"
                 ]
             ],
-            [
+            4 => null,
+            5 => [
                 "name" => "startWall",
                 "type" => EntityType::class,
                 "options" => [
@@ -111,7 +112,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "labelProperty" => "name"
                 ]
             ],
-            [
+            6 => [
                 "name" => "endWall",
                 "type" => EntityType::class,
                 "options" => [
@@ -124,7 +125,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "labelProperty" => "name"
                 ]
             ],
-            [
+            7 => [
                 "name" => "setters",
                 "type" => EntityType::class,
                 "options" => [
@@ -138,7 +139,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "labelProperty" => "username"
                 ]
             ],
-            [
+            8 => [
                 "name" => "tags",
                 "type" => EntityType::class,
                 "options" => [
@@ -152,7 +153,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "labelProperty" => "name"
                 ]
             ],
-            [
+            9 => [
                 "name" => "points",
                 "type" => NumberType::class,
                 "options" => [
@@ -162,7 +163,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                     "default" => Boulder::DEFAULT_SCORE
                 ]
             ],
-            [
+            10 => [
                 "name" => "status",
                 "type" => ChoiceType::class,
                 "options" => [
@@ -179,7 +180,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
         ];
 
         if ($this->contextService->getSettings()?->grades?->internal) {
-            $data[] = [
+            $data[4] = [
                 "name" => "internalGrade",
                 "type" => EntityType::class,
                 "options" => [

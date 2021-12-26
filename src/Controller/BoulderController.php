@@ -117,6 +117,23 @@ class BoulderController extends AbstractController
     }
 
     /**
+     * @Route("/{identifier}", methods={"GET"}, name="boulders_read_readable_identifier")
+     */
+    public function readByReadableIdentifier(string $identifier)
+    {
+        $boulder = $this->boulderRepository->getByReadableInterface(
+            $this->contextService->getLocation()->getId(),
+            $identifier
+        );
+
+        if (!$boulder) {
+            return $this->resourceNotFoundResponse(Boulder::class, $identifier);
+        }
+
+        return $this->okResponse($boulder, ["detail"]);
+    }
+
+    /**
      * @Route("/{id}", requirements={"id": "\d+"}, methods={"PUT"}, name="boulders_update")
      */
     public function update(Request $request, string $id)

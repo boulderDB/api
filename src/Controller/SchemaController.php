@@ -77,7 +77,7 @@ class SchemaController extends AbstractController
             return $this->json(null, Response::HTTP_NOT_IMPLEMENTED);
         }
 
-        $data = $form->getSchema();
+        $data = array_values(array_filter($form->getSchema()));
 
         foreach ($data as &$field) {
             $elements = explode("\\", $field["type"]);

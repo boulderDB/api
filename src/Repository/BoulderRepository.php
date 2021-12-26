@@ -12,6 +12,8 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class BoulderRepository extends ServiceEntityRepository implements PaginatableInterface
 {
+    use ReadableIdentifierTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Boulder::class);
