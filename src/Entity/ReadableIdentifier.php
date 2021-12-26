@@ -21,7 +21,7 @@ class ReadableIdentifier implements LocationResourceInterface
     private ?int $id;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", unique=true)
      */
     private ?string $value;
 
