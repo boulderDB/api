@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Boulder;
 use App\Entity\HoldType;
 use App\Entity\Location;
+use App\Entity\ReadableIdentifier;
 use App\Entity\Setter;
 use App\Entity\BoulderTag;
 use App\Entity\Grade;
@@ -189,6 +190,22 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                 "schema" => [
                     "resource" => "/grades",
                     "labelProperty" => "name"
+                ]
+            ];
+        }
+
+        if ($this->contextService->getSettings()?->readableIdentifiers) {
+            $data[] = [
+                "name" => "readableIdentifier",
+                "type" => EntityType::class,
+                "options" => [
+                    "class" => ReadableIdentifier::class,
+                    "constraints" => [],
+                    "query_builder" => $locationQuery
+                ],
+                "schema" => [
+                    "resource" => "/readable-identifiers",
+                    "labelProperty" => "value"
                 ]
             ];
         }

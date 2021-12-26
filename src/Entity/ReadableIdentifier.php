@@ -7,8 +7,12 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class ReadableIdentifier
+class ReadableIdentifier implements LocationResourceInterface
 {
+    public const RESOURCE_NAME = "readableIdentifier";
+
+    use LocationTrait;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

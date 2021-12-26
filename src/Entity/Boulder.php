@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\Table(indexes={@ORM\Index(name="status", columns={"status"})})
  */
-class Boulder implements LocationResourceInterface, TimestampableInterface, CacheableInterface
+class Boulder implements LocationResourceInterface, TimestampableInterface, CacheableInterface, ReadableIdentifierInterface
 {
     use TimestampTrait;
     use LocationTrait;
@@ -338,7 +338,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface, Cach
         return $this->readableIdentifier;
     }
 
-    public function setReadableIdentifier(?ReadableIdentifier $readableIdentifier): void
+    public function setReadableIdentifier(ReadableIdentifier $readableIdentifier): void
     {
         $this->readableIdentifier = $readableIdentifier;
     }

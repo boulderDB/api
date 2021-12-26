@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Ascent;
 use App\Entity\Event;
 use App\Factory\RedisConnectionFactory;
 use App\Repository\AscentRepository;

@@ -92,3 +92,8 @@ event:
   resource: ../../src/Controller/EventController.php
   type: annotation
   prefix: /api/{location}/
+
+readableIdentifiers:
+  resource: ../../src/Controller/ReadableIdentifierController.php
+  type: annotation
+  prefix: /api/{location}/

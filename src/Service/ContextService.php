@@ -28,7 +28,7 @@ class ContextService
     public function getSettings()
     {
         try {
-            $data = file_get_contents($this->parameterBag->get('kernel.project_dir') . "/settings/{$this->getLocation()->getUrl()}.json");
+            $data = file_get_contents($this->parameterBag->get('kernel.project_dir') . "/settings/{$this->getLocation()?->getUrl()}.json");
             return json_decode($data);
         } catch (\Exception $exception) {
             return null;
