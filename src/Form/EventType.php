@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Boulder;
 use App\Entity\Event;
+use App\Entity\Location;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

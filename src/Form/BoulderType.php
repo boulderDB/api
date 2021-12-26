@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Boulder;
 use App\Entity\HoldType;
+use App\Entity\Location;
 use App\Entity\Setter;
 use App\Entity\BoulderTag;
 use App\Entity\Grade;
@@ -62,7 +63,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                 ->setParameter("location", $locationId);
         };
 
-        return [
+        $data = [
             [
                 "name" => "name",
                 "type" => TextType::class,
@@ -89,19 +90,6 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                 "options" => [
                     "class" => Grade::class,
                     "constraints" => [new NotBlank()],
-                    "query_builder" => $locationQuery
-                ],
-                "schema" => [
-                    "resource" => "/grades",
-                    "labelProperty" => "name"
-                ]
-            ],
-            [
-                "name" => "internalGrade",
-                "type" => EntityType::class,
-                "options" => [
-                    "class" => Grade::class,
-                    "constraints" => [],
                     "query_builder" => $locationQuery
                 ],
                 "schema" => [
@@ -188,5 +176,23 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                 ]
             ],
         ];
+
+        if ($this->contextService->getSettings()?->grades?->internal) {
+            $data[] = [
+                "name" => "internalGrade",
+                "type" => EntityType::class,
+                "options" => [
+                    "class" => Grade::class,
+                    "constraints" => [],
+                    "query_builder" => $locationQuery
+                ],
+                "schema" => [
+                    "resource" => "/grades",
+                    "labelProperty" => "name"
+                ]
+            ];
+        }
+
+        return $data;
     }
 }

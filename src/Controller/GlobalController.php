@@ -392,6 +392,19 @@ class GlobalController extends AbstractController
     }
 
     /**
+     * @Route("/{location}/config", methods={"GET"}, name="location_config")
+     */
+    public function config()
+    {
+        $this->denyUnlessLocationAdmin();
+
+        /* stdclass to array */
+        $data = json_decode(json_encode($this->contextService->getSettings()), true);
+
+        return $this->okResponse($data);
+    }
+
+    /**
      * @Route("/{location}/ping", methods={"GET"}, name="ping")
      */
     public function ping()

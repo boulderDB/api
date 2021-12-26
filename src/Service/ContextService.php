@@ -3,10 +3,17 @@
 namespace App\Service;
 
 use App\Entity\Location;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ContextService
 {
     private ?Location $location = null;
+    private ParameterBagInterface $parameterBag;
+
+    public function __construct(ParameterBagInterface $parameterBag)
+    {
+        $this->parameterBag = $parameterBag;
+    }
 
     public function getLocation(): ?Location
     {
@@ -16,6 +23,16 @@ class ContextService
     public function setLocation(Location $location): void
     {
         $this->location = $location;
+    }
+
+    public function getSettings()
+    {
+        try {
+            $data = file_get_contents($this->parameterBag->get('kernel.project_dir') . "/settings/{$this->getLocation()->getUrl()}.json");
+            return json_decode($data);
+        } catch (\Exception $exception) {
+            return null;
+        }
     }
 
     public static function isLocationRole(string $role, int $locationId): bool

@@ -6,7 +6,6 @@ use App\Entity\Boulder;
 use App\Entity\User;
 use App\Scoring\DefaultScoring;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -23,8 +22,6 @@ class BoulderListener implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
-            Events::prePersist,
-            Events::preUpdate,
             Events::postLoad
         ];
     }
@@ -50,31 +47,5 @@ class BoulderListener implements EventSubscriber
         }
 
         $subject->setUserAscent($user->getId());
-    }
-
-    public function prePersist(LifecycleEventArgs $args)
-    {
-        $subject = $args->getObject();
-
-        if (!$subject instanceof Boulder) {
-            return;
-        }
-
-        if (!$subject->getInternalGrade()) {
-            $subject->setInternalGrade($subject->getGrade());
-        }
-    }
-
-    public function preUpdate(PreUpdateEventArgs $args)
-    {
-        $subject = $args->getObject();
-
-        if (!$subject instanceof Boulder) {
-            return;
-        }
-
-        if (!$subject->getInternalGrade()) {
-            $subject->setInternalGrade($subject->getGrade());
-        }
     }
 }

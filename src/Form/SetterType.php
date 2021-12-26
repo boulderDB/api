@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Location;
 use App\Entity\Setter;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

@@ -19,7 +19,10 @@ use App\Form\HoldTypeType;
 use App\Form\SchemaTypeInterface;
 use App\Form\SetterType;
 use App\Form\WallType;
+use App\Repository\LocationRepository;
+use App\Service\ContextService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,6 +45,21 @@ class SchemaController extends AbstractController
         Event::RESOURCE_NAME => EventType::class
     ];
 
+    private LocationRepository $locationRepository;
+    private ContextService $contextService;
+    private FormRegistryInterface $formRegistry;
+
+    public function __construct(
+        LocationRepository $locationRepository,
+        ContextService $contextService,
+        FormRegistryInterface $formRegistry
+    )
+    {
+        $this->locationRepository = $locationRepository;
+        $this->contextService = $contextService;
+        $this->formRegistry = $formRegistry;
+    }
+
     /**
      * @Route("/{name}", methods={"GET"}, name="boulders_schema")
      */
@@ -52,7 +70,8 @@ class SchemaController extends AbstractController
         }
 
         $class = self::MAP[$name];
-        $form = new $class;
+
+        $form = $this->formRegistry->getType($class)?->getInnerType();
 
         if (!$form instanceof SchemaTypeInterface) {
             return $this->json(null, Response::HTTP_NOT_IMPLEMENTED);

@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Location;
 use App\Entity\Wall;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;

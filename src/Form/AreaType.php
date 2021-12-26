@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Area;
+use App\Entity\Location;
 use App\Entity\Wall;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityRepository;
