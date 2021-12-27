@@ -44,7 +44,7 @@ class ReadableIdentifierController extends AbstractController
         $this->denyUnlessLocationAdmin();
 
         return $this->okResponse(
-            $this->readableIdentifierRepository->getAll($this->contextService->getLocation()->getId())
+            $this->readableIdentifierRepository->getUnassigned($this->contextService->getLocation()->getId())
         );
     }
 

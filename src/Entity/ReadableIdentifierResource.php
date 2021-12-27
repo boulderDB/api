@@ -18,7 +18,7 @@ class ReadableIdentifierResource implements ReadableIdentifierInterface
         // TODO: Implement getReadableIdentifier() method.
     }
 
-    public function setReadableIdentifier(ReadableIdentifier $readableIdentifier): void
+    public function setReadableIdentifier(ReadableIdentifier $readableIdentifier = null): void
     {
         // TODO: Implement setReadableIdentifier() method.
     }
