@@ -64,6 +64,14 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                 ->setParameter("location", $locationId);
         };
 
+        $identifierQuery = function (EntityRepository $entityRepository) use ($locationId) {
+            return $entityRepository->createQueryBuilder("readableIdentifier")
+                ->leftJoin("boulder.readableIdentifier", "readableIdentifier")
+                ->where("locationResource.location = :location")
+                ->andWhere("boulder.readableIdentifier is NULL")
+                ->setParameter("location", $locationId);
+        };
+
         $data = [
             1 => [
                 "name" => "name",
@@ -202,7 +210,7 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                 "options" => [
                     "class" => ReadableIdentifier::class,
                     "constraints" => [],
-                    "query_builder" => $locationQuery
+                    "query_builder" => $identifierQuery
                 ],
                 "schema" => [
                     "resource" => "/readable-identifiers",
