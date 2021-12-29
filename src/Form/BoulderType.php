@@ -10,6 +10,7 @@ use App\Entity\Setter;
 use App\Entity\BoulderTag;
 use App\Entity\Grade;
 use App\Entity\Wall;
+use App\Repository\ReadableIdentifierRepository;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -25,10 +26,15 @@ use Symfony\Component\Validator\Constraints\NotNull;
 class BoulderType extends AbstractType implements SchemaTypeInterface
 {
     private ?ContextService $contextService;
+    private ReadableIdentifierRepository $readableIdentifierRepository;
 
-    public function __construct(ContextService $contextService = null)
+    public function __construct(
+        ContextService $contextService = null,
+        ReadableIdentifierRepository $readableIdentifierRepository
+    )
     {
         $this->contextService = $contextService;
+        $this->readableIdentifierRepository = $readableIdentifierRepository;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -64,12 +70,10 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
                 ->setParameter("location", $locationId);
         };
 
-        $identifierQuery = function (EntityRepository $entityRepository) use ($locationId) {
-            return $entityRepository->createQueryBuilder("readableIdentifier")
-                ->leftJoin("boulder.readableIdentifier", "readableIdentifier")
-                ->where("locationResource.location = :location")
-                ->andWhere("boulder.readableIdentifier is NULL")
-                ->setParameter("location", $locationId);
+        $readableIdentifierRepository = $this->readableIdentifierRepository;
+
+        $identifierQuery = function (EntityRepository $entityRepository) use ($locationId, $readableIdentifierRepository) {
+            return $readableIdentifierRepository->getUnassigned($locationId);
         };
 
         $data = [
