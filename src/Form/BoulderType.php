@@ -213,6 +213,6 @@ class BoulderType extends AbstractSchemaType
             ];
         }
 
-        return $data;
+        return array_filter($data);
     }
 }
