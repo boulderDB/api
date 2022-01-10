@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\Boulder;
 use App\Entity\HoldType;
-use App\Entity\Location;
 use App\Entity\ReadableIdentifier;
 use App\Entity\Setter;
 use App\Entity\BoulderTag;
@@ -14,16 +13,14 @@ use App\Repository\ReadableIdentifierRepository;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
-class BoulderType extends AbstractType implements SchemaTypeInterface
+class BoulderType extends AbstractSchemaType
 {
     private ?ContextService $contextService;
     private ReadableIdentifierRepository $readableIdentifierRepository;
@@ -35,13 +32,6 @@ class BoulderType extends AbstractType implements SchemaTypeInterface
     {
         $this->contextService = $contextService;
         $this->readableIdentifierRepository = $readableIdentifierRepository;
-    }
-
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        foreach ($this->getSchema() as $field) {
-            $builder->add($field["name"], $field["type"], $field["options"]);
-        }
     }
 
     public function configureOptions(OptionsResolver $resolver)

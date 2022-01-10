@@ -2,23 +2,14 @@
 
 namespace App\Form;
 
-use App\Entity\Location;
 use App\Entity\Wall;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class WallType extends AbstractType implements SchemaTypeInterface
+class WallType extends AbstractSchemaType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        foreach ($this->getSchema() as $field) {
-            $builder->add($field["name"], $field["type"], $field["options"]);
-        }
-    }
 
     public function configureOptions(OptionsResolver $resolver)
     {
