@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Location;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Finder\SplFileInfo;
 
 class ContextService
 {
@@ -27,9 +28,11 @@ class ContextService
 
     public function getSettings()
     {
+        $path = $this->parameterBag->get('kernel.project_dir') . "/settings/{$this->getLocation()?->getUrl()}.json";
+        $file = new SplFileInfo($path, "", "");
+
         try {
-            $data = file_get_contents($this->parameterBag->get('kernel.project_dir') . "/settings/{$this->getLocation()?->getUrl()}.json");
-            return json_decode($data);
+            return json_decode($file->getContents());
         } catch (\Exception $exception) {
             return null;
         }
