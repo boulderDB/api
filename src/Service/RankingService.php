@@ -3,12 +3,13 @@
 namespace App\Service;
 
 use App\Entity\Ascent;
-use App\Scoring\DefaultScoring;
-use App\Scoring\ScoringInterface;
+use App\Ranking\DefaultPointsRanking;
+use App\Ranking\RankingInterface;
+use http\Params;
 
 class RankingService
 {
-    public function calculateRanking(ScoringInterface $scoring, array $boulders): array
+    public function calculateRanking(RankingInterface $ranking, array $boulders): array
     {
         $data = [];
 
@@ -16,13 +17,14 @@ class RankingService
          * @var \App\Entity\Boulder $boulder
          */
         foreach ($boulders as $boulder) {
-            $scoring->calculateScore($boulder);
+
+            $ranking->getScoring()->calculateScore($boulder);
 
             /**
              * @var \App\Entity\Ascent $ascent
              */
             foreach ($boulder->getAscents() as $ascent) {
-                if (!in_array($ascent->getType(), $scoring->getScoredAscentTypes())) {
+                if (!in_array($ascent->getType(), $ranking->getScoring()->getScoredAscentTypes())) {
                     continue;
                 }
 
@@ -55,16 +57,29 @@ class RankingService
 
         foreach ($data as &$rank) {
             $rank["total"]["count"] = $rank[Ascent::ASCENT_TOP]["count"] + $rank[Ascent::ASCENT_FLASH]["count"];
-            $rank[Ascent::ASCENT_TOP]["rate"] = DefaultScoring::calculateRate(count($boulders), $rank[Ascent::ASCENT_TOP]["count"]);
-            $rank[Ascent::ASCENT_FLASH]["rate"] = DefaultScoring::calculateRate(count($boulders), $rank[Ascent::ASCENT_FLASH]["count"]);
-            $rank["total"]["rate"] = DefaultScoring::calculateRate(count($boulders), $rank["total"]["count"]);
+            $rank[Ascent::ASCENT_TOP]["rate"] = self::calculateRate(count($boulders), $rank[Ascent::ASCENT_TOP]["count"]);
+            $rank[Ascent::ASCENT_FLASH]["rate"] = self::calculateRate(count($boulders), $rank[Ascent::ASCENT_FLASH]["count"]);
+            $rank["total"]["rate"] = self::calculateRate(count($boulders), $rank["total"]["count"]);
         }
 
-        usort($data, function ($a, $b) {
-            return $a["points"] > $b["points"] ? -1 : 1;
-        });
+        usort($data, $ranking->getSorter());
 
         return array_values($data);
     }
 
+    public static function calculateRate(int $total, int $partial): float|int
+    {
+        if (!$total || !$partial) {
+            return 0;
+        }
+
+        return round(($partial / $total) * 100);
+    }
+
+    public function getRankings(): array
+    {
+        return [
+            new DefaultPointsRanking()
+        ];
+    }
 }

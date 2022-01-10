@@ -4,10 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Event;
 use App\Factory\RedisConnectionFactory;
+use App\Ranking\DefaultPointsRanking;
 use App\Repository\AscentRepository;
 use App\Repository\BoulderRepository;
 use App\Repository\EventRepository;
-use App\Scoring\DefaultScoring;
 use App\Service\ContextService;
 use App\Service\RankingService;
 use Symfony\Component\Routing\Annotation\Route;
@@ -52,7 +52,7 @@ class RankingController extends AbstractController
         $boulders = $this->boulderRepository->getWithAscents($locationId);
 
         return $this->okResponse($this->rankingService->calculateRanking(
-            new DefaultScoring(),
+            new DefaultPointsRanking(),
             $boulders
         ));
     }
@@ -72,7 +72,7 @@ class RankingController extends AbstractController
         }
 
         return $this->okResponse($this->rankingService->calculateRanking(
-            new DefaultScoring(),
+            new DefaultPointsRanking(),
             $event->getBoulders()->toArray()
         ));
     }

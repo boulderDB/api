@@ -4,6 +4,7 @@ namespace App\EventListener;
 
 use App\Entity\Boulder;
 use App\Entity\User;
+use App\Scoring\DefaultPointsRanking;
 use App\Scoring\DefaultScoring;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;

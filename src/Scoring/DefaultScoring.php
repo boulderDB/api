@@ -38,22 +38,8 @@ class DefaultScoring implements ScoringInterface
         }
     }
 
-    public function getIdentifier(): string
-    {
-        return "default";
-    }
-
     public function getScoredAscentTypes(): array
     {
         return [Ascent::ASCENT_TOP, Ascent::ASCENT_FLASH];
-    }
-
-    public static function calculateRate(int $total, int $partial): float|int
-    {
-        if (!$total || !$partial) {
-            return 0;
-        }
-
-        return round(($partial / $total) * 100);
     }
 }

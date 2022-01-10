@@ -59,6 +59,11 @@ class Event implements LocationResourceInterface, CacheableInterface
      */
     private ?\DateTime $endDate = null;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private ?string $ranking;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -132,6 +137,16 @@ class Event implements LocationResourceInterface, CacheableInterface
     public function setEndDate(?\DateTime $endDate): void
     {
         $this->endDate = $endDate;
+    }
+
+    public function getRanking(): ?string
+    {
+        return $this->ranking;
+    }
+
+    public function setRanking(?string $ranking): void
+    {
+        $this->ranking = $ranking;
     }
 
     public function invalidates(): array

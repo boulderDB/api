@@ -5,8 +5,9 @@ namespace App\Controller;
 use App\Entity\Boulder;
 use App\Form\BoulderType;
 use App\Form\MassOperationType;
-use App\Repository\BoulderRepository;
+use App\Scoring\DefaultPointsRanking;
 use App\Scoring\DefaultScoring;
+use App\Repository\BoulderRepository;
 use App\Service\ContextService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -81,7 +82,6 @@ class BoulderController extends AbstractController
      */
     public function index()
     {
-
         $userId = $this->getUser()->getId();
         $boulders = $this->boulderRepository->getByStatus($this->contextService->getLocation()?->getId());
         $scoring = new DefaultScoring();

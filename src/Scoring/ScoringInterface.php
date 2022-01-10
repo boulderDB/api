@@ -15,7 +15,5 @@ interface ScoringInterface
 
     public function calculateScore(Boulder $boulder): void;
 
-    public function getIdentifier(): string;
-
     public function getScoredAscentTypes(): array;
 }
