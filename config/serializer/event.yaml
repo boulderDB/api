@@ -16,3 +16,5 @@ App\Entity\Event:
       groups: [ "detail" ]
     participants:
       groups: [ "admin" ]
+    ranking:
+      groups: [ "detail" ]
