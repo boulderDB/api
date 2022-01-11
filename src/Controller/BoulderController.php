@@ -109,6 +109,18 @@ class BoulderController extends AbstractController
     }
 
     /**
+     * @Route("/count", methods={"GET"}, name="boulders_count")
+     */
+    public function count()
+    {
+        $count = $this->boulderRepository->countByStatus(
+            $this->contextService->getLocation()?->getId()
+        );
+
+        return $this->okResponse($count);
+    }
+
+    /**
      * @Route("/{id}", requirements={"id": "\d+"}, methods={"GET"}, name="boulders_read")
      */
     public function read(string $id)
@@ -151,18 +163,6 @@ class BoulderController extends AbstractController
         $this->denyUnlessLocationAdminOrSetter();
 
         return $this->deleteEntity(Boulder::class, $id, true);
-    }
-
-    /**
-     * @Route("/count", methods={"GET"}, name="boulders_count")
-     */
-    public function count()
-    {
-        $count = $this->boulderRepository->countByStatus(
-            $this->contextService->getLocation()?->getId()
-        );
-
-        return $this->okResponse($count);
     }
 
     /**
