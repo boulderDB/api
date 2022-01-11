@@ -23,15 +23,10 @@ use Symfony\Component\Validator\Constraints\NotNull;
 class BoulderType extends AbstractSchemaType
 {
     private ?ContextService $contextService;
-    private ReadableIdentifierRepository $readableIdentifierRepository;
 
-    public function __construct(
-        ContextService $contextService = null,
-        ReadableIdentifierRepository $readableIdentifierRepository
-    )
+    public function __construct(ContextService $contextService = null)
     {
         $this->contextService = $contextService;
-        $this->readableIdentifierRepository = $readableIdentifierRepository;
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -60,10 +55,9 @@ class BoulderType extends AbstractSchemaType
                 ->setParameter("location", $locationId);
         };
 
-        $readableIdentifierRepository = $this->readableIdentifierRepository;
 
-        $identifierQuery = function (EntityRepository $entityRepository) use ($locationId, $readableIdentifierRepository) {
-            return $readableIdentifierRepository->getUnassigned($locationId);
+        $identifierQuery = function (EntityRepository $entityRepository) use ($locationId) {
+            return ReadableIdentifierRepository::addUnassignedQuery($entityRepository->createQueryBuilder("readableIdentifier"), $locationId);
         };
 
         $data = [

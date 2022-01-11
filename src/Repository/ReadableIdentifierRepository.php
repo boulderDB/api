@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Boulder;
 use App\Entity\ReadableIdentifier;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 class ReadableIdentifierRepository extends ServiceEntityRepository
@@ -17,15 +20,19 @@ class ReadableIdentifierRepository extends ServiceEntityRepository
 
     public function getUnassigned(int $locationId)
     {
-        $connection = $this->getEntityManager()->getConnection();
-        $statement = "SELECT readable_identifier.id, readable_identifier.value from readable_identifier LEFT JOIN boulder ON readable_identifier.id = boulder.readable_identifier_id WHERE boulder.readable_identifier_id IS NULL AND readable_identifier.tenant_id = :locationId;";
+        $queryBuilder = $this->createQueryBuilder("readableIdentifier");
+        self::addUnassignedQuery($queryBuilder, $locationId);
 
-        $query = $connection
-            ->prepare($statement)
-            ->executeQuery([
-                "locationId" => $locationId
-            ]);
+        return $queryBuilder
+            ->getQuery()
+            ->getResult();
+    }
 
-        return $query->fetchAllAssociative();
+    public static function addUnassignedQuery(QueryBuilder $queryBuilder, string $locationId)
+    {
+        return $queryBuilder->leftJoin(Boulder::class, "boulder", Join::WITH, "readableIdentifier.id = boulder.readableIdentifier")
+            ->where("boulder.readableIdentifier is NULL")
+            ->andWhere("readableIdentifier.location = :location")
+            ->setParameter("location", $locationId);
     }
 }
