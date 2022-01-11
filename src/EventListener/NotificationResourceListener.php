@@ -132,7 +132,14 @@ class NotificationResourceListener implements EventSubscriber
         foreach ($users as $user) {
             $userId = $user->getId();
 
-            if (!$this->notificationRepository->findOneBy(['user' => $userId, 'type' => $type, 'location' => $locationId])) {
+            $hasNotification = $user->getNotifications()->filter(function ($notification) use ($type, $locationId) {
+                /**
+                 * @var \App\Entity\Notification $notification
+                 */
+                return $notification->getType() === $type && $notification->getLocation()->getId() === $locationId;
+            });
+
+            if (!$hasNotification) {
                 continue;
             }
 
