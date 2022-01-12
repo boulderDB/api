@@ -15,18 +15,23 @@ class EventRepository extends ServiceEntityRepository implements DeactivatableRe
         parent::__construct($registry, Event::class);
     }
 
-    public function getActive(int $locationId)
+    public function getActive(int $locationId, bool $public = true)
     {
         $date = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
 
-        return $this->createQueryBuilder("event")
+        $queryBuilder = $this->createQueryBuilder("event")
             ->where("event.location = :locationId")
             ->andWhere("event.visible = true")
             ->andWhere("event.startDate < :date")
             ->andWhere("event.endDate > :date")
             ->setParameter("date", $date)
-            ->setParameter("locationId", $locationId)
-            ->getQuery()
+            ->setParameter("locationId", $locationId);
+
+        if ($public) {
+            $queryBuilder->andWhere("event.public = true");
+        }
+
+        return $queryBuilder->getQuery()
             ->getResult();
     }
 
@@ -37,6 +42,25 @@ class EventRepository extends ServiceEntityRepository implements DeactivatableRe
             ->andWhere("event.visible = true")
             ->setParameter("locationId", $locationId)
             ->getQuery()
+            ->getResult();
+    }
+
+    public function getUpcoming(int $locationId, bool $public = true)
+    {
+        $date = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
+
+        $queryBuilder = $this->createQueryBuilder("event")
+            ->where("event.location = :locationId")
+            ->andWhere("event.visible = true")
+            ->andWhere("event.startDate > :date")
+            ->setParameter("date", $date)
+            ->setParameter("locationId", $locationId);
+
+        if ($public) {
+            $queryBuilder->andWhere("event.public = true");
+        }
+
+        return $queryBuilder->getQuery()
             ->getResult();
     }
 }

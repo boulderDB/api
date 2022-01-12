@@ -3,13 +3,13 @@
 namespace App\Service;
 
 use App\Entity\Ascent;
+use App\Entity\Event;
 use App\Ranking\DefaultPointsRanking;
 use App\Ranking\RankingInterface;
-use http\Params;
 
 class RankingService
 {
-    public function calculateRanking(RankingInterface $ranking, array $boulders): array
+    public function calculateRanking(RankingInterface $ranking, array $boulders, Event $event = null): array
     {
         $data = [];
 
@@ -25,6 +25,14 @@ class RankingService
              */
             foreach ($boulder->getAscents() as $ascent) {
                 if (!in_array($ascent->getType(), $ranking->getScoring()->getScoredAscentTypes())) {
+                    continue;
+                }
+
+                if ($event && $ascent->getCreatedAt() > $event->getEndDate()) {
+                    continue;
+                }
+
+                if ($event && !$event->isParticipant($ascent->getUser())) {
                     continue;
                 }
 

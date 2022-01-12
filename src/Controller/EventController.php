@@ -40,16 +40,82 @@ class EventController extends AbstractController
      */
     public function index(Request $request)
     {
-        $matches = $this->handleFilters(
-            $request->get("filter"),
-            $this->eventRepository,
-            $this->getLocationId(),
-            function ($filters, $repository, $locationId) {
-                return $repository->getActive($locationId);
-            }
-        );
+        $filter = $request->get("filter");
+        $locationId = $this->contextService->getLocation()->getId();
 
-        return $this->okResponse($matches);
+        if ($filter === "all") {
+            $this->denyUnlessLocationAdmin();
+
+            return $this->okResponse($this->eventRepository->getAll($locationId));
+        }
+
+        if ($filter === "upcoming") {
+            return $this->okResponse($this->eventRepository->getUpcoming($locationId));
+        }
+
+        return $this->okResponse($this->eventRepository->getActive($locationId));
+    }
+
+    /**
+     * @Route("/{id}/registration", methods={"POST"}, name="events_registration")
+     */
+    public function registration(int $id)
+    {
+        /**
+         * @var Event $event
+         */
+        $event = $this->eventRepository->find($id);
+        $date = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
+
+        if (!$event || !$event->isPublic() || !$event->getVisible()) {
+            return $this->resourceNotFoundResponse(Event::RESOURCE_NAME, $id);
+        }
+
+        if ($event->isParticipant($this->getUser())) {
+            return $this->badRequestResponse("You are already registered to this event");
+        }
+
+        if ($date > $event->getEndDate()) {
+            return $this->badRequestResponse("This event ended");
+        }
+
+        $event->getParticipants()->add($this->getUser());
+
+        $this->entityManager->persist($event);
+        $this->entityManager->flush();
+
+        return $this->noContentResponse();
+    }
+
+    /**
+     * @Route("/{id}/registration", methods={"DELETE"}, name="events_registration_delete")
+     */
+    public function deleteRegistration(int $id)
+    {
+        /**
+         * @var Event $event
+         */
+        $event = $this->eventRepository->find($id);
+        $date = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
+
+        if (!$event || !$event->isPublic() || !$event->getVisible()) {
+            return $this->resourceNotFoundResponse(Event::RESOURCE_NAME, $id);
+        }
+
+        if (!$event->isParticipant($this->getUser())) {
+            return $this->badRequestResponse("You are not registered to this event");
+        }
+
+        if ($date > $event->getEndDate()) {
+            return $this->badRequestResponse("This event ended");
+        }
+
+        $event->getParticipants()->removeElement($this->getUser());
+
+        $this->entityManager->persist($event);
+        $this->entityManager->flush();
+
+        return $this->noContentResponse();
     }
 
     /**

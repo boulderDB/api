@@ -71,9 +71,16 @@ class RankingController extends AbstractController
             return $this->resourceNotFoundResponse(Event::RESOURCE_NAME, $eventId);
         }
 
+        $current = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
+
+        if ($event->getStartDate() > $current || $event->getEndDate() < $current) {
+            $this->denyUnlessLocationAdmin();
+        }
+
         return $this->okResponse($this->rankingService->calculateRanking(
             new DefaultPointsRanking(),
-            $event->getBoulders()->toArray()
+            $event->getBoulders()->toArray(),
+            $event
         ));
     }
 

@@ -109,6 +109,16 @@ class Event implements LocationResourceInterface, CacheableInterface
         $this->participants = $participants;
     }
 
+    public function isParticipant(User $user): bool
+    {
+        return (bool)$this->participants->filter(function ($participant) use ($user) {
+            /**
+             * @var \App\Entity\User $participant
+             */
+            return $participant->getId() === $user->getId();
+        })->first();
+    }
+
     public function isPublic(): bool
     {
         return $this->public;
