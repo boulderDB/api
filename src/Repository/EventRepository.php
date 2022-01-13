@@ -63,4 +63,23 @@ class EventRepository extends ServiceEntityRepository implements DeactivatableRe
         return $queryBuilder->getQuery()
             ->getResult();
     }
+
+    public function getParticipating(int $locationId, int $userId)
+    {
+        $date = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
+
+        $queryBuilder = $this->createQueryBuilder("event")
+            ->innerJoin("event.participants", "participant")
+            ->where("event.location = :locationId")
+            ->andWhere("event.visible = true")
+            ->andWhere("event.startDate < :date")
+            ->andWhere("event.endDate > :date")
+            ->andWhere("participant.id = :userId")
+            ->setParameter("date", $date)
+            ->setParameter("locationId", $locationId)
+            ->setParameter("userId", $userId);
+
+        return $queryBuilder->getQuery()
+            ->getResult();
+    }
 }

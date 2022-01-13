@@ -53,7 +53,11 @@ class EventController extends AbstractController
             return $this->okResponse($this->eventRepository->getUpcoming($locationId));
         }
 
-        return $this->okResponse($this->eventRepository->getActive($locationId));
+        if ($filter === "active") {
+            return $this->okResponse($this->eventRepository->getActive($locationId));
+        }
+
+        return $this->okResponse($this->eventRepository->getParticipating($locationId, $this->getUser()->getId()));
     }
 
     /**
@@ -67,8 +71,12 @@ class EventController extends AbstractController
         $event = $this->eventRepository->find($id);
         $date = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
 
-        if (!$event || !$event->isPublic() || !$event->getVisible()) {
+        if (!$event || !$event->getVisible()) {
             return $this->resourceNotFoundResponse(Event::RESOURCE_NAME, $id);
+        }
+
+        if( !$event->isPublic() ){
+            return $this->badRequestResponse("Event does not allow public registrations");
         }
 
         if ($event->isParticipant($this->getUser())) {
@@ -139,7 +147,7 @@ class EventController extends AbstractController
     /**
      * @Route("/{id}", methods={"PUT"}, name="events_update")
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, int $id)
     {
         $this->denyUnlessLocationAdmin();
 
@@ -149,7 +157,7 @@ class EventController extends AbstractController
     /**
      * @Route("/{id}", methods={"DELETE"}, name="events_delete")
      */
-    public function delete(string $id)
+    public function delete(int $id)
     {
         $this->denyUnlessLocationAdmin();
 
