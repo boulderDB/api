@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\User;
 use App\Factory\RedisConnectionFactory;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -48,7 +49,7 @@ class ProcessAccountDeletionsCommand extends Command
             }
 
             /**
-             * @var User $users
+             * @var User $user
              */
             $user = $repository->find($data['user']);
 
@@ -58,7 +59,23 @@ class ProcessAccountDeletionsCommand extends Command
             }
 
             $io->writeln("Removed user ${$data['user']}");
-            $this->entityManager->remove($user);
+
+
+            $user->setUsername("removed-user-{$user->getId()}");
+            $user->setEmail("removed-user-{$user->getId()}");
+            $user->setGender("neutral");
+            $user->setFirstName("");
+            $user->setLastName("");
+            $user->setActive(false);
+            $user->setVisible(false);
+            $user->setRoles([]);
+            $user->setImage(null);
+            $user->setPassword(null);
+            $user->setNotifications(new ArrayCollection());
+            $user->setLastActivity(new \DateTime());
+            $user->setLastVisitedLocation(null);
+
+            $this->entityManager->persist($user);
             $this->entityManager->flush();
 
             $io->success("Removed user $user");
