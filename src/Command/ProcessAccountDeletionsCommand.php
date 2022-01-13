@@ -60,7 +60,6 @@ class ProcessAccountDeletionsCommand extends Command
 
             $io->writeln("Removed user ${$data['user']}");
 
-
             $user->setUsername("removed-user-{$user->getId()}");
             $user->setEmail("removed-user-{$user->getId()}");
             $user->setGender("neutral");
