@@ -153,6 +153,20 @@ class Event implements LocationResourceInterface, CacheableInterface
         $this->endDate = $endDate;
     }
 
+    public function hasEnded(): bool
+    {
+        $current = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
+
+        return $current > $this->getEndDate();
+    }
+
+    public function isActive(): bool
+    {
+        $current = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
+
+        return $current > $this->getStartDate() && $current < $this->getEndDate() && $this->getVisible();
+    }
+
     public function getRanking(): ?string
     {
         return $this->ranking;

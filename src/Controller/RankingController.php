@@ -71,9 +71,7 @@ class RankingController extends AbstractController
             return $this->resourceNotFoundResponse(Event::RESOURCE_NAME, $eventId);
         }
 
-        $current = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
-
-        if ($event->getStartDate() > $current || $event->getEndDate() < $current) {
+        if (!$event->isActive()) {
             $this->denyUnlessLocationAdmin();
         }
 

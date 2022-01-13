@@ -42,6 +42,7 @@ class EventNormalizer implements ContextAwareNormalizerInterface
         $user = $this->tokenStorage->getToken()->getUser();
 
         $data["isParticipant"] = $object->isParticipant($user);
+        $data["active"] = $object->isActive();
 
         return $data;
     }

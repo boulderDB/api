@@ -83,7 +83,7 @@ class EventController extends AbstractController
             return $this->badRequestResponse("You are already registered to this event");
         }
 
-        if ($date > $event->getEndDate()) {
+        if ($event->hasEnded()) {
             return $this->badRequestResponse("This event ended");
         }
 
