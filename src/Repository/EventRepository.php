@@ -35,6 +35,18 @@ class EventRepository extends ServiceEntityRepository implements DeactivatableRe
             ->getResult();
     }
 
+    public function getEnded()
+    {
+        $date = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
+
+        $queryBuilder = $this->createQueryBuilder("event")
+            ->where("event.endDate < :date")
+            ->setParameter("date", $date);
+
+        return $queryBuilder->getQuery()
+            ->getResult();
+    }
+
     public function getAll(int $locationId)
     {
         return $this->createQueryBuilder("event")
@@ -81,5 +93,18 @@ class EventRepository extends ServiceEntityRepository implements DeactivatableRe
 
         return $queryBuilder->getQuery()
             ->getResult();
+    }
+
+    public function isEventBoulder(int $boulderId)
+    {
+        $events = $this->createQueryBuilder("event")
+            ->select("event.id")
+            ->innerJoin("event.boulders", "boulders")
+            ->where("boulders.id = :boulderId")
+            ->setParameter("boulderId", $boulderId)
+            ->getQuery()
+            ->getResult();
+
+        return (bool)$events;
     }
 }

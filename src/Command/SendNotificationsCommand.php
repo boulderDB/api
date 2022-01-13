@@ -31,8 +31,8 @@ class SendNotificationsCommand extends Command
         string $name = null
     )
     {
-        $this->redis = RedisConnectionFactory::create();
         parent::__construct($name);
+        $this->redis = RedisConnectionFactory::create();
         $this->userRepository = $userRepository;
         $this->mailer = $mailer;
         $this->notificationService = $notificationService;
