@@ -54,6 +54,13 @@ class ArchiveEndedEventsCommand extends Command
                 $event
             );
 
+            $key = "event:{$event->getId()}:ranking";
+
+            if ($this->redis->exists($key)) {
+                $progress->advance();
+                continue;
+            }
+
             $this->redis->set("event:{$event->getId()}:ranking", json_encode($ranking));
 
             $progress->advance();
