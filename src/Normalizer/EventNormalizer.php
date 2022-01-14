@@ -4,7 +4,6 @@ namespace App\Normalizer;
 
 use App\Entity\Event;
 use App\Entity\User;
-use App\Service\ContextService;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
