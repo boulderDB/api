@@ -90,6 +90,10 @@ class EventController extends AbstractController
                 return $this->badRequestResponse("User {$payload["user"]} not found");
             }
 
+            if ($event->isParticipant($this->getUser())) {
+                return $this->conflictResponse("This user is already registered to the event");
+            }
+
             $event->getParticipants()->add($user);
 
             $this->entityManager->persist($event);
