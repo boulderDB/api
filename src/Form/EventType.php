@@ -122,6 +122,7 @@ class EventType extends AbstractSchemaType
                 "options" => [
                     "class" => User::class,
                     "multiple" => true,
+                    "constraints" => [],
                 ],
                 "schema" => [
                     "resource" => null,
