@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Boulder;
 use App\Entity\Event;
+use App\Entity\User;
 use App\Ranking\DefaultPointsRanking;
 use App\Service\ContextService;
 use App\Service\RankingService;
@@ -114,7 +115,19 @@ class EventType extends AbstractSchemaType
                 "schema" => [
                     "default" => DefaultPointsRanking::IDENTIFIER
                 ]
-            ]
+            ],
+            [
+                "name" => "participants",
+                "type" => EntityType::class,
+                "options" => [
+                    "class" => User::class,
+                    "multiple" => true,
+                ],
+                "schema" => [
+                    "resource" => null,
+                    "labelProperty" => "username"
+                ]
+            ],
         ];
     }
 }
