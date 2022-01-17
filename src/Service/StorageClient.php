@@ -23,11 +23,16 @@ class StorageClient
         ]);
     }
 
-    public function upload(UploadedFile $file): string
+    public function uploadFile(UploadedFile $file): string
     {
         $contents = file_get_contents($file->getPathname());
         $filename = md5($contents) . "." . $file->getClientOriginalExtension();
 
+        return $this->uploadContent($filename, $contents);
+    }
+
+    public function uploadContent(string $filename, string $contents): string
+    {
         $this->client->putObject([
             "Bucket" => $_ENV["S3_BUCKET"],
             "Key" => $filename,
@@ -36,6 +41,5 @@ class StorageClient
 
         return "{$_ENV["CDN_HOST"]}/{$_ENV["S3_BUCKET"]}/{$filename}";
     }
-
 
 }

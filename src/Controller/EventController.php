@@ -5,7 +5,10 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Form\EventType;
 use App\Repository\EventRepository;
+use App\Repository\UserRepository;
 use App\Service\ContextService;
+use App\Service\RankingService;
+use App\Service\StorageClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,16 +26,25 @@ class EventController extends AbstractController
     private EventRepository $eventRepository;
     private ContextService $contextService;
     private EntityManagerInterface $entityManager;
+    private UserRepository $userRepository;
+    private RankingService $rankingService;
+    private StorageClient $storageClient;
 
     public function __construct(
         EventRepository $eventRepository,
         ContextService $contextService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        UserRepository $userRepository,
+        RankingService $rankingService,
+        StorageClient $storageClient
     )
     {
         $this->eventRepository = $eventRepository;
         $this->contextService = $contextService;
         $this->entityManager = $entityManager;
+        $this->userRepository = $userRepository;
+        $this->rankingService = $rankingService;
+        $this->storageClient = $storageClient;
     }
 
     /**
@@ -63,19 +75,34 @@ class EventController extends AbstractController
     /**
      * @Route("/{id}/registration", methods={"POST"}, name="events_registration")
      */
-    public function registration(int $id)
+    public function registration(Request $request, int $id)
     {
         /**
          * @var Event $event
          */
         $event = $this->eventRepository->find($id);
-        $date = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
+        $payload = self::decodePayLoad($request);
+
+        if ($payload && $payload["user"] && $this->isLocationAdmin()) {
+            $user = $this->userRepository->findActiveAndVisible($payload["user"]);
+
+            if (!$user) {
+                return $this->badRequestResponse("User {$payload["user"]} not found");
+            }
+
+            $event->getParticipants()->add($user);
+
+            $this->entityManager->persist($event);
+            $this->entityManager->flush();
+
+            return $this->noContentResponse();
+        }
 
         if (!$event || !$event->getVisible()) {
             return $this->resourceNotFoundResponse(Event::RESOURCE_NAME, $id);
         }
 
-        if( !$event->isPublic() ){
+        if (!$event->isPublic()) {
             return $this->badRequestResponse("Event does not allow public registrations");
         }
 
@@ -98,13 +125,30 @@ class EventController extends AbstractController
     /**
      * @Route("/{id}/registration", methods={"DELETE"}, name="events_registration_delete")
      */
-    public function deleteRegistration(int $id)
+    public function deleteRegistration(Request $request, int $id)
     {
         /**
          * @var Event $event
          */
         $event = $this->eventRepository->find($id);
         $date = new \DateTime("now", new \DateTimeZone("Europe/Berlin"));
+
+        $payload = self::decodePayLoad($request);
+
+        if ($payload && $payload["user"] && $this->isLocationAdmin()) {
+            $user = $this->userRepository->findActiveAndVisible($payload["user"]);
+
+            if (!$user) {
+                return $this->badRequestResponse("User {$payload["user"]} not found");
+            }
+
+            $event->getParticipants()->removeElement($user);
+
+            $this->entityManager->persist($event);
+            $this->entityManager->flush();
+
+            return $this->noContentResponse();
+        }
 
         if (!$event || !$event->isPublic() || !$event->getVisible()) {
             return $this->resourceNotFoundResponse(Event::RESOURCE_NAME, $id);

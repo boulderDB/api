@@ -74,6 +74,15 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->getResult();
     }
 
+    public function findActiveAndVisible(int $id): ?User
+    {
+        return $this->findOneBy([
+            "id" => $id,
+            "visible" => true,
+            "active" => true
+        ]);
+    }
+
     public function loadUserByIdentifier(string $identifier)
     {
         return $this->loadUserByUsername($identifier);

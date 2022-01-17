@@ -77,8 +77,6 @@ class RankingController extends AbstractController
 
         if ($event->hasEnded()) {
             $this->denyUnlessLocationAdmin();
-
-            return $this->okResponse(json_decode($this->redis->get("event:{$event->getId()}:ranking")));
         }
 
         return $this->okResponse($this->rankingService->calculateRanking(

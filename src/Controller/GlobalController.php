@@ -361,7 +361,7 @@ class GlobalController extends AbstractController
         try {
             $this->entityManager->flush();
         } catch (UniqueConstraintViolationException $exception) {
-            return $this->badRequestResponse("Username or email already taken");
+            return $this->conflictResponse("Username or email already taken");
         }
 
         return $this->createdResponse($user);
@@ -444,7 +444,7 @@ class GlobalController extends AbstractController
             return $this->badRequestResponse("No file provided");
         }
 
-        $resource = $this->storageClient->upload($file);
+        $resource = $this->storageClient->uploadFile($file);
 
         return $this->okResponse([
             "file" => $resource
