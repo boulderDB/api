@@ -61,6 +61,8 @@ class AscentController extends AbstractController
         } catch (UniqueConstraintViolationException $exception) {
             return $this->conflictResponse("You already checked this boulder");
         }
+
+        return  $this->createdResponse($ascent);
     }
 
     /**
