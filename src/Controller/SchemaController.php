@@ -8,6 +8,7 @@ use App\Entity\BoulderTag;
 use App\Entity\Event;
 use App\Entity\Grade;
 use App\Entity\HoldType;
+use App\Entity\ReadableIdentifier;
 use App\Entity\Setter;
 use App\Entity\Wall;
 use App\Form\AreaType;
@@ -16,6 +17,7 @@ use App\Form\BoulderType;
 use App\Form\EventType;
 use App\Form\GradeType;
 use App\Form\HoldTypeType;
+use App\Form\ReadableIdentifierType;
 use App\Form\SchemaTypeInterface;
 use App\Form\SetterType;
 use App\Form\WallType;
@@ -42,7 +44,8 @@ class SchemaController extends AbstractController
         HoldType::RESOURCE_NAME => HoldTypeType::class,
         Setter::RESOURCE_NAME => SetterType::class,
         Wall::RESOURCE_NAME => WallType::class,
-        Event::RESOURCE_NAME => EventType::class
+        Event::RESOURCE_NAME => EventType::class,
+        ReadableIdentifier::RESOURCE_NAME=> ReadableIdentifierType::class
     ];
 
     private LocationRepository $locationRepository;
