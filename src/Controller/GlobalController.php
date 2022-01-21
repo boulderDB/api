@@ -184,7 +184,7 @@ class GlobalController extends AbstractController
             return $this->badFormRequestResponse($form);
         }
 
-        $isValid = $this->passwordEncoder->isPasswordValid($user, $data["oldPassword"]);
+        $isValid = $this->passwordEncoder->isPasswordValid($user, $data["currentPassword"]);
 
         if (!$isValid) {
             return $this->unauthorizedResponse("Invalid credentials");
