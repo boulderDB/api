@@ -39,7 +39,7 @@ class StorageClient
             "Body" => $contents
         ]);
 
-        return "{$_ENV["CDN_HOST"]}/{$_ENV["S3_BUCKET"]}/{$filename}";
+        return "{$_ENV["S3_ENDPOINT"]}/{$_ENV["S3_BUCKET"]}/{$filename}";
     }
 
 }
