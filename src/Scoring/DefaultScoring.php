@@ -9,25 +9,25 @@ class DefaultScoring implements ScoringInterface
 {
     public function calculateScore(Boulder $boulder): void
     {
-        $ascentCount = $boulder->getAscents()->count();
         $points = $boulder->getPoints();
+
+        $validAscentsCount = $boulder->getAscents()->filter(function ($ascent) {
+            /**
+             * @var Ascent $ascent
+             */
+            return in_array($ascent->getType(), $this->getScoredAscentTypes()) && $ascent->getUser()->isVisible();
+        })->count();
 
         /**
          * @var Ascent $ascent
          */
         foreach ($boulder->getAscents() as $ascent) {
-            $validAscentsCount = $boulder->getAscents()->filter(function ($ascent) {
-                /**
-                 * @var Ascent $ascent
-                 */
-                return in_array($ascent->getType(), $this->getScoredAscentTypes()) && $ascent->getUser()->isVisible();
-            })->count();
 
             if ($ascent->getType() === Ascent::ASCENT_FLASH) {
-                $ascent->setScore(round(($points / $ascentCount) * 1.1));
+                $ascent->setScore(round(($points / $validAscentsCount) * 1.1));
 
             } else if ($ascent->getType() === Ascent::ASCENT_TOP) {
-                $ascent->setScore(round($points / $ascentCount));
+                $ascent->setScore(round($points / $validAscentsCount));
             } else {
                 $ascent->setScore(0);
             }

@@ -82,20 +82,9 @@ class BoulderController extends AbstractController
      */
     public function index()
     {
-        $userId = $this->getUser()->getId();
-        $boulders = $this->boulderRepository->getByStatus($this->contextService->getLocation()?->getId());
-        $scoring = new DefaultScoring();
-
-        /* todo: add postload listener */
-        /**
-         * @var Boulder $boulder
-         */
-        foreach ($boulders as $boulder) {
-            $scoring->calculateScore($boulder);
-            $boulder->setUserAscent($userId);
-        }
-
-        return $this->okResponse($boulders);
+        return $this->okResponse(
+            $this->boulderRepository->getByStatus($this->contextService->getLocation()?->getId())
+        );
     }
 
     /**
