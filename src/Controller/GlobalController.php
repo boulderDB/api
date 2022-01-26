@@ -33,7 +33,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class GlobalController extends AbstractController
 {
-    const ACCOUNT_DELETION_TIMEOUT = '+1 day';
+    const ACCOUNT_DELETION_TIMEOUT = "+1 day";
     const PASSWORD_RESET_EXPIRY = 60 * 60;
 
     use FormErrorTrait;
@@ -116,15 +116,23 @@ class GlobalController extends AbstractController
          */
         $user = $this->getUser();
         $currentMail = $user->getEmail();
+        $currentUsername = $user->getUsername();
 
         $form = $this->createForm(UserType::class, $user);
 
         $form->add(...UserType::notificationsField());
+        $form->add(...UserType::usernameField());
         $form->submit(self::decodePayLoad($request), false);
 
         if ($this->userRepository->userExists("email", $form->getData()->getEmail()) && $currentMail !== $form->getData()->getEmail()) {
             $form->get("email")->addError(
-                new FormError('This email is already taken')
+                new FormError("This email is already taken")
+            );
+        }
+
+        if ($this->userRepository->userExists("username", $form->getData()->getUsername()) && $currentUsername !== $form->getData()->getUsername()) {
+            $form->get("email")->addError(
+                new FormError("This username is already taken")
             );
         }
 
@@ -161,8 +169,8 @@ class GlobalController extends AbstractController
         );
 
         return $this->okResponse([
-            "message" => "Your account was scheduled for deletion and will be removed on {$current->format('c')}",
-            "time" => $current->format('c')
+            "message" => "Your account was scheduled for deletion and will be removed on {$current->format("c")}",
+            "time" => $current->format("c")
         ]);
     }
 
@@ -206,7 +214,7 @@ class GlobalController extends AbstractController
      */
     public function requestReset(Request $request)
     {
-        self::rateLimit($request, 'reset', 50);
+        self::rateLimit($request, "reset", 50);
 
         $form = $this->createForm(PasswordResetRequestType::class);
         $form->submit(self::decodePayLoad($request));
@@ -215,10 +223,10 @@ class GlobalController extends AbstractController
             return $this->badFormRequestResponse($form);
         }
 
-        $email = $form->getData()['email'];
+        $email = $form->getData()["email"];
 
-        if (!$this->userRepository->userExists('email', $email)) {
-            $form->get('email')->addError(
+        if (!$this->userRepository->userExists("email", $email)) {
+            $form->get("email")->addError(
                 new FormError("E-Mail '$email' not found")
             );
         }
@@ -236,9 +244,9 @@ class GlobalController extends AbstractController
             return $this->resourceNotFoundResponse("User", $email);
         }
 
-        $clientHostname = $_ENV['CLIENT_HOSTNAME'];
+        $clientHostname = $_ENV["CLIENT_HOSTNAME"];
         $storageKey = "pending_password_reset_{$user->getId()}";
-        $hash = hash('sha256', $storageKey);
+        $hash = hash("sha256", $storageKey);
 
         $this->redis->set($hash, $user->getId(), self::PASSWORD_RESET_EXPIRY);
 
@@ -249,7 +257,7 @@ class GlobalController extends AbstractController
         $email = (new Email())
             ->from($_ENV["MAILER_FROM"])
             ->to($user->getEmail())
-            ->subject('BoulderDB Password reset')
+            ->subject("BoulderDB Password reset")
             ->html($html);
 
         $this->mailer->send($email);
@@ -292,7 +300,7 @@ class GlobalController extends AbstractController
             return $this->badFormRequestResponse($form);
         }
 
-        $password = $this->passwordEncoder->hashPassword($user, $form->getData()['password']);
+        $password = $this->passwordEncoder->hashPassword($user, $form->getData()["password"]);
         $user->setPassword($password);
         $this->redis->del($hash);
 
@@ -307,15 +315,15 @@ class GlobalController extends AbstractController
      */
     public function register(Request $request)
     {
-        self::rateLimit($request, 'register');
+        self::rateLimit($request, "register");
 
         $user = new User();
 
         $form = $this->createForm(UserType::class, $user);
 
         $form->add(...UserType::usernameField());
-        $form->add('email', EmailType::class, [
-            'constraints' => [
+        $form->add("email", EmailType::class, [
+            "constraints" => [
                 new NotBlank()
             ]
         ]);
@@ -330,19 +338,19 @@ class GlobalController extends AbstractController
 
         if ($form->isSubmitted()) {
             // check bot traps and return fake id response if filled
-            if (isset($form->getExtraData()['phone']) || isset($form->getExtraData()['fax'])) {
+            if (isset($form->getExtraData()["phone"]) || isset($form->getExtraData()["fax"])) {
                 return $this->noContentResponse();
             }
 
-            if ($this->userRepository->userExists('email', $form->getData()->getEmail())) {
+            if ($this->userRepository->userExists("email", $form->getData()->getEmail())) {
                 $form->get("email")->addError(
-                    new FormError('This email is already taken')
+                    new FormError("This email is already taken")
                 );
             }
 
-            if ($this->userRepository->userExists('username', $form->getData()->getUsername())) {
+            if ($this->userRepository->userExists("username", $form->getData()->getUsername())) {
                 $form->get("username")->addError(
-                    new FormError('This username is already taken')
+                    new FormError("This username is already taken")
                 );
             }
         }
