@@ -54,8 +54,6 @@ class WallController extends AbstractController
      */
     public function read(int $id)
     {
-        $this->denyUnlessLocationAdmin();
-
         return $this->readEntity(Wall::class, $id, ["detail"]);
     }
 
