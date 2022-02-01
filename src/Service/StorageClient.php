@@ -28,18 +28,24 @@ class StorageClient
         $contents = file_get_contents($file->getPathname());
         $filename = md5($contents) . "." . $file->getClientOriginalExtension();
 
-        return $this->uploadContent($filename, $contents);
+        return $this->uploadContent($filename, $contents, $file->getClientMimeType());
     }
 
-    public function uploadContent(string $filename, string $contents): string
+    public function uploadContent(string $filename, string $contents, string $contentType = null): string
     {
-        $this->client->putObject([
+        $options = [
             "Bucket" => $_ENV["S3_BUCKET"],
             "Key" => $filename,
             "Body" => $contents
-        ]);
+        ];
 
-        return "{$_ENV["CDN_HOST"]}/{$_ENV["S3_BUCKET"]}/{$filename}";
+        if ($contentType) {
+            $options["ContentType"] = $contentType;
+        }
+
+        $this->client->putObject($options);
+
+        return "{$_ENV["S3_ENDPOINT"]}/{$_ENV["S3_BUCKET"]}/{$filename}";
     }
 
 }
