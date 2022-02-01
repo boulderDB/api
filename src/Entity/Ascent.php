@@ -18,6 +18,9 @@ class Ascent implements LocationResourceInterface, TimestampableInterface, UserR
     public const ASCENT_RESIGNED = 'resignation';
     public const PENDING_DOUBT_FLAG = '-pending-doubt';
 
+    public const SOURCE_USER = "user";
+    public const SOURCE_ADMIN = "admin";
+
     use TimestampTrait;
     use LocationTrait;
 
@@ -59,6 +62,11 @@ class Ascent implements LocationResourceInterface, TimestampableInterface, UserR
      * @ORM\Column(name="user_id", type="integer")
      */
     private ?int $userId = null;
+
+    /**
+     * @ORM\Column(type="string", options={"default": "user"})
+     */
+    private ?string $source = self::SOURCE_USER;
 
     public function getId(): ?int
     {
@@ -123,6 +131,16 @@ class Ascent implements LocationResourceInterface, TimestampableInterface, UserR
     public function setChecksum(): void
     {
         $this->checksum = md5($this->boulder->getId() . $this->user->getId());
+    }
+
+    public function getSource(): ?string
+    {
+        return $this->source;
+    }
+
+    public function setSource(?string $source): void
+    {
+        $this->source = $source;
     }
 
     public function invalidates(): array

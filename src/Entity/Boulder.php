@@ -128,6 +128,8 @@ class Boulder implements LocationResourceInterface, TimestampableInterface, Cach
 
     private ?int $currentPoints = null;
 
+    private bool $calculated = false;
+
     public function __construct()
     {
         $this->setters = new ArrayCollection();
@@ -248,6 +250,16 @@ class Boulder implements LocationResourceInterface, TimestampableInterface, Cach
     public function setCurrentPoints(int $points): void
     {
         $this->currentPoints = $points;
+    }
+
+    public function isCalculated(): bool
+    {
+        return $this->calculated;
+    }
+
+    public function setCalculated(bool $calculated): void
+    {
+        $this->calculated = $calculated;
     }
 
     public function getRemovedAt(): ?\DateTime

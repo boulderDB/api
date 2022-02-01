@@ -17,7 +17,6 @@ class RankingService
          * @var \App\Entity\Boulder $boulder
          */
         foreach ($boulders as $boulder) {
-
             $ranking->getScoring()->calculateScore($boulder);
 
             /**
@@ -28,7 +27,7 @@ class RankingService
                     continue;
                 }
 
-                if ($event && $ascent->getCreatedAt() > $event->getEndDate()) {
+                if ($event && $ascent->getCreatedAt() > $event->getEndDate() && $ascent->getSource() !== Ascent::SOURCE_ADMIN) {
                     continue;
                 }
 

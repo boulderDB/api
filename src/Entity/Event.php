@@ -120,7 +120,19 @@ class Event implements LocationResourceInterface, CacheableInterface
              * @var \App\Entity\User $participant
              */
             return $participant->getId() === $user->getId();
-        })->first();
+        })?->first();
+    }
+
+    public function findBoulder(int $id): ?Boulder
+    {
+        $match = $this->boulders->filter(function ($boulder) use ($id) {
+            /**
+             * @var \App\Entity\Boulder $boulder
+             */
+            return $boulder->getId() === $id;
+        })?->first();
+
+        return $match ? $match: null;
     }
 
     public function isPublic(): bool

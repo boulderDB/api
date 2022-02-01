@@ -179,7 +179,7 @@ class EventController extends AbstractController
      */
     public function read(int $id)
     {
-        return $this->readEntity(Event::class, $id, ["detail"]);
+        return $this->readEntity(Event::class, $id);
     }
 
     /**

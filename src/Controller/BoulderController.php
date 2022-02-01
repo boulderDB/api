@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Boulder;
+use App\Entity\Event;
 use App\Form\BoulderType;
 use App\Form\MassOperationType;
+use App\Repository\EventRepository;
 use App\Scoring\DefaultPointsRanking;
 use App\Scoring\DefaultScoring;
 use App\Repository\BoulderRepository;
@@ -26,16 +28,19 @@ class BoulderController extends AbstractController
     private EntityManagerInterface $entityManager;
     private ContextService $contextService;
     private BoulderRepository $boulderRepository;
+    private EventRepository $eventRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ContextService $contextService,
-        BoulderRepository $boulderRepository
+        BoulderRepository $boulderRepository,
+        EventRepository $eventRepository
     )
     {
         $this->entityManager = $entityManager;
         $this->contextService = $contextService;
         $this->boulderRepository = $boulderRepository;
+        $this->eventRepository = $eventRepository;
     }
 
     /**
@@ -80,22 +85,26 @@ class BoulderController extends AbstractController
     /**
      * @Route(methods={"GET"}, name="boulders_index")
      */
-    public function index()
+    public function index(Request $request)
     {
-        $userId = $this->getUser()->getId();
-        $boulders = $this->boulderRepository->getByStatus($this->contextService->getLocation()?->getId());
-        $scoring = new DefaultScoring();
+        $eventId = $request->get("event");
 
-        /* todo: add postload listener */
-        /**
-         * @var Boulder $boulder
-         */
-        foreach ($boulders as $boulder) {
-            $scoring->calculateScore($boulder);
-            $boulder->setUserAscent($userId);
+        if ($eventId) {
+            /**
+             * @var Event|null $event
+             */
+            $event = $this->eventRepository->find($eventId);
+
+            if (!$event) {
+                return $this->resourceNotFoundResponse(Event::RESOURCE_NAME, $eventId);
+            }
+
+            return $this->okResponse($event->getBoulders());
         }
 
-        return $this->okResponse($boulders);
+        return $this->okResponse(
+            $this->boulderRepository->getByStatus($this->contextService->getLocation()?->getId())
+        );
     }
 
     /**
@@ -123,8 +132,30 @@ class BoulderController extends AbstractController
     /**
      * @Route("/{id}", requirements={"id": "\d+"}, methods={"GET"}, name="boulders_read")
      */
-    public function read(string $id)
+    public function read(Request $request, string $id)
     {
+        $eventId = $request->get("event");
+
+        if ($eventId) {
+            /**
+             * @var Event|null $event
+             */
+            $event = $this->eventRepository->find($eventId);
+
+            if (!$event) {
+                return $this->resourceNotFoundResponse(Event::RESOURCE_NAME, $id);
+            }
+
+            $boulder = $event->findBoulder($id);
+
+            if (!$boulder) {
+                return $this->badRequestResponse("Boulder $id is not part of event $eventId");
+            }
+
+            return $this->okResponse($boulder);
+        }
+
+
         return $this->readEntity(Boulder::class, $id, ["detail"]);
     }
 

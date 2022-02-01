@@ -54,6 +54,8 @@ class ExceptionListener implements EventSubscriberInterface
             ], $exception->getStatusCode());
         }
 
+
+
         $event->setResponse($response);
     }
 }
