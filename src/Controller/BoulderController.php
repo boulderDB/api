@@ -152,7 +152,7 @@ class BoulderController extends AbstractController
                 return $this->badRequestResponse("Boulder $id is not part of event $eventId");
             }
 
-            return $this->okResponse($boulder);
+            return $this->okResponse($boulder, ["detail"]);
         }
 
 
