@@ -4,16 +4,11 @@ namespace App\Scoring;
 
 use App\Entity\Ascent;
 use App\Entity\Boulder;
-use App\Entity\Event;
 
 class DefaultScoring implements ScoringInterface
 {
-    public function calculateScore(Boulder $boulder, Event $event = null): void
+    public function calculateScore(Boulder $boulder): void
     {
-        if ($boulder->isCalculated()) {
-            return;
-        }
-
         $points = $boulder->getPoints();
 
         $validAscentsCount = $boulder->getAscents()->filter(function ($ascent) {
@@ -27,6 +22,7 @@ class DefaultScoring implements ScoringInterface
          * @var Ascent $ascent
          */
         foreach ($boulder->getAscents() as $ascent) {
+
             if ($ascent->getType() === Ascent::ASCENT_FLASH) {
                 $ascent->setScore(round(($points / $validAscentsCount) * 1.1));
 
@@ -40,8 +36,6 @@ class DefaultScoring implements ScoringInterface
                 $boulder->setCurrentPoints(round($boulder->getPoints() / ($validAscentsCount + 1)));
             }
         }
-
-        $boulder->setCalculated(true);
     }
 
     public function getScoredAscentTypes(): array

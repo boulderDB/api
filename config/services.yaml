@@ -61,7 +61,3 @@ services:
   App\EventListener\CacheableResourceListener:
     tags:
       - { name: 'doctrine.event_subscriber' }
-
-  App\EventListener\EventListener:
-    tags:
-      - { name: 'doctrine.event_subscriber' }
