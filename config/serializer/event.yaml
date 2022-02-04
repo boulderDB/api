@@ -13,7 +13,7 @@ App\Entity\Event:
     endDate:
       groups: [ "default" ]
     boulders:
-      groups: [ "detail" ]
+      groups: [ "detail", "admin" ]
     participants:
       groups: [ "admin" ]
     ranking:
