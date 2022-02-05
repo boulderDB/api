@@ -55,7 +55,7 @@ class AscentController extends AbstractController
         $ascent = new Ascent();
 
         if ($request->query->has("forUser") && $this->isLocationAdmin()) {
-            $userId = $request->query->has("forUser");
+            $userId = $request->query->get("forUser");
 
             /**
              * @var \App\Entity\User $user
@@ -104,7 +104,7 @@ class AscentController extends AbstractController
         }
 
         if ($request->query->has("forUser") && $this->isLocationAdmin()) {
-            $userId = $request->query->has("forUser");
+            $userId = $request->query->get("forUser");
 
             /**
              * @var \App\Entity\User $user
