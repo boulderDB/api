@@ -71,7 +71,7 @@ class BoulderListener implements EventSubscriber
     {
         $request = $this->requestStack->getCurrentRequest();
         $locationAdmin = $this->authorizationChecker->isGranted($this->contextService->getLocationRole(User::ROLE_ADMIN));
-        $userId = $request->query->has("forUser");
+        $userId = $request->query->get("forUser");
 
         if ($userId && $locationAdmin) {
             /**
