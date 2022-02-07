@@ -57,7 +57,7 @@ class SetterController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"GET"}, name="setters_read")
+     * @Route("/{id}", requirements={"id": "\d+"}, methods={"GET"}, name="setters_read")
      */
     public function read(int $id)
     {
@@ -102,7 +102,7 @@ class SetterController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"PUT"}, name="setters_update")
+     * @Route("/{id}", requirements={"id": "\d+"}, methods={"PUT"}, name="setters_update")
      */
     public function update(Request $request, string $id)
     {
@@ -138,7 +138,7 @@ class SetterController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"DELETE"}, name="setters_delete")
+     * @Route("/{id}", requirements={"id": "\d+"}, methods={"DELETE"}, name="setters_delete")
      */
     public function delete(string $id)
     {
