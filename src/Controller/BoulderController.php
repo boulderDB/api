@@ -5,10 +5,8 @@ namespace App\Controller;
 use App\Entity\Boulder;
 use App\Entity\Event;
 use App\Form\BoulderType;
-use App\Form\MassOperationType;
+use App\Form\BoulderMassOperationType;
 use App\Repository\EventRepository;
-use App\Scoring\DefaultPointsRanking;
-use App\Scoring\DefaultScoring;
 use App\Repository\BoulderRepository;
 use App\Service\ContextService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -203,7 +201,7 @@ class BoulderController extends AbstractController
     {
         $this->denyUnlessLocationAdminOrSetter();
 
-        $form = $this->handleForm($request, null, MassOperationType::class);
+        $form = $this->handleForm($request, null, BoulderMassOperationType::class);
 
         if (!$form->isValid()) {
             return $this->badFormRequestResponse($form);
@@ -216,15 +214,15 @@ class BoulderController extends AbstractController
          * @var Boulder $boulder
          */
         foreach ($items as $boulder) {
-            if ($operation === MassOperationType::OPERATION_DEACTIVATE) {
+            if ($operation === BoulderMassOperationType::OPERATION_DEACTIVATE) {
                 $boulder->setStatus(Boulder::STATUS_INACTIVE);
             }
 
-            if ($operation === MassOperationType::OPERATION_REACTIVATE) {
+            if ($operation === BoulderMassOperationType::OPERATION_REACTIVATE) {
                 $boulder->setStatus(Boulder::STATUS_ACTIVE);
             }
 
-            if ($operation === MassOperationType::OPERATION_PRUNE_ASCENTS) {
+            if ($operation === BoulderMassOperationType::OPERATION_PRUNE_ASCENTS) {
                 $boulder->setAscents(new ArrayCollection());
             }
 

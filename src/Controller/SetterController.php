@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Setter;
+use App\Form\SetterMassOperationType;
 use App\Form\SetterType;
 use App\Repository\SetterRepository;
 use App\Service\ContextService;
@@ -144,5 +145,42 @@ class SetterController extends AbstractController
         $this->denyUnlessLocationAdmin();
 
         return $this->deleteEntity(Setter::class, $id, true);
+    }
+
+
+    /**
+     * @Route("/mass", methods={"PUT"}, name="setters_mass")
+     */
+    public function mass(Request $request)
+    {
+        $this->denyUnlessLocationAdmin();
+
+        $form = $this->handleForm($request, null, SetterMassOperationType::class);
+
+        if (!$form->isValid()) {
+            return $this->badFormRequestResponse($form);
+        }
+
+        $items = $form->getData()["items"];
+        $operation = $form->getData()["operation"];
+
+        /**
+         * @var Setter $setter
+         */
+        foreach ($items as $setter) {
+            if ($operation === SetterMassOperationType::OPERATION_DEACTIVATE) {
+                $setter->setActive(false);
+            }
+
+            if ($operation === SetterMassOperationType::OPERATION_REACTIVATE) {
+                $setter->setActive(true);
+            }
+
+            $this->entityManager->persist($setter);
+        }
+
+        $this->entityManager->flush();
+
+        return $this->noContentResponse();
     }
 }

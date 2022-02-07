@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Ascent;
 use App\Form\AscentType;
-use App\Form\MassOperationType;
 use App\Repository\AscentRepository;
 use App\Repository\EventRepository;
 use App\Repository\UserRepository;
