@@ -7,7 +7,7 @@ App\Entity\Boulder:
     grade:
       groups: [ "default" ]
     internalGrade:
-      groups: [ "setter", "admin" ]
+      groups: [ "setterDefault", "adminDefault" ]
     holdType:
       groups: [ "default" ]
     startWall:
@@ -28,9 +28,7 @@ App\Entity\Boulder:
       groups: [ "detail" ]
     comments:
       groups: [ "detail" ]
-    behaviours:
-      groups: [ "admin" ]
     status:
-      groups: [ "detail", "admin" ]
+      groups: [ "setterDefault", "adminDefault" ]
     areas:
       groups: [ "default" ]

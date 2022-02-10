@@ -6,5 +6,3 @@ App\Entity\Notification:
       groups: [ "default" ]
     location:
       groups: [ "default" ]
-    behaviours:
-      groups: [ "admin" ]

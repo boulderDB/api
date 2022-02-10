@@ -8,5 +8,3 @@ App\Entity\Ascent:
       groups: [ "default" ]
     user:
       groups: [ "default" ]
-    behaviours:
-      groups: [ "admin" ]

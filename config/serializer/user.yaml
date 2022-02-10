@@ -21,6 +21,4 @@ App\Entity\User:
     notifications:
       groups: [ "self" ]
     roles:
-      groups: [ "admin", "self" ]
-    behaviours:
-      groups: [ "admin" ]
+      groups: [ "self", "adminDetail" ]

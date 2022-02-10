@@ -6,5 +6,3 @@ App\Entity\BoulderTag:
       groups: [ "default" ]
     emoji:
       groups: [ "default" ]
-    behaviours:
-      groups: [ "admin" ]

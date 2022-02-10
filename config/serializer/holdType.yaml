@@ -8,5 +8,3 @@ App\Entity\HoldType:
       groups: [ "default" ]
     active:
       groups: [ "detail" ]
-    behaviours:
-      groups: [ "admin" ]

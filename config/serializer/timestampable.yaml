@@ -2,5 +2,3 @@ App\Entity\TimestampableInterface:
   attributes:
     createdAt:
       groups: [ "default" ]
-    behaviours:
-      groups: [ "admin" ]

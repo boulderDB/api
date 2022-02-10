@@ -26,5 +26,3 @@ App\Entity\Location:
       groups: [ "detail" ]
     twitter:
       groups: [ "detail" ]
-    behaviours:
-      groups: [ "admin" ]

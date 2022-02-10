@@ -14,7 +14,7 @@ App\Entity\Event:
       groups: [ "default" ]
     boulders:
       groups: [ "detail"]
-    participants:
-      groups: [ "admin" ]
     ranking:
       groups: [ "detail" ]
+    participants:
+      groups: [ "adminDetail" ]

@@ -52,7 +52,7 @@ trait CrudTrait
         return $this->createdResponse($object);
     }
 
-    private function readEntity(string $resource, string $id, array $groups = ["default"])
+    private function readEntity(string $resource, string $id, array $groups = ["detail"])
     {
         $entity = new $resource;
 

@@ -10,5 +10,3 @@ App\Entity\Wall:
       groups: [ "detail" ]
     description:
       groups: [ "detail" ]
-    behaviours:
-      groups: [ "admin" ]

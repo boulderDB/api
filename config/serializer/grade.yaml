@@ -8,7 +8,5 @@ App\Entity\Grade:
       groups: [ "default" ]
     active:
       groups: [ "detail" ]
-    behaviours:
-      groups: [ "admin" ]
     position:
       groups: [ "default" ]

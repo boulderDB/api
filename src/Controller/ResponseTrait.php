@@ -122,11 +122,19 @@ trait ResponseTrait
         }
 
         if ($this->isLocationAdmin()) {
-            $context["groups"][] = "admin";
+            $context["groups"][] = "adminDefault";
+
+            if (in_array("detail", $context["groups"])) {
+                $context["groups"][] = "adminDetail";
+            }
         }
 
         if ($this->isLocationSetter()) {
-            $context["groups"][] = "setter";
+            $context["groups"][] = "setterDefault";
+
+            if (in_array("detail", $context["groups"])) {
+                $context["groups"][] = "setterDetail";
+            }
         }
 
         return $context;

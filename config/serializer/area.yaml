@@ -8,5 +8,3 @@ App\Entity\Area:
       groups: [ "detail" ]
     active:
       groups: [ "detail" ]
-    behaviours:
-      groups: [ "admin" ]

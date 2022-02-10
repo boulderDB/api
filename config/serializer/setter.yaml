@@ -8,5 +8,3 @@ App\Entity\Setter:
       groups: [ "default" ]
     user:
       groups: [ "detail" ]
-    behaviours:
-      groups: [ "admin" ]
