@@ -120,7 +120,8 @@ class Boulder implements LocationResourceInterface, TimestampableInterface, Cach
     private ?Collection $ratings = null;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\ReadableIdentifier")
+     * @ORM\OneToOne(targetEntity="App\Entity\ReadableIdentifier", fetch="EAGER")
+     * @ORM\JoinColumn(name="readable_identifier_id", referencedColumnName="id")
      */
     private ?ReadableIdentifier $readableIdentifier;
 
