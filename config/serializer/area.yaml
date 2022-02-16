@@ -5,6 +5,6 @@ App\Entity\Area:
     name:
       groups: [ "default" ]
     walls:
-      groups: [ "detail" ]
+      groups: [ "adminDefault" ]
     active:
       groups: [ "detail" ]

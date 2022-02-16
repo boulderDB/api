@@ -339,7 +339,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface, Cach
         return $this->readableIdentifier;
     }
 
-    public function setReadableIdentifier(ReadableIdentifier $readableIdentifier = null): void
+    public function setReadableIdentifier(ReadableIdentifier $readableIdentifier): void
     {
         $this->readableIdentifier = $readableIdentifier;
     }

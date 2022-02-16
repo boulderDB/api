@@ -6,5 +6,5 @@ interface ReadableIdentifierInterface
 {
     public function getReadableIdentifier(): ?ReadableIdentifier;
 
-    public function setReadableIdentifier(ReadableIdentifier $readableIdentifier = null): void;
+    public function setReadableIdentifier(ReadableIdentifier $readableIdentifier): void;
 }
