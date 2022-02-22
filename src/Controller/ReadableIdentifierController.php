@@ -119,6 +119,8 @@ class ReadableIdentifierController extends AbstractController
      */
     public function code(string $identifier)
     {
+        $this->denyUnlessLocationAdmin();
+
         $value = $_ENV["CLIENT_HOSTNAME"] . "/" . $this->contextService->getLocation()->getUrl() . "/boulder/" . $identifier;
 
         $code = Builder::create()
@@ -135,11 +137,13 @@ class ReadableIdentifierController extends AbstractController
             ->labelText($identifier)
             ->labelFont(new NotoSans(12))
             ->labelAlignment(new LabelAlignmentCenter())
-            ->foregroundColor(new Color(0, 0, 0))
             ->build();
 
+
         return new Response($code->getString(), Response::HTTP_OK, [
-            'Content-type' => $code->getMimeType()
+            "Content-type" => $code->getMimeType(),
+            "Content-Disposition" => "attachment; filename=$identifier.png",
+            "Content-length" => strlen($code->getString())
         ]);
     }
 }
