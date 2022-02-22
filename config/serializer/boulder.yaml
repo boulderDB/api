@@ -33,4 +33,4 @@ App\Entity\Boulder:
     areas:
       groups: [ "default" ]
     readableIdentifier:
-      groups: [ "detail" ]
+      groups: [ "detail", "adminDefault", "setterDefault" ]
