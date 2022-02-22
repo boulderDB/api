@@ -18,6 +18,15 @@ class ReadableIdentifierRepository extends ServiceEntityRepository
         parent::__construct($registry, ReadableIdentifier::class);
     }
 
+    public function getByLocation(int $locationId)
+    {
+        return $this->createQueryBuilder("readableIdentifier")
+            ->where("readableIdentifier.location = :location")
+            ->setParameter("location", $locationId)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function getUnassigned(int $locationId)
     {
         $queryBuilder = $this->createQueryBuilder("readableIdentifier");
