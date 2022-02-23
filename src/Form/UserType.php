@@ -14,6 +14,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class UserType extends AbstractType
 {
@@ -73,6 +74,7 @@ class UserType extends AbstractType
             [
                 "constraints" => [
                     new NotBlank(),
+                    new NotNull(),
                     new Length(["min" => 2, "max" => 50])
                 ]
             ]

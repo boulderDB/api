@@ -30,6 +30,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class GlobalController extends AbstractController
 {
@@ -324,7 +325,8 @@ class GlobalController extends AbstractController
         $form->add(...UserType::usernameField());
         $form->add("email", EmailType::class, [
             "constraints" => [
-                new NotBlank()
+                new NotBlank(),
+                new NotNull()
             ]
         ]);
 
