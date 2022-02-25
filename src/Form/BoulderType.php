@@ -59,9 +59,7 @@ class BoulderType extends AbstractSchemaType
         $identifierQuery = function (EntityRepository $entityRepository) use ($locationId) {
             return $entityRepository->createQueryBuilder("readableIdentifier")
                 ->where("readableIdentifier.location = :location")
-                ->setParameter("location", $locationId)
-                ->getQuery()
-                ->getResult();
+                ->setParameter("location", $locationId);
         };
 
         $data = [
