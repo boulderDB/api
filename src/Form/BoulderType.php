@@ -9,7 +9,6 @@ use App\Entity\Setter;
 use App\Entity\BoulderTag;
 use App\Entity\Grade;
 use App\Entity\Wall;
-use App\Repository\ReadableIdentifierRepository;
 use App\Service\ContextService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -63,23 +62,36 @@ class BoulderType extends AbstractSchemaType
         };
 
         $data = [
-            1 => [
+            0 => [
                 "name" => "name",
                 "type" => TextType::class,
                 "options" => [
                     "constraints" => [new NotBlank()],
                 ]
             ],
-            2 => [
-                "name" => "holdType",
+            1 => [
+                "name" => "startWall",
                 "type" => EntityType::class,
                 "options" => [
-                    "class" => HoldType::class,
+                    "class" => Wall::class,
                     "constraints" => [new NotBlank()],
                     "query_builder" => $locationQuery
                 ],
                 "schema" => [
-                    "resource" => "/holdtypes",
+                    "resource" => "/walls",
+                    "labelProperty" => "name"
+                ]
+            ],
+            2 => [
+                "name" => "endWall",
+                "type" => EntityType::class,
+                "options" => [
+                    "class" => Wall::class,
+                    "constraints" => [],
+                    "query_builder" => $locationQuery
+                ],
+                "schema" => [
+                    "resource" => "/walls",
                     "labelProperty" => "name"
                 ]
             ],
@@ -98,28 +110,29 @@ class BoulderType extends AbstractSchemaType
             ],
             4 => null,
             5 => [
-                "name" => "startWall",
+                "name" => "holdType",
                 "type" => EntityType::class,
                 "options" => [
-                    "class" => Wall::class,
+                    "class" => HoldType::class,
                     "constraints" => [new NotBlank()],
                     "query_builder" => $locationQuery
                 ],
                 "schema" => [
-                    "resource" => "/walls",
+                    "resource" => "/holdtypes",
                     "labelProperty" => "name"
                 ]
             ],
             6 => [
-                "name" => "endWall",
+                "name" => "tags",
                 "type" => EntityType::class,
                 "options" => [
-                    "class" => Wall::class,
-                    "constraints" => [],
+                    "class" => BoulderTag::class,
+                    "multiple" => true,
+                    "constraints" => [new NotNull()],
                     "query_builder" => $locationQuery
                 ],
                 "schema" => [
-                    "resource" => "/walls",
+                    "resource" => "/boulder-tags",
                     "labelProperty" => "name"
                 ]
             ],
@@ -138,20 +151,6 @@ class BoulderType extends AbstractSchemaType
                 ]
             ],
             8 => [
-                "name" => "tags",
-                "type" => EntityType::class,
-                "options" => [
-                    "class" => BoulderTag::class,
-                    "multiple" => true,
-                    "constraints" => [new NotNull()],
-                    "query_builder" => $locationQuery
-                ],
-                "schema" => [
-                    "resource" => "/boulder-tags",
-                    "labelProperty" => "name"
-                ]
-            ],
-            9 => [
                 "name" => "points",
                 "type" => NumberType::class,
                 "options" => [
@@ -161,7 +160,7 @@ class BoulderType extends AbstractSchemaType
                     "default" => Boulder::DEFAULT_SCORE
                 ]
             ],
-            10 => [
+            9 => [
                 "name" => "status",
                 "type" => ChoiceType::class,
                 "options" => [
@@ -188,7 +187,8 @@ class BoulderType extends AbstractSchemaType
                 ],
                 "schema" => [
                     "resource" => "/grades",
-                    "labelProperty" => "name"
+                    "labelProperty" => "name",
+                    "mapping" => $this->contextService->getSettings()?->grades?->mapping
                 ]
             ];
         }
