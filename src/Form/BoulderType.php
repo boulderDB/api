@@ -95,7 +95,8 @@ class BoulderType extends AbstractSchemaType
                     "labelProperty" => "name"
                 ]
             ],
-            3 => [
+            3 => null,
+            4 => [
                 "name" => "grade",
                 "type" => EntityType::class,
                 "options" => [
@@ -108,7 +109,6 @@ class BoulderType extends AbstractSchemaType
                     "labelProperty" => "name"
                 ]
             ],
-            4 => null,
             5 => [
                 "name" => "holdType",
                 "type" => EntityType::class,
@@ -177,7 +177,7 @@ class BoulderType extends AbstractSchemaType
         ];
 
         if ($this->contextService->getSettings()?->grades?->internal) {
-            $data[4] = [
+            $data[3] = [
                 "name" => "internalGrade",
                 "type" => EntityType::class,
                 "options" => [
