@@ -62,6 +62,7 @@ class BoulderRepository extends ServiceEntityRepository implements PaginatableIn
             ->innerJoin("boulder.grade", "grade")
             ->innerJoin("boulder.holdType", "holdType")
             ->leftJoin("startWall.areas", "area")
+            ->leftJoin("boulder.tags", "tags")
             ->where("boulder.location = :location")
             ->andWhere("boulder.status = :status")
             ->setParameter("location", $locationId)
