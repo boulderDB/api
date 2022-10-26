@@ -11,7 +11,7 @@ class DefaultScoring implements ScoringInterface
     {
         $points = $boulder->getPoints();
 
-        $validAscentsCount = $boulder->getAscents()->filter(function ($ascent) {
+        $validAscentsCount = $boulder->getAscents(false)->filter(function ($ascent) {
             /**
              * @var Ascent $ascent
              */

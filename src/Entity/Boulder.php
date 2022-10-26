@@ -288,15 +288,20 @@ class Boulder implements LocationResourceInterface, TimestampableInterface, Cach
         return $this->userAscent;
     }
 
-    public function getAscents(): Collection
+    public function getAscents(bool $returnArray = true): Collection|array
     {
-        return $this->ascents->filter(function ($ascent) {
-
+        $collection = $this->ascents->filter(function ($ascent) {
             /**
              * @var Ascent $ascent
              */
             return $ascent->getUser()->isVisible();
         });
+
+        if ($returnArray) {
+            return $collection->getValues();
+        }
+
+        return $collection;
     }
 
     public function setAscents($ascents): void
