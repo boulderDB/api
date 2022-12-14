@@ -2,6 +2,7 @@
 
 namespace App\Ranking;
 
+use App\Entity\Ascent;
 use App\Scoring\AscentScoring;
 use App\Scoring\ScoringInterface;
 
@@ -17,12 +18,16 @@ class AscentRanking implements RankingInterface
     public function getSorter(): \Closure
     {
         return function ($a, $b) {
-            return $a["points"] > $b["points"] ? -1 : 1;
+            if ($a["total"] === $b["total"]) {
+                return $a[Ascent::ASCENT_FLASH]["count"] > $b[Ascent::ASCENT_FLASH]["count"] ? -1 : 1;
+            }
+
+            return $a["total"] > $b["total"] ? -1 : 1;
         };
     }
 
     public function getScoring(): ScoringInterface
     {
-       return new AscentScoring();
+        return new AscentScoring();
     }
 }
