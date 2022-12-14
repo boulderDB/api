@@ -4,8 +4,14 @@ namespace App\Service;
 
 use App\Entity\Ascent;
 use App\Entity\Event;
+use App\Ranking\AscentRanking;
 use App\Ranking\DefaultPointsRanking;
 use App\Ranking\RankingInterface;
+
+const RANKINGS = [
+    DefaultPointsRanking::IDENTIFIER => DefaultPointsRanking::class,
+    AscentRanking::IDENTIFIER => AscentRanking::class
+];
 
 class RankingService
 {
@@ -86,7 +92,13 @@ class RankingService
     public function getRankings(): array
     {
         return [
-            new DefaultPointsRanking()
+            new DefaultPointsRanking(),
+            new AscentRanking()
         ];
+    }
+
+    public function createRanking(string $identifier = DefaultPointsRanking::IDENTIFIER): RankingInterface
+    {
+        return new (RANKINGS[$identifier]);
     }
 }

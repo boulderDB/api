@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Event;
 use App\Factory\RedisConnectionFactory;
-use App\Ranking\DefaultPointsRanking;
 use App\Repository\AscentRepository;
 use App\Repository\BoulderRepository;
 use App\Repository\EventRepository;
@@ -53,7 +52,7 @@ class RankingController extends AbstractController
         $boulders = $this->boulderRepository->getWithAscents($locationId);
 
         return $this->okResponse($this->rankingService->calculateRanking(
-            new DefaultPointsRanking(),
+            $this->rankingService->createRanking(),
             $boulders
         ));
     }
@@ -81,7 +80,7 @@ class RankingController extends AbstractController
         }
 
         return $this->okResponse($this->rankingService->calculateRanking(
-            new DefaultPointsRanking(),
+            $this->rankingService->createRanking($event->getRanking()),
             $event->getBoulders()->toArray(),
             $event
         ));
@@ -104,7 +103,7 @@ class RankingController extends AbstractController
         }
 
         $ranking = $this->rankingService->calculateRanking(
-            new DefaultPointsRanking(),
+            $this->rankingService->createRanking($event->getRanking()),
             $event->getBoulders()->toArray(),
             $event
         );
