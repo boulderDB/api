@@ -2,6 +2,7 @@
 
 namespace App\Ranking;
 
+use App\Scoring\AscentScoring;
 use App\Scoring\ScoringInterface;
 
 class AscentRanking implements RankingInterface
@@ -22,6 +23,6 @@ class AscentRanking implements RankingInterface
 
     public function getScoring(): ScoringInterface
     {
-        // TODO: Implement getScoring() method.
+       return new AscentScoring();
     }
 }
