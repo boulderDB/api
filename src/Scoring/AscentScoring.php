@@ -13,9 +13,7 @@ class AscentScoring implements ScoringInterface
          * @var Ascent $ascent
          */
         foreach ($boulder->getAscents() as $ascent) {
-            if ($ascent->getType() === Ascent::ASCENT_FLASH) {
-                $ascent->setScore(2);
-            } else if ($ascent->getType() === Ascent::ASCENT_TOP) {
+            if ($ascent->getType() === Ascent::ASCENT_FLASH || $ascent->getType() === Ascent::ASCENT_TOP) {
                 $ascent->setScore(1);
             } else {
                 $ascent->setScore(0);
