@@ -48,9 +48,9 @@ class AuthenticationSuccessSubscriber implements EventSubscriberInterface
         $event->setData($payload);
     }
 
-    public function onJWTDecoded(JWTDecodedEvent $event): void
+    public function onJWTCreated(JWTCreatedEvent $event): void
     {
-        $payload = $event->getPayload();
+        $payload = $event->getData();
         $serializerGroups = ["groups" => ["default", "self"]];
 
         /**
@@ -61,14 +61,14 @@ class AuthenticationSuccessSubscriber implements EventSubscriberInterface
         $payload["user"] = $this->serializer->normalize($user, null, $serializerGroups);
         $payload["lastVisitedLocation"] = $this->serializer->normalize($user->getLastVisitedLocation(), null, $serializerGroups);
 
-        $event->setPayload($payload);
+        $event->setData($payload);
     }
 
     public static function getSubscribedEvents()
     {
         return [
             "lexik_jwt_authentication.on_authentication_success" => "onAuthenticationSuccess",
-            "lexik_jwt_authentication.on_jwt_decoded" => "onJWTDecoded"
+            "lexik_jwt_authentication.on_jwt_created" => "onJWTDecoded"
         ];
     }
 }
