@@ -68,7 +68,7 @@ class AuthenticationSuccessSubscriber implements EventSubscriberInterface
     {
         return [
             "lexik_jwt_authentication.on_authentication_success" => "onAuthenticationSuccess",
-            "lexik_jwt_authentication.on_jwt_created" => "onJWTDecoded"
+            "lexik_jwt_authentication.on_jwt_created" => "onJWTCreated"
         ];
     }
 }
