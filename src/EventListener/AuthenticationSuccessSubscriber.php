@@ -5,11 +5,11 @@ namespace App\EventListener;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
-use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTDecodedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 
 class AuthenticationSuccessSubscriber implements EventSubscriberInterface
 {
