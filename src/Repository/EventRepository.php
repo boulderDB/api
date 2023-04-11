@@ -65,6 +65,7 @@ class EventRepository extends ServiceEntityRepository implements DeactivatableRe
         $queryBuilder = $this->createQueryBuilder("event")
             ->where("event.location = :locationId")
             ->andWhere("event.visible = true")
+            ->andWhere("event.startDate > :date")
             ->andWhere("event.endDate > :date")
             ->setParameter("date", $date)
             ->setParameter("locationId", $locationId);
