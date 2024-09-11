@@ -99,6 +99,6 @@ class RankingService
 
     public function createRanking(string $identifier = DefaultPointsRanking::IDENTIFIER): RankingInterface
     {
-        return new (RANKINGS[$identifier]);
+        return new (Rankings[$identifier]);
     }
 }
