@@ -36,10 +36,10 @@ jobs:
           END
 
       - name: Sync repository
-        run: rsync . --archive --recursive --checksum --verbose --delete target:/var/www/boulderdb.de/current/api
+        run: rsync . --archive --recursive --checksum --verbose --delete target:/var/www/boulderdb/current/api
 
       - name: Copy shared files and environment configuration
-        run: ssh target "cd /var/www/boulderdb.de && cp -rf shared/. current && cd /var/www/boulderdb.de/current"
+        run: ssh target "cd /var/www/boulderdb && cp -rf shared/. current && cd /var/www/boulderdb/current"
 
       - name: Run postdeploy.sh
-        run: ssh target "cd /var/www/boulderdb.de/current && ./postdeploy.sh"
+        run: ssh target "cd /var/www/boulderdb/current && ./postdeploy.sh"
