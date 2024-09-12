@@ -37,7 +37,7 @@ jobs:
 
       - name: Sync repository
         run: rsync . --archive --recursive --checksum --verbose --delete target:/var/www/boulderdb/current/api
-        
+
       - name: Copy shared files and environment configuration
         run: ssh target "cd /var/www/boulderdb && cp -rf shared/. current && cd /var/www/boulderdb/current"
 
