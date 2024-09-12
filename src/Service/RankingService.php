@@ -8,13 +8,14 @@ use App\Ranking\AscentRanking;
 use App\Ranking\DefaultPointsRanking;
 use App\Ranking\RankingInterface;
 
-const RANKINGS = [
-    DefaultPointsRanking::IDENTIFIER => DefaultPointsRanking::class,
-    AscentRanking::IDENTIFIER => AscentRanking::class
-];
-
 class RankingService
 {
+
+    private const RANKINGS = [
+        DefaultPointsRanking::IDENTIFIER => DefaultPointsRanking::class,
+        AscentRanking::IDENTIFIER => AscentRanking::class
+    ];
+
     public function calculateRanking(RankingInterface $ranking, array $boulders, Event $event = null): array
     {
         $data = [];
@@ -99,6 +100,6 @@ class RankingService
 
     public function createRanking(string $identifier = DefaultPointsRanking::IDENTIFIER): RankingInterface
     {
-        return new (Rankings[$identifier]);
+        return new (self::RANKINGS[$identifier]);
     }
 }
