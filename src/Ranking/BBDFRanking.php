@@ -4,12 +4,12 @@ namespace App\Ranking;
 
 use App\Entity\Ascent;
 use App\Entity\Boulder;
-use App\Scoring\AscentScoring;
+use App\Scoring\BBDFScoring;
 use App\Scoring\ScoringInterface;
 
-class AscentRanking implements RankingInterface
+class BBDFRanking implements RankingInterface
 {
-    public const IDENTIFIER = "ascent";
+    public const IDENTIFIER = "bbdf";
 
     public function getIdentifier(): string
     {
@@ -29,11 +29,16 @@ class AscentRanking implements RankingInterface
 
     public function getScoring(): ScoringInterface
     {
-        return new AscentScoring();
+        return new BBDFScoring();
     }
 
     public function getAscents(array $boulders): array
     {
+        $userAscents = [];
+
+        /**
+         * @var Ascent[] $ascents
+         */
         $ascents = [];
 
         /**
@@ -46,6 +51,27 @@ class AscentRanking implements RankingInterface
             }
         }
 
-        return $ascents;
+        usort($ascents, function ($a, $b) {
+            /**
+             * @var $a Ascent
+             * @var $b Ascent
+             */
+
+            return $a->getScore() > $b->getScore() ? -1 : 1;
+        });
+
+        foreach ($ascents as $ascent) {
+            $userId = $ascent->getUser()->getId();
+
+            if (!array_key_exists($userId, $userAscents)) {
+                $userAscents[$userId] = [];
+            }
+
+            if (count($userAscents[$userId]) < 5) {
+                $userAscents[$userId][] = $ascent;
+            }
+        }
+
+        return array_merge(...array_values($userAscents));
     }
 }

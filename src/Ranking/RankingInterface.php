@@ -11,4 +11,6 @@ interface RankingInterface
     public function getSorter(): \Closure;
 
     public function getScoring(): ScoringInterface;
+
+    public function getAscents(array $boulders): array;
 }

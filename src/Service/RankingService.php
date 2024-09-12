@@ -5,15 +5,16 @@ namespace App\Service;
 use App\Entity\Ascent;
 use App\Entity\Event;
 use App\Ranking\AscentRanking;
+use App\Ranking\BBDFRanking;
 use App\Ranking\DefaultPointsRanking;
 use App\Ranking\RankingInterface;
 
 class RankingService
 {
-
     private const RANKINGS = [
         DefaultPointsRanking::IDENTIFIER => DefaultPointsRanking::class,
-        AscentRanking::IDENTIFIER => AscentRanking::class
+        AscentRanking::IDENTIFIER => AscentRanking::class,
+        BBDFRanking::IDENTIFIER => BBDFRanking::class
     ];
 
     public function calculateRanking(RankingInterface $ranking, array $boulders, Event $event = null): array
@@ -25,48 +26,45 @@ class RankingService
          */
         foreach ($boulders as $boulder) {
             $ranking->getScoring()->calculateScore($boulder);
+        }
 
-            /**
-             * @var \App\Entity\Ascent $ascent
-             */
-            foreach ($boulder->getAscents() as $ascent) {
-                if (!in_array($ascent->getType(), $ranking->getScoring()->getScoredAscentTypes())) {
-                    continue;
-                }
-
-                if ($event && $ascent->getCreatedAt() > $event->getEndDate() && $ascent->getSource() !== Ascent::SOURCE_ADMIN) {
-                    continue;
-                }
-
-                if ($event && !$event->isParticipant($ascent->getUser())) {
-                    continue;
-                }
-
-                $userId = $ascent->getUser()->getId();
-
-                if (!array_key_exists($userId, $data)) {
-                    $data[$userId] = [
-                        "user" => $ascent->getUser(),
-                        Ascent::ASCENT_TOP => [
-                            "count" => 0,
-                            "rate" => 0
-                        ],
-                        Ascent::ASCENT_FLASH => [
-                            "count" => 0,
-                            "rate" => 0
-                        ],
-                        "total" => [
-                            "count" => 0,
-                            "rate" => 0
-                        ],
-                        "points" => 0
-                    ];
-                }
-
-                $data[$userId][$ascent->getType()]["count"]++;
-                $data[$userId]["total"]["count"]++;
-                $data[$userId]["points"] += $ascent->getScore();
+        foreach ($ranking->getAscents($boulders) as $ascent) {
+            if (!in_array($ascent->getType(), $ranking->getScoring()->getScoredAscentTypes())) {
+                continue;
             }
+
+            if ($event && $ascent->getCreatedAt() > $event->getEndDate() && $ascent->getSource() !== Ascent::SOURCE_ADMIN) {
+                continue;
+            }
+
+            if ($event && !$event->isParticipant($ascent->getUser())) {
+                continue;
+            }
+
+            $userId = $ascent->getUser()->getId();
+
+            if (!array_key_exists($userId, $data)) {
+                $data[$userId] = [
+                    "user" => $ascent->getUser(),
+                    Ascent::ASCENT_TOP => [
+                        "count" => 0,
+                        "rate" => 0
+                    ],
+                    Ascent::ASCENT_FLASH => [
+                        "count" => 0,
+                        "rate" => 0
+                    ],
+                    "total" => [
+                        "count" => 0,
+                        "rate" => 0
+                    ],
+                    "points" => 0
+                ];
+            }
+
+            $data[$userId][$ascent->getType()]["count"]++;
+            $data[$userId]["total"]["count"]++;
+            $data[$userId]["points"] += $ascent->getScore();
         }
 
         foreach ($data as &$rank) {
@@ -94,7 +92,8 @@ class RankingService
     {
         return [
             new DefaultPointsRanking(),
-            new AscentRanking()
+            new AscentRanking(),
+            new BBDFRanking()
         ];
     }
 

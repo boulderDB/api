@@ -15,14 +15,13 @@ class DefaultScoring implements ScoringInterface
             /**
              * @var Ascent $ascent
              */
-            return in_array($ascent->getType(), $this->getScoredAscentTypes()) && $ascent->getUser()->isVisible();
+            return in_array($ascent->getType(), [Ascent::ASCENT_TOP, Ascent::ASCENT_FLASH]) && $ascent->getUser()->isVisible();
         })->count();
 
         /**
          * @var Ascent $ascent
          */
         foreach ($boulder->getAscents() as $ascent) {
-
             if ($ascent->getType() === Ascent::ASCENT_FLASH) {
                 $ascent->setScore(round(($points / $validAscentsCount) * 1.1));
 
