@@ -55,9 +55,6 @@ class BoulderListener implements EventSubscriber
             return;
         }
 
-        $scoring = new DefaultScoring();
-        $scoring->calculateScore($subject);
-
         $user = $this->getUser();
 
         if (!$user) {
