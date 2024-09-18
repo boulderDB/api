@@ -238,7 +238,7 @@ class Boulder implements LocationResourceInterface, TimestampableInterface, Cach
 
     public function setPoints(int $points): void
     {
-        $this->currentPoints = $points;
+        $this->points = $points;
     }
 
     public function getCurrentPoints(): int
