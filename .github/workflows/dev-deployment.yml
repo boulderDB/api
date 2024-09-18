@@ -1,4 +1,4 @@
-name: STAGING deployment
+name: dev deployment
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     environment:
-      name: internal
+      name: dev
       url: https://dev.boulderdb.de
     env:
       SSH_USER: ${{ secrets.INTERNAL_SSH_USER }}
